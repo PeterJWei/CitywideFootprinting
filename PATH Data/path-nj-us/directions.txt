@@ -1,0 +1,15 @@
+route_id,direction_id,Direction
+11048,1,Inbound
+11048,0,Outbound
+4768,1,Inbound
+4768,0,Outbound
+1024,1,Inbound
+1024,0,Outbound
+862,1,Inbound
+862,0,Outbound
+861,1,Inbound
+861,0,Outbound
+860,1,Inbound
+860,0,Outbound
+859,1,Inbound
+859,0,Outbound

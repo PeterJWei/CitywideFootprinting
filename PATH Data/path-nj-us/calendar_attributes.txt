@@ -1,0 +1,8 @@
+service_id,service_description
+c_2597_b_643_d_64,Before February 18th (Sunday only)
+c_2597_b_643_d_32,Before February 18th (Saturday only)
+c_2597_b_643_d_31,Before February 18th (Monday-Friday)
+c_2597_b_643_d_127,Before February 18th (All days of week)
+c_3219_b_15826_d_64,Year Round (Sunday only)
+c_3219_b_15826_d_32,Year Round (Saturday only)
+c_3219_b_15826_d_31,Year Round (Monday-Friday)

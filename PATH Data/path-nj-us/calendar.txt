@@ -1,0 +1,8 @@
+service_id,service_name,monday,tuesday,wednesday,thursday,friday,saturday,sunday,start_date,end_date
+c_2597_b_643_d_64,Before February 18th (Sunday only),0,0,0,0,0,0,1,20170201,20190101
+c_2597_b_643_d_32,Before February 18th (Saturday only),0,0,0,0,0,1,0,20170201,20190101
+c_2597_b_643_d_31,Before February 18th (Monday-Friday),1,1,1,1,1,0,0,20170201,20190101
+c_2597_b_643_d_127,Before February 18th (All days of week),1,1,1,1,1,1,1,20170201,20190101
+c_3219_b_15826_d_64,Year Round (Sunday only),0,0,0,0,0,0,1,20180522,20181225
+c_3219_b_15826_d_32,Year Round (Saturday only),0,0,0,0,0,1,0,20180522,20181225
+c_3219_b_15826_d_31,Year Round (Monday-Friday),1,1,1,1,1,0,0,20180522,20181225
