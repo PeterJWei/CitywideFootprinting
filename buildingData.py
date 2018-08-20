@@ -44,9 +44,28 @@ class buildingData:
 					self.block2building[block].append(latlon)
 
 	def closestStation(self, stationCoordinates):
+		self.nearestStationDictionary = {}
 		for block in self.block2building:
-			(lat,lon)
+			(lat,lon) = self.block2building[block][0]
+			distance = 10000
+			closestStation = None
+			for station in stationCoordinates:
+				(slat,slon) = stationCoordinates[station]
+				d = abs(slat-lat) + abs(slon-lon)
+				if d < distance:
+					distance = d
+					closestStation = station
+			self.nearestStationDictionary[block] = closestStation
+		return self.nearestStationDictionary
 
+	def station2Blocks(self):
+		self.station2Blocks = {}
+		for block in self.nearestStationDictionary:
+			station = self.nearestStationDictionary[block]
+			if station not in self.station2Blocks:
+				self.station2Blocks[station] = []
+			self.station2Blocks[station].append(block)
+		return self.station2Blocks
 
 
 
