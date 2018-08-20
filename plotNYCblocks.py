@@ -7,7 +7,7 @@ from shapely.geometry import Polygon
 from descartes.patch import PolygonPatch
 import csv
 from pyproj import Proj, transform
-from subwayHistorical import S
+#from subwayHistorical import S
 
 #nDictionary = S.loadTurnstile('TurnstileData/turnstile_180811.csv')
 
@@ -190,6 +190,6 @@ class plotNYCblocks:
 		self.ax.autoscale()
 		plt.show()
 
-P = plotNYCblocks()
+#P = plotNYCblocks()
 
 

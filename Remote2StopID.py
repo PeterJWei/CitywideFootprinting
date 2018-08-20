@@ -1,5 +1,138 @@
+import time
+import csv
+import datetime
 class remoteDictionary:
 	def __init__(self):
+		print("Initializing Remote Dictionary.")
+		print("Creating Station Name Translation...")
+		start = time.time()
+		self.createLegend()
+		end = time.time()
+		print("Finished: " + str(end-start) + " s\n")
+		print("Creating Booth to Station Dictionary...")
+		start = time.time()
+		self.loadRemote2Station("TurnstileData/Remote-Booth-Station-3.csv")
+		end = time.time()
+		print("Finished: " + str(end-start) + " s\n")
+		print("Creating Station to Latitude/Longitude Dictionary...")
+		start = time.time()
+		self.loadStation2Coordinates("SubwayStations/SubwayStationCoordinates.csv")
+		end = time.time()
+		print("Finished: " + str(end-start) + " s\n")
+		print("Loading Turnstile Data...")
+		start = time.time()
+		self.loadTurnstile('TurnstileData/turnstile_180811.csv')
+		end = time.time()
+		print("Finished: " + str(end-start) + " s\n")
+
+	def loadRemote2Station(self, remoteKeyFile):
+		self.remote2station = {}
+		with open (remoteKeyFile, 'rb') as csvfile:
+			data = [row for row in csv.reader(csvfile.read().splitlines())]
+			reader = data
+			i = True
+			total = 0
+			errors = 0
+			for row in reader: 
+				total += 1
+				if i: #skip the first line
+					i = False
+					continue
+				else:
+					remote = row[0]
+					booth = row[1]
+					stationName = row[2]
+					lineName = row[3]
+					key = stationName + "," + lineName
+					if key in self.Remote2StopID:
+						self.remote2station[booth + remote] = self.Remote2StopID[key]
+					else:
+						errors += 1
+						continue
+			print(str(errors) + "/" + str(total) + " station names not found.")
+
+	def loadStation2Coordinates(self, coordinatesFile):
+		self.coordinates = {}
+		with open (coordinatesFile, 'rb') as csvfile:
+			reader = csv.reader(csvfile, delimiter=',')
+			i = True
+			for row in reader: 
+				if i: #skip the first line
+					i = False
+					continue
+				else:
+					GTFSStopID = row[2]
+					GTFSLatitude = float(row[9])
+					GTFSLongitude = float(row[10])
+					self.coordinates[GTFSStopID] = (GTFSLatitude, GTFSLongitude)
+
+	def loadTurnstile(self, turnstileFile):
+		self.timeSeriesDataEntries = {}
+		self.timeSeriesDataExits = {}
+		with open (turnstileFile, 'rb') as csvfile:
+			reader = csv.reader(csvfile, delimiter=',')
+			i = True
+			total = 0
+			errors = 0
+			for row in reader: 
+				total += 1
+				if i: #skip the first line
+					i = False
+					continue
+				else:
+					booth = row[0]
+					unit = row[1]
+					#stationName = row[3]
+					date = row[6]
+					ds = date.split("/")
+					t = row[7]
+					ts = t.split(":")
+					newDate = ""
+					for n in ds:
+						if len(n) == 1:
+							newDate += "0" + n
+							newDate += "/"
+						else:
+							newDate += n
+							newDate += "/"
+					date = newDate[:-1]
+					if len(ts[0]) == 1:
+						t = "0" + t
+					try:
+						d = datetime.datetime.strptime(date + "," + t, "%m/%d/%y,%H:%M:%S")
+					except ValueError:
+						print(date + "," + t)
+						continue
+					diff = d - datetime.datetime(2018, 8, 4, 0, 0, 0)
+					index = diff.seconds / 3600 / 4
+					entries = row[9]
+					exits = row[10]
+					key = booth + unit
+					if key not in self.remote2station:
+						errors += 1
+						#print("Key " + booth + " " + unit + " not found")
+						continue
+					station = self.remote2station[key]
+
+					if station not in self.timeSeriesDataEntries:
+						self.timeSeriesDataEntries[station] = [0] * 42
+						self.timeSeriesDataExits[station] = [0] * 42
+						#boothNTAs[booth] = nta
+					self.timeSeriesDataEntries[station][index] += int(entries)
+					self.timeSeriesDataExits[station][index] += int(exits)
+			print("Missing Keys: " + str(errors) + "/" + str(total))
+
+		#for booth in timeSeriesDataEntries:
+		#	nta = boothNTAs[booth]
+		#	for n in nta:
+		#		if n not in ntaDictionary:
+		#			ntaDictionary[n] = [0] * 41
+		#		for i in range(len(timeSeriesDataEntries[booth])-1):
+		#			ntaDictionary[n][i] += (int(timeSeriesDataEntries[booth][i+1]) - int(timeSeriesDataEntries[booth][i]))/len(nta)
+		#			ntaDictionary[n][i] -= (int(timeSeriesDataExits[booth][i+1]) - int(timeSeriesDataExits[booth][i]))/len(nta)
+		#return ntaDictionary
+
+	def createLegend(self):
 		self.Remote2StopID = {}
 		self.Remote2StopID['DITMARS BL-31 S,NQ'] = 'R01' #Astoria - Ditmars BLVD
 		self.Remote2StopID['HOYT ST-ASTORIA,NQ'] = 'R03' #Astoria BLVD
@@ -16,6 +149,7 @@ class remoteDictionary:
 		self.Remote2StopID['28 ST-BROADWAY,NR'] = 'R18' #28 ST
 		self.Remote2StopID['23 ST-5 AVE,NR'] = 'R19'
 		self.Remote2StopID['14 ST-UNION SQ,LNQR456'] = 'R20'
+		self.Remote2StopID['14 ST-UNION SQ,LNRQ456'] = 'R20'
 		self.Remote2StopID["8 ST-B'WAY NYU,NR"] = 'R21'
 		self.Remote2StopID["PRINCE ST-B'WAY,NR"] = 'R22'
 		self.Remote2StopID['CANAL ST,JNQRZ6'] = 'R23'
@@ -60,7 +194,7 @@ class remoteDictionary:
 		self.Remote2StopID['STILLWELL AVE,DFNQ'] = 'D43'
 		self.Remote2StopID['9 AVE,D'] = 'B12'
 		self.Remote2StopID['FT HAMILTON PKY,D'] = 'B13'
-		self.Remote2StopID['BAY 50 ST,D'] = 'B14'
+		self.Remote2StopID['50 ST,D'] = 'B14'
 		self.Remote2StopID['55 ST,D'] = 'B15'
 		#self.Remote2StopID['AVE H'] = 'B16'
 		self.Remote2StopID['71 ST,D'] = 'B17'
@@ -153,6 +287,7 @@ class remoteDictionary:
 		self.Remote2StopID['145 ST,ABCD'] = 'A12'
 		self.Remote2StopID['135 ST,BC'] = 'A14'
 		self.Remote2StopID['125 ST,ABCD'] = 'A15'
+		self.Remote2StopID['125 ST,ACBD'] = 'A15'
 		self.Remote2StopID['116 ST,BC'] = 'A16'
 		self.Remote2StopID['CATHEDRL-110 ST,BC'] = 'A17'
 		self.Remote2StopID['103 ST,BC'] = 'A18'
@@ -164,6 +299,7 @@ class remoteDictionary:
 		self.Remote2StopID['50 ST,CE'] = 'A25'
 		self.Remote2StopID['42 ST-PA BUS TE,ACENQRS1237'] = 'A27'
 		self.Remote2StopID['34 ST-PENN STA,123ACE'] = 'A28'
+		self.Remote2StopID['34 ST-PENN STA,ACE'] = 'A28'
 		self.Remote2StopID['23 ST,CE'] = 'A30'
 		self.Remote2StopID['14 ST,ACEL'] = 'A31'
 		self.Remote2StopID['W 4 ST-WASH SQ,ABCDEFM'] = 'A32'
@@ -267,6 +403,7 @@ class remoteDictionary:
 		self.Remote2StopID['63 DR-REGO PARK,MR'] = 'G10'
 		self.Remote2StopID['WOODHAVEN BLVD,MR'] = 'G11'
 		self.Remote2StopID['GRAND AV-NEWTOWN,MR'] = 'G12'
+		self.Remote2StopID['GRAND AV-NEWTON,MR'] = 'G12'
 		self.Remote2StopID['ELMHURST AVE,MR'] = 'G13'
 		self.Remote2StopID['ROOSEVELT AVE,EFMR7'] = 'G14'
 		self.Remote2StopID['65 ST,MR'] = 'G15'
@@ -285,10 +422,11 @@ class remoteDictionary:
 		self.Remote2StopID['JAMAICA-VAN WYC,E'] = 'G07'
 		self.Remote2StopID['COURT SQ-23 ST,EMG'] = 'G22'
 		self.Remote2StopID['COURT SQ,EMG'] = 'G22'
-		#self.Remote2StopID['7 AVE-53 ST,BDE'] = 'G24'
+		self.Remote2StopID['VAN ALSTON-21ST,G'] = 'G24'
 		self.Remote2StopID['GREENPOINT AVE,G'] = 'G26'
 		self.Remote2StopID['NASSAU AV,G'] = 'G28'
 		self.Remote2StopID['METROPOLITAN AV,G'] = 'G29'
+		self.Remote2StopID['METROPOLITAN AV,GL'] = 'G29'
 		self.Remote2StopID['BROADWAY,G'] = 'G30'
 		self.Remote2StopID['FLUSHING AVE,G'] = 'G31'
 		self.Remote2StopID['MYRTLE-WILLOUGH,G'] = 'G32'
@@ -303,6 +441,7 @@ class remoteDictionary:
 		self.Remote2StopID['215 ST,1'] = '107'
 		self.Remote2StopID['207 ST,1'] = '108'
 		self.Remote2StopID['DYCKMAN ST,1AC'] = '109'
+		self.Remote2StopID['DYCKMAN ST,1'] = '109'
 		self.Remote2StopID['191 ST,1'] = '110'
 		self.Remote2StopID['181 ST,1'] = '111'
 		self.Remote2StopID['168 ST-BROADWAY,1AC'] = '112'
@@ -342,6 +481,7 @@ class remoteDictionary:
 		self.Remote2StopID['HOYT ST,23'] = '233'
 		self.Remote2StopID['NEVINS ST,2345'] = '234'
 		self.Remote2StopID['ATLANTIC AVE,2345BDNQR'] = '235'
+		self.Remote2StopID['PACIFIC ST,BDNQR2345'] = '235'
 		self.Remote2StopID['BERGEN ST,23'] = '236'
 		self.Remote2StopID['GRAND ARMY PLAZ,23'] = '237'
 		self.Remote2StopID['EASTERN PKWY,23'] = '238'
@@ -416,6 +556,7 @@ class remoteDictionary:
 		self.Remote2StopID['SPRING ST,6'] = '638'
 		self.Remote2StopID['CANAL ST,JNQRZ6'] = '639'
 		self.Remote2StopID['BROOKLYN BRIDGE,456JZ'] = '640'
+		self.Remote2StopID['BROOKLYN BRIDGE,JZ456'] = '640'
 		self.Remote2StopID['FULTON ST,ACJZ2345'] = '418'
 		self.Remote2StopID['WALL ST,45'] = '419'
 		self.Remote2StopID['BOWLING GREEN,45'] = '420'
@@ -448,8 +589,9 @@ class remoteDictionary:
 		self.Remote2StopID['110 ST-CPN,23'] = '227'
 		self.Remote2StopID['DYRE AVE,5'] = '501'
 		self.Remote2StopID['BAYCHESTER AVE,5'] = '502'
-		self.Remote2StopID['GUN HILL ROAD,25'] = '503'
+		self.Remote2StopID['GUN HILL ROAD,5'] = '503'
 		self.Remote2StopID['PELHAM PARKWAY,5'] = '504'
+		self.Remote2StopID['PELHAM PARKWAY,25'] = '504'
 		self.Remote2StopID['MORRIS PARK,5'] = '505'
 		self.Remote2StopID['MAIN ST,7'] = '701'
 		self.Remote2StopID['METS-WILLETS PT,7'] = '702'
@@ -501,10 +643,6 @@ class remoteDictionary:
 		#self.Remote2StopID[''] = '477'
 		#self.Remote2StopID[''] = '902'
 		#self.Remote2StopID[''] = '902'
-
-
-
-
 
 
 
