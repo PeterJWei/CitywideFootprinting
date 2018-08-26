@@ -1,6 +1,7 @@
 import time
 import csv
 import datetime
+import matplotlib.pyplot as plt
 class remoteDictionary:
 	def __init__(self):
 		print("Initializing Remote Dictionary.")
@@ -104,7 +105,10 @@ class remoteDictionary:
 						print(date + "," + t)
 						continue
 					diff = d - datetime.datetime(2018, 8, 4, 0, 0, 0)
-					index = diff.seconds / 3600 / 4
+					#print(d)
+					#print(diff.days)
+					#print(diff.seconds/3600)
+					index = (diff.days * 24 + diff.seconds / 3600) / 4
 					entries = row[9]
 					exits = row[10]
 					key = booth + unit
@@ -120,6 +124,25 @@ class remoteDictionary:
 						#boothNTAs[booth] = nta
 					self.timeSeriesDataEntries[station][index] += int(entries)
 					self.timeSeriesDataExits[station][index] += int(exits)
+			for station in self.timeSeriesDataEntries:
+				for i in range(1, len(self.timeSeriesDataEntries[station])):
+					if self.timeSeriesDataEntries[station][i] > self.timeSeriesDataEntries[station][i-1] + 100000:
+						if i == len(self.timeSeriesDataEntries[station])-1:
+							self.timeSeriesDataEntries[station][i] = self.timeSeriesDataEntries[station][i-1]
+						else:
+							self.timeSeriesDataEntries[station][i] = (self.timeSeriesDataEntries[station][i-1] + self.timeSeriesDataEntries[station][i+1])/2
+			dp = False
+			if (dp):
+				print(self.timeSeriesDataEntries[station])
+				x = [datetime.datetime(2018, 8, i, j, 0, 0) + datetime.timedelta(hours=4) for i in range(4, 11) for j in range(0,24,4)]
+				self.fig = plt.figure()
+				self.ax = plt.axes()
+				plt.scatter(x, self.timeSeriesDataEntries[station])
+				plt.xlabel("Time")
+				plt.ylabel("People Count")
+				plt.title(station + " station")
+				plt.axis([datetime.datetime(2018,8,4,0,0,0),datetime.datetime(2018,8,11,0,0,0),19290000,19360000])
+				plt.show()
 			print("Missing Keys: " + str(errors) + "/" + str(total))
 
 		#for booth in timeSeriesDataEntries:

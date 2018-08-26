@@ -1,0 +1,29 @@
+<html>
+<script src="https://d3js.org/d3.v3.min.js"></script>
+<script type="text/javascript" src="http://mpld3.github.io/js/mpld3.v0.2.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<header><title>Dynamic Occupancy</title></header>
+<body>
+
+<div id="fig">
+</div>
+<button onclick="myFunction()">Load Graph</button>
+<script>
+	function myFunction() {
+			var result = null;
+			$.get("/realtime/",{
+	    		},
+		    	function(data,status){
+		    	console.log(data,status);
+		    	var json = data;
+		    	var f = mpld3.draw_figure("fig", json);
+		    },'json').fail(function() {
+			    alert('Error!'); // or whatever			    
+			    $btn.button('reset');
+			});
+
+		}
+	
+</script>
+</body>
+</html>
