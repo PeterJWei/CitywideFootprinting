@@ -1,9 +1,10 @@
 from Remote2StopID import remoteDictionary
 from buildingData import buildingData
 from plotNYCblocks import plotNYCblocks
+from loadEnergy import loadEnergy
 import time
 import web
-#from subwayStream import subwayStream
+from subwayStream import subwayStream
 
 urls = ("/", "dynamicAPI")
 
@@ -15,13 +16,18 @@ class dynamicAPI:
 
 class showDynamicPopulation:
 	def __init__(self):
+		self.init()
 		return
 
 	def init(self):
+		self.MTAstream = subwayStream()
+		E = loadEnergy()
+		self.energyDictionary = E.energyDictionary
 		S = remoteDictionary()
 		B = buildingData()
 		self.BBL2CT = B.BBL2CT
-		S = subwayStream()
+		self.CT2EUI()
+		#S = subwayStream()
 		self.blocks2Occupancy = {}
 
 		print("Determining Closest Station...")
@@ -39,10 +45,28 @@ class showDynamicPopulation:
 		self.timeSeriesEntries = S.timeSeriesDataEntries
 		self.timeSeriesExits = S.timeSeriesDataExits
 
+	def CT2EUI(self):
+		self.CTEUI = {}
+		for BBL in self.energyDictionary:
+			if BBL in self.BBL2CT:
+				block = self.BBL2CT[BBL]
+				if block not in self.CTEUI:
+					self.CTEUI[block] = 0.0
+				self.CTEUI[block] += self.energyDictionary[BBL]
+
 	def getBlocks2Occupancy(self,t):
 		self.blocks2Occupancy = {}
+		stationTrains = self.MTAstream.getData()
+		for station in stationTrains:
+			print(str(stationTrains[station]) + " trains passed station: " + station)
 		count = 0
-		for station in self.station2Blocks:
+		for station in stationTrains:
+			#Trainslate s to station
+			#TODO
+			if station not in self.station2Blocks:
+				#print("No station: " + str(station) + " found")
+				continue
+		#for station in self.station2Blocks:
 			blockCount = len(self.station2Blocks[station])
 			for block in self.station2Blocks[station]:
 				if block not in self.blocks2Occupancy:
@@ -53,29 +77,39 @@ class showDynamicPopulation:
 					if entryDiff > 100000 or exitDiff > 100000 or entryDiff < 0 or exitDiff < 0:
 						continue
 					count += 1
-					self.blocks2Occupancy[block] -= (entryDiff - exitDiff)
+					self.blocks2Occupancy[block] += (exitDiff - entryDiff)/blockCount/48
 
 		print("Number of nonzero changes: " + str(count) + "/" + str(len(self.blocks2Occupancy)))
 
+	def plotRealtime(self):
+		self.P = plotNYCblocks(self.CTEUI)
+		self.P.examplePlotRealTime(self.blocks2Occupancy)
+
+
 	def serviceStartup(self):
-		self.P = plotNYCblocks()
+		self.P = plotNYCblocks(self.CTEUI)
 		json = self.P.exampleRun3()
 		print(json)
 		return json
 
 	def startup(self):
-		self.P = plotNYCblocks()
+		self.P = plotNYCblocks(self.CTEUI)
 		self.P.exampleRun()
 
 	def plotDynamic(self):
+		self.P = plotNYCblocks(self.CTEUI)
 		self.P.dynamicPopulation(self.blocks2Occupancy)
 		self.P.examplePlot2()
 
 	def plotBuildings(self):
-		self.P = plotNYCblocks()
+		self.P = plotNYCblocks(self.CTEUI)
 		self.P.buildingPlot()
 
-dynamic = showDynamicPopulation()
-dynamic.plotBuildings()
+#dynamic = showDynamicPopulation()
+#dynamic.getBlocks2Occupancy(13)
+#dynamic.getBlocks2Occupancy(14)
+#dynamic.getBlocks2Occupancy(15)
+#dynamic.getBlocks2Occupancy(16)
+#dynamic.plotDynamic()
 
 doPopulation = web.application(urls, locals());

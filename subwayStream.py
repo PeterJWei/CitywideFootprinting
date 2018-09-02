@@ -35,7 +35,6 @@ class subwayStream:
 		self.TIMEZONE = timezone('America/New_York')
 		self.KEY = '914716d7b50514f729f51936174bc790'
 		self.lastStops = {}
-		self.
 		return
 
 	def stationDefinitions(self, stationFile):
@@ -55,13 +54,14 @@ class subwayStream:
 					self.stopID2parent[stationName] = parent
 
 	def getData(self):
+		stationTrains = {}
 		feed = gtfs_realtime_pb2.FeedMessage()
 		url = 'http://datamine.mta.info/mta_esi.php?key=' + self.KEY + '&feed_id=1'
 		response = urllib.urlopen(url)
 		feed.ParseFromString(response.read())
-		for entity in feed.entity:
-			if entity.HasField('trip_update'):
-				print(entity.trip_update)
+		#for entity in feed.entity:
+		#	if entity.HasField('trip_update'):
+		#		print(entity.trip_update)
 
 		timestamp = feed.header.timestamp
 		print("Timestamp: " + str(timestamp))
@@ -92,15 +92,37 @@ class subwayStream:
 					break
 				self.tripUpdates.append(t)
 		for t in self.tripUpdates:
-			if t.nextStopTimes[0] != 0:
-				print((t.tripId,t.nextStopTimes))
+			if t.tripId not in self.lastStops: #new train
+				self.lastStops[t.tripId] = t.nextStop
+				continue
+			else:
+				nextStation = t.nextStop
+				leftStation = self.lastStops[t.tripId]
+				if leftStation != nextStation: #train has left the station
+					#print((t, leftStation, nextStation))
+					if leftStation not in stationTrains:
+						stationTrains[self.stopID2parent[leftStation]] = 0
+					stationTrains[self.stopID2parent[leftStation]] += 1 # another train has gone through the station
+					self.lastStops[t.tripId] = nextStation #train is now going to the next station
+		removeTrains = []
+		for t in self.lastStops:
+			found = False
+			for t_u in self.tripUpdates:
+				if t_u.tripId == t:
+					found = True
+					break
+			if not found:
+			#if t not in self.tripUpdates: # train has finished
+				lastStation = self.lastStops[t]
+				#print(t)
+				if lastStation not in stationTrains:
+					stationTrains[self.stopID2parent[lastStation]] = 0
+				stationTrains[self.stopID2parent[lastStation]] += 1
+				removeTrains.append(t)
+		for t in removeTrains:
+			self.lastStops.pop(t, None) # remove the train
 
+		return stationTrains
 
-
-
-
-
-		return self.tripUpdates
-
-S = subwayStream()
-S.getData()
+#S = subwayStream()
+#S.getData()

@@ -74,6 +74,8 @@ class buildingData:
 				sys.stdout.write("\033[F")
 				sys.stdout.write("\033[K")
 				print(str(int(round(float(blockNo)/float(totalBlocks)*100))) + "%...")
+			if block[0] != "1":
+				continue
 			coord1 = self.block2building[block][0]
 			distance = None
 			closestStation = None
@@ -85,7 +87,7 @@ class buildingData:
 					distance = d
 					closestStation = station
 			#print(distance)
-			if distance is not None and distance < 3.0:
+			if distance is not None and distance < 5.0:
 				self.nearestStationDictionary[block] = closestStation
 
 		return self.nearestStationDictionary

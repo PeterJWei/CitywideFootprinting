@@ -10,6 +10,7 @@ from pyproj import Proj, transform
 import sys
 import mpld3
 import json
+import math
 #from subwayHistorical import S
 
 #nDictionary = S.loadTurnstile('TurnstileData/turnstile_180811.csv')
@@ -17,7 +18,8 @@ import json
 
 
 class plotNYCblocks:
-	def __init__(self):
+	def __init__(self, EUI):
+		self.EUI = EUI
 		self.inProj = Proj(init='epsg:32054', preserve_units=True)
 		self.outProj = Proj(init='epsg:4326')
 		self.PopulationDictionary = {}
@@ -65,8 +67,17 @@ class plotNYCblocks:
 		self.instantiateFigure()
 		self.drawBoroughs("Boroughs/boroughs.shp")
 		self.drawBlocks("BlockLevel/nycb2010.shp")
-		self.drawSubwayLines("SubwayLines/SubwayLines.shp")
-		self.drawSubwayStations("SubwayStations/SubwayStations.shp")
+		#self.drawSubwayLines("SubwayLines/SubwayLines.shp")
+		#self.drawSubwayStations("SubwayStations/SubwayStations.shp")
+		self.plotGraph()
+		return json.dumps(mpld3.fig_to_dict(self.fig))
+
+	def examplePlotRealTime(self, newPopulation):
+		self.instantiateFigure()
+		self.drawBoroughs("Boroughs/boroughs.shp")
+		self.clearPopulation()
+		self.dynamicPopulation(newPopulation)
+		self.drawBlocks("BlockLevel/nycb2010.shp")
 		self.plotGraph()
 
 	def buildingPlot(self):
@@ -75,6 +86,10 @@ class plotNYCblocks:
 		print("Plotting Buildings")
 		self.drawBuildings("buildingLevel/shapefile.shp")
 		self.plotGraph()
+
+	def clearPopulation(self):
+		for block in self.PopulationDictionary:
+			self.PopulationDictionary[block] = 0
 
 	def dynamicPopulation(self, newPopulation):
 		print("Changing Population...")
@@ -85,9 +100,9 @@ class plotNYCblocks:
 			change = newPopulation[block]
 			if block in self.PopulationDictionary:
 				self.PopulationDictionary[block] += change
-				if self.PopulationDictionary[block] < 0:
-					print("Less than 0!")
-					self.PopulationDictionary[block] = 0
+				#if self.PopulationDictionary[block] < 0:
+				#	print("Less than 0!")
+				#	self.PopulationDictionary[block] = 0
 				changed += 1
 		print("Total Changed Population: " + str(changed) + "/" + str(total))
 		self.MB = self.maxBlock()
@@ -116,6 +131,26 @@ class plotNYCblocks:
 		for block in self.PopulationDictionary:
 			if block[0] == "1" and MB < self.PopulationDictionary[block]:
 				MB = self.PopulationDictionary[block]
+		print("Max Block: " + str(MB))
+		return MB
+
+	def minBlock(self):
+		MB = 0
+		for block in self.PopulationDictionary:
+			if block[0] == "1" and MB > self.PopulationDictionary[block]:
+				MB = self.PopulationDictionary[block]
+		print("Min Block: " + str(MB))
+		return MB
+
+	def maxBlockEnergy(self):
+		MB = 1
+		#for block in self.EUI:
+		#	if MB < self.EUI[block]:
+		#		MB = self.EUI[block]
+		for block in self.PopulationDictionary:
+			if block[0] == "1" and self.PopulationDictionary[block] > 0 and block in self.EUI:
+				if MB < self.EUI[block]/self.PopulationDictionary[block]:
+					MB = self.EUI[block]/self.PopulationDictionary[block]
 		print("Max Block: " + str(MB))
 		return MB
 
@@ -212,6 +247,7 @@ class plotNYCblocks:
 		numout = 0
 		print("\n")
 		self.MB = self.maxBlock()
+		self.MB1 = self.minBlock()
 		if self.MB == 0:
 			self.MB = 1.0
 		for s in sf.shapeRecords():
@@ -221,19 +257,34 @@ class plotNYCblocks:
 				sys.stdout.write("\033[K")
 				print("Drawing shape " + str(i) + " of " + str(recordlen))
 				#print((s.record[3],s.record[4],s.record[5]))
-			if s.record[4] not in self.PopulationDictionary or s.record[4][0] != "1":
+			if s.record[4] not in self.PopulationDictionary or s.record[4][0] != "1" or s.record[4] not in self.EUI:
 				R = 0.0
 				G = 0.0
 				B = 0.0
 				numout += 1
+			elif self.PopulationDictionary[s.record[4]] == 0:
+				R = 1.0
+				G = 1.0
+				B = 1.0
 			else:
 				pop = self.PopulationDictionary[s.record[4]]
+				#energy = self.EUI[s.record[4]]
+
+				#pop = energy/pop
+
 				#print((pop, self.MB))
-				frac = float(pop)/float(self.MB)
-				frac = frac/(frac + 0.2) + 0.2/1.2
-				R = 1.0
-				B = 1.0-frac
-				G = 1.0-frac
+				if pop > 0:
+					frac = float(pop)/float(self.MB)
+					frac = frac/(frac + 0.03) + 0.03/1.03
+					R = 1.0
+					G = 1.0-frac
+					B = 1.0-frac
+				elif pop < 0:
+					frac = float(pop)/float(self.MB1)
+					frac = frac/(frac + 0.03) + 0.03/1.03
+					R = 1.0-frac
+					G = 1.0-frac
+					B = 1.0
 				numin += 1
 			shape = s.shape
 			newPoints = []
@@ -284,10 +335,33 @@ class plotNYCblocks:
 			plt.plot(newPoints[0][0], newPoints[0][1], marker='o', markersize = 3, color='green')
 
 	def plotGraph(self):
+		cdic = {'red': ((0.0, 0.0, 0.0),
+				(0.5, 1.0, 1.0),
+				(1.0, 1.0, 1.0)),
+		'green': ((0.0, 0.0, 0.0),
+				(0.5, 1.0, 1.0),
+				(1.0, 0.0, 0.0)),
+		'blue': ((0.0, 1.0, 1.0),
+				(0.5, 1.0, 1.0),
+				(1.0, 0.0, 0.0))}
+		blueRed1 = LinearSegmentedColormap('BlueRed1', cdic)
+		sm = plt.cm.ScalarMappable(cmap=blueRed1, norm = plt.Normalize(vmin=self.MB1, vmax=self.MB))
+		sm._A = []
+		clb = plt.colorbar(sm)
+		clb.ax.tick_params(labelsize=20)
+		clb.set_label('Change in Population', fontsize=30)
+
 		self.ax.autoscale()
 		plt.axis([-93.8,-93.68,42.45,42.65])
+		#plt.title('Energy Footprint per Capita, Equal Apportionment', fontsize=16)
+		plt.xlabel('Longitude', fontsize=30)
+		plt.ylabel('Latitude', fontsize=30)
+		plt.xticks(fontsize=20)
+		plt.yticks(fontsize=20)
+		mng = plt.get_current_fig_manager()
+		mng.resize(*mng.window.maxsize())
 		plt.show()
-
+		plt.savefig("foo.png")
 
 #P = plotNYCblocks()
 

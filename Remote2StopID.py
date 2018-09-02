@@ -2,6 +2,8 @@ import time
 import csv
 import datetime
 import matplotlib.pyplot as plt
+from scipy.interpolate import interp1d
+import numpy as np
 class remoteDictionary:
 	def __init__(self):
 		print("Initializing Remote Dictionary.")
@@ -126,23 +128,63 @@ class remoteDictionary:
 					self.timeSeriesDataExits[station][index] += int(exits)
 			for station in self.timeSeriesDataEntries:
 				for i in range(1, len(self.timeSeriesDataEntries[station])):
-					if self.timeSeriesDataEntries[station][i] > self.timeSeriesDataEntries[station][i-1] + 100000:
-						if i == len(self.timeSeriesDataEntries[station])-1:
+					if abs(self.timeSeriesDataEntries[station][i]-self.timeSeriesDataEntries[station][i-1]) > 50000:
+						if i == len(self.timeSeriesDataEntries[station])-1 or abs(self.timeSeriesDataEntries[station][i]-self.timeSeriesDataEntries[station][i+1]) > 100000:
 							self.timeSeriesDataEntries[station][i] = self.timeSeriesDataEntries[station][i-1]
 						else:
 							self.timeSeriesDataEntries[station][i] = (self.timeSeriesDataEntries[station][i-1] + self.timeSeriesDataEntries[station][i+1])/2
-			dp = False
-			if (dp):
-				print(self.timeSeriesDataEntries[station])
-				x = [datetime.datetime(2018, 8, i, j, 0, 0) + datetime.timedelta(hours=4) for i in range(4, 11) for j in range(0,24,4)]
-				self.fig = plt.figure()
-				self.ax = plt.axes()
-				plt.scatter(x, self.timeSeriesDataEntries[station])
-				plt.xlabel("Time")
-				plt.ylabel("People Count")
-				plt.title(station + " station")
-				plt.axis([datetime.datetime(2018,8,4,0,0,0),datetime.datetime(2018,8,11,0,0,0),19290000,19360000])
-				plt.show()
+			for station in self.timeSeriesDataExits:
+				for i in range(1, len(self.timeSeriesDataExits[station])):
+					if abs(self.timeSeriesDataExits[station][i]-self.timeSeriesDataExits[station][i-1]) > 50000:
+						if i == len(self.timeSeriesDataExits[station])-1 or abs(self.timeSeriesDataExits[station][i]-self.timeSeriesDataExits[station][i+1]) > 100000:
+							self.timeSeriesDataExits[station][i] = self.timeSeriesDataExits[station][i-1]
+						else:
+							self.timeSeriesDataExits[station][i] = (self.timeSeriesDataExits[station][i-1] + self.timeSeriesDataExits[station][i+1])/2
+			
+			#dp = False
+			#if (dp):
+				if station == "R06":
+					#print(self.timeSeriesDataEntries[station])
+					x = [datetime.datetime(2018, 8, i, j, 0, 0) + datetime.timedelta(hours=4) for i in range(4, 11) for j in range(0,24,4)]
+					self.fig = plt.figure()
+					plt.subplot(2, 1, 1)
+
+					#self.ax = plt.axes()
+					
+					#plt.scatter(x, self.timeSeriesDataEntries[station])
+					f = interp1d(range(42), self.timeSeriesDataEntries[station], kind='cubic')
+					xnew = np.linspace(0, 41, 400, endpoint=True)
+					plt.scatter(range(42),self.timeSeriesDataEntries[station])
+					plt.title("Entries", fontsize=20)
+					plt.xticks(range(0,42,6), x[::6], fontsize=15)
+					plt.ylabel("Turnstile Count", fontsize=20)
+					plt.xlabel("Date and Time", fontsize=20)
+					plt.plot(xnew, f(xnew), 'r-')
+					#plt.xlabel("Time")
+					#plt.ylabel("People Count")
+					#plt.title(station + " station")
+					#plt.axis([datetime.datetime(2018,8,4,0,0,0),datetime.datetime(2018,8,11,0,0,0),19290000,19360000])
+					#plt.show()
+					#print(self.timeSeriesDataEntries[station])
+					x = [datetime.datetime(2018, 8, i, j, 0, 0) + datetime.timedelta(hours=4) for i in range(4, 11) for j in range(0,24,4)]
+					#self.fig = plt.figure()
+					plt.subplot(2, 1, 2)
+					#self.ax = plt.axes()
+					#plt.scatter(x, self.timeSeriesDataEntries[station])
+					
+					f = interp1d(range(42), self.timeSeriesDataExits[station], kind='cubic')
+					xnew = np.linspace(0, 41, 400, endpoint=True)
+					plt.scatter(range(42),self.timeSeriesDataExits[station])
+					plt.title("Exits", fontsize=20)
+					plt.xticks(range(0,42,6), x[::6], fontsize=15)
+					plt.ylabel("Turnstile Count", fontsize=20)
+					plt.xlabel("Date and Time", fontsize=20)
+					plt.plot(xnew, f(xnew), 'r-')
+					#plt.xlabel("Time")
+					#plt.ylabel("People Count")
+					#plt.title(station + " station")
+					#plt.axis([datetime.datetime(2018,8,4,0,0,0),datetime.datetime(2018,8,11,0,0,0),19290000,19360000])
+					plt.show()
 			print("Missing Keys: " + str(errors) + "/" + str(total))
 
 		#for booth in timeSeriesDataEntries:
@@ -260,7 +302,7 @@ class remoteDictionary:
 		self.Remote2StopID['MARCY AVE,JMZ'] = 'M16'
 		self.Remote2StopID['ESSEX ST,FJMZ'] = 'M18'
 		self.Remote2StopID['BOWERY,JZ'] = 'M19'
-		self.Remote2StopID['CANAL ST,JNQRZ6'] = 'M20'
+		self.Remote2StopID['CANAL ST,JNQRZ6'] = 'R23'
 		self.Remote2StopID['CHAMBERS ST,456JZ'] = 'M21'
 		self.Remote2StopID['FULTON ST,ACJZ2345'] = 'M22'
 		self.Remote2StopID['BROAD ST,JZ'] = 'M23'
@@ -272,9 +314,9 @@ class remoteDictionary:
 		self.Remote2StopID['KNICKERBOCKER,M'] = 'M09'
 		self.Remote2StopID['CENTRAL AVE,M'] = 'M10'
 		self.Remote2StopID['8 AVE,ACEL'] = 'L01'
-		self.Remote2StopID['14 ST-6 AVE,FLM123'] = 'L02'
+		self.Remote2StopID['14 ST-6 AVE,FLM123'] = '132'
 		self.Remote2StopID['6 AVE,FLM123'] = 'L02'
-		self.Remote2StopID['14 ST-UNION SQ,LNQR456'] = 'L03'
+		self.Remote2StopID['14 ST-UNION SQ,LNQR456'] = 'R20'
 		self.Remote2StopID['3 AVE,L'] = 'L05'
 		self.Remote2StopID['1 AVE,L'] = 'L06'
 		self.Remote2StopID['BEDFORD AVE,L'] = 'L08'
@@ -320,7 +362,7 @@ class remoteDictionary:
 		self.Remote2StopID['72 ST,BC'] = 'A22'
 		self.Remote2StopID['59 ST-COLUMBUS,1ABCD'] = 'A24'
 		self.Remote2StopID['50 ST,CE'] = 'A25'
-		self.Remote2StopID['42 ST-PA BUS TE,ACENQRS1237'] = 'A27'
+		self.Remote2StopID['42 ST-PA BUS TE,ACENQRS1237'] = 'R16'
 		self.Remote2StopID['34 ST-PENN STA,123ACE'] = 'A28'
 		self.Remote2StopID['34 ST-PENN STA,ACE'] = 'A28'
 		self.Remote2StopID['23 ST,CE'] = 'A30'
@@ -387,9 +429,9 @@ class remoteDictionary:
 		self.Remote2StopID['57 ST,F'] = 'B10'
 		self.Remote2StopID['47-50 ST-ROCK,BDFM'] = 'D15'
 		self.Remote2StopID['42 ST-BRYANT PK,BDFM7'] = 'D16'
-		self.Remote2StopID['34 ST-HERALD SQ,BDFMNQR'] = 'D17'
+		self.Remote2StopID['34 ST-HERALD SQ,BDFMNQR'] = 'R17'
 		self.Remote2StopID['23 ST-6 AVE,FM'] = 'D18'
-		self.Remote2StopID['14 ST-6 AVE,FLM123'] = 'D19'
+		self.Remote2StopID['14 ST-6 AVE,FLM123'] = '132'
 		self.Remote2StopID['BROADWAY/LAFAY,BDFQ6'] = 'D21'
 		self.Remote2StopID['GRAND ST,BD'] = 'D22'
 		self.Remote2StopID['2 AVE,F'] = 'F14'
@@ -480,17 +522,17 @@ class remoteDictionary:
 		self.Remote2StopID['79 ST,1'] = '122'
 		self.Remote2StopID['72 ST,123'] = '123'
 		self.Remote2StopID['66 ST-LINCOLN,1'] = '124'
-		self.Remote2StopID['59 ST-COLUMBUS,1ABCD'] = '125'
+		self.Remote2StopID['59 ST-COLUMBUS,1ABCD'] = 'A24'
 		self.Remote2StopID['50 ST,1'] = '126'
-		self.Remote2StopID['42 ST-TIMES SQ,1237ACENQRS'] = '127'
-		self.Remote2StopID['34 ST-PENN STA,123'] = '128'
+		self.Remote2StopID['42 ST-TIMES SQ,1237ACENQRS'] = 'R16'
+		self.Remote2StopID['34 ST-PENN STA,123'] = 'A28'
 		self.Remote2StopID['28 ST,1'] = '129'
 		self.Remote2StopID['23 ST,1'] = '130'
 		self.Remote2StopID['18 ST,1'] = '131'
 		self.Remote2StopID['14 ST,123FLM'] = '132'
 		self.Remote2StopID['CHRISTOPHER ST,1'] = '133'
 		self.Remote2StopID['HOUSTON ST,1'] = '134'
-		self.Remote2StopID['CANAL ST,1'] = '135'
+		self.Remote2StopID['CANAL ST,1'] = 'A34'
 		self.Remote2StopID['FRANKLIN ST,1'] = '136'
 		self.Remote2StopID['CHAMBERS ST,123'] = '137'
 		self.Remote2StopID['CORTLANDT ST,1'] = '138'
@@ -573,11 +615,11 @@ class remoteDictionary:
 		self.Remote2StopID['33 ST,6'] = '632'
 		self.Remote2StopID['28 ST,6'] = '633'
 		self.Remote2StopID['23 ST,6'] = '634'
-		self.Remote2StopID['14 ST-UNION SQ,LNQR456'] = '635'
+		self.Remote2StopID['14 ST-UNION SQ,LNQR456'] = 'R20'
 		self.Remote2StopID['ASTOR PLACE,6'] = '636'
 		self.Remote2StopID['BLEECKER ST,6DF'] = '637'
 		self.Remote2StopID['SPRING ST,6'] = '638'
-		self.Remote2StopID['CANAL ST,JNQRZ6'] = '639'
+		self.Remote2StopID['CANAL ST,JNQRZ6'] = 'R23'
 		self.Remote2StopID['BROOKLYN BRIDGE,456JZ'] = '640'
 		self.Remote2StopID['BROOKLYN BRIDGE,JZ456'] = '640'
 		self.Remote2StopID['FULTON ST,ACJZ2345'] = '418'
@@ -635,9 +677,9 @@ class remoteDictionary:
 		self.Remote2StopID['COURT SQ,7'] = '719'
 		self.Remote2StopID['HUNTERS PT AVE,7'] = '720'
 		self.Remote2StopID['VERNON/JACKSON,7'] = '721'
-		self.Remote2StopID['42 ST-GRD CNTRL,4567S'] = '723'
+		self.Remote2StopID['42 ST-GRD CNTRL,4567S'] = '631'
 		self.Remote2StopID['5 AVE-BRYANT PK,7BDFM'] = '724'
-		self.Remote2StopID['42 ST-TIMES SQ,1237ACENQRS'] = '725'
+		self.Remote2StopID['42 ST-TIMES SQ,1237ACENQRS'] = 'R16'
 
 		self.Remote2StopID['ST. GEORGE,1'] = 'S31'
 		self.Remote2StopID['TOMPKINSVILLE,1'] = 'S30'
