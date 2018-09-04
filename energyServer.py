@@ -20,12 +20,13 @@ def notfound():
 	return web.notfound("404 not found")
 
 def runDynamicPopulation():
-	run1 = showDynamicPopulation()
+	run1 = showDynamicPopulation(0)
 	while True:
 		print("\n\nRunning dynamic\n\n")
 		run1.getBlocks2Occupancy(20)
+		run1.startup()
 		#run1.plotRealtime()
-		time.sleep(15)
+		time.sleep(30)
 	# run1.getBlocks2Occupancy(1)
 	# run1.plotDynamic()
 	# run1.getBlocks2Occupancy(2)

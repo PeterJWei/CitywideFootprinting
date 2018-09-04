@@ -15,11 +15,12 @@ class dynamicAPI:
 		return self.dynamic.serviceStartup()
 
 class showDynamicPopulation:
-	def __init__(self):
-		self.init()
+	def __init__(self, borough=0): # borough options: 0, all boroughs; 1, Manhattan
+		self.init(borough)
+		self.borough = borough
 		return
 
-	def init(self):
+	def init(self, borough=0):
 		self.MTAstream = subwayStream()
 		E = loadEnergy()
 		self.energyDictionary = E.energyDictionary
@@ -30,9 +31,15 @@ class showDynamicPopulation:
 		#S = subwayStream()
 		self.blocks2Occupancy = {}
 
+		boroughFileName = {0:"AllBoroughs",
+						   1:"Manhattan",
+						   2:"Bronx",
+						   3:"Brooklyn",
+						   4:"Queens",
+						   5:"Staten Island"}
 		print("Determining Closest Station...")
 		start = time.time()
-		self.nearestStation = B.closestStation(S.coordinates)
+		self.nearestStation = B.closestStation(S.coordinates, borough, boroughFileName[borough])
 		end = time.time()
 		print("Finished: " + str(end-start) + " s\n")
 
@@ -56,7 +63,7 @@ class showDynamicPopulation:
 
 	def getBlocks2Occupancy(self,t):
 		self.blocks2Occupancy = {}
-		stationTrains = self.MTAstream.getData()
+		stationTrains = self.MTAstream.getData(0x1FF)
 		for station in stationTrains:
 			print(str(stationTrains[station]) + " trains passed station: " + station)
 		count = 0
@@ -82,27 +89,27 @@ class showDynamicPopulation:
 		print("Number of nonzero changes: " + str(count) + "/" + str(len(self.blocks2Occupancy)))
 
 	def plotRealtime(self):
-		self.P = plotNYCblocks(self.CTEUI)
+		self.P = plotNYCblocks(self.CTEUI, self.borough)
 		self.P.examplePlotRealTime(self.blocks2Occupancy)
 
 
 	def serviceStartup(self):
-		self.P = plotNYCblocks(self.CTEUI)
+		self.P = plotNYCblocks(self.CTEUI, self.borough)
 		json = self.P.exampleRun3()
 		print(json)
 		return json
 
 	def startup(self):
-		self.P = plotNYCblocks(self.CTEUI)
+		self.P = plotNYCblocks(self.CTEUI, self.borough)
 		self.P.exampleRun()
 
 	def plotDynamic(self):
-		self.P = plotNYCblocks(self.CTEUI)
+		self.P = plotNYCblocks(self.CTEUI, self.borough)
 		self.P.dynamicPopulation(self.blocks2Occupancy)
 		self.P.examplePlot2()
 
 	def plotBuildings(self):
-		self.P = plotNYCblocks(self.CTEUI)
+		self.P = plotNYCblocks(self.CTEUI, self.borough)
 		self.P.buildingPlot()
 
 #dynamic = showDynamicPopulation()

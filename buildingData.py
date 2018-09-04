@@ -3,23 +3,35 @@ import time
 from pyproj import Proj, transform
 import geopy.distance
 import sys
+import pickle
+import os.path
 
 class buildingData:
 	def __init__(self):
-		self.boroughCode = {"MN":1}
+		self.boroughCode = {"MN":1,
+							"BX":2,
+							"BK":3,
+							"QN":4,
+							"SI":5}
 		self.BBL2CT = {}
+		self.block2building = {}
 		self.inProj = Proj(init='epsg:2263', preserve_units=True)
 		self.outProj = Proj(init='epsg:4326')
-		print("Loading PLUTO Manhattan File...")
-		start = time.time()
-		self.loadCSV("datasets/PLUTO_Manhattan.csv")
-		end = time.time()
-		print("Finished: " + str(end-start) + " s\n")
+		self.loadPLUTO("datasets/PLUTO_Manhattan.csv", "Manhattan")
+		self.loadPLUTO("datasets/PLUTO_Bronx.csv", "Bronx")
+		self.loadPLUTO("datasets/PLUTO_Brooklyn.csv", "Brooklyn")
+		self.loadPLUTO("datasets/PLUTO_Queens.csv", "Queens")
+		self.loadPLUTO("datasets/PLUTO_Staten.csv", "Staten Island")
 		return
 
+	def loadPLUTO(self, PLUTOfile, name):
+		print("Loading PLUTO " + name + " File...")
+		start = time.time()
+		self.loadCSV(PLUTOfile)
+		end = time.time()
+		print("Finished: " + str(end-start) + " s\n")
+
 	def loadCSV(self, PLUTOfile):
-		self.block2building = {}
-		self.BBL2CT = {}
 		with open (PLUTOfile, 'rb') as csvfile:
 			reader = csv.reader(csvfile, delimiter=',')
 			i = True
@@ -64,32 +76,39 @@ class buildingData:
 					self.block2building[block].append((lat,lon))
 					self.BBL2CT[BBL] = block
 
-	def closestStation(self, stationCoordinates):
+	def closestStation(self, stationCoordinates, borough=0, name="AllBoroughs"):
 		self.nearestStationDictionary = {}
-		totalBlocks = len(self.block2building)
-		blockNo = 0
-		for block in self.block2building:
-			blockNo += 1
-			if blockNo % (totalBlocks/100) == 0:
-				sys.stdout.write("\033[F")
-				sys.stdout.write("\033[K")
-				print(str(int(round(float(blockNo)/float(totalBlocks)*100))) + "%...")
-			if block[0] != "1":
-				continue
-			coord1 = self.block2building[block][0]
-			distance = None
-			closestStation = None
-			for station in stationCoordinates:
-				coord2 = stationCoordinates[station]
-				d = geopy.distance.vincenty(coord1, coord2).miles
-				#print((coord1, coord2))
-				if distance is None or d < distance:
-					distance = d
-					closestStation = station
-			#print(distance)
-			if distance is not None and distance < 5.0:
-				self.nearestStationDictionary[block] = closestStation
-
+		if os.path.isfile('obj/' + name + '.pkl'):
+			print("Pickle Loaded " + name + '.pkl')
+			self.nearestStationDictionary = self.load_obj(name)
+			#return self.nearestStationDictionary
+		else:
+			print(name + '.pkl file not found.\n')
+			totalBlocks = len(self.block2building)
+			blockNo = 0
+			for block in self.block2building:
+				blockNo += 1
+				if blockNo % (totalBlocks/100) == 0:
+					sys.stdout.write("\033[F")
+					sys.stdout.write("\033[K")
+					print(str(int(round(float(blockNo)/float(totalBlocks)*100))) + "%...")
+				if borough != 0 and block[0] != str(borough):
+					continue
+				coord1 = self.block2building[block][0]
+				distance = None
+				closestStation = None
+				for station in stationCoordinates:
+					coord2 = stationCoordinates[station]
+					d = geopy.distance.vincenty(coord1, coord2).miles
+					#print((coord1, coord2))
+					if distance is None or d < distance:
+						distance = d
+						closestStation = station
+				#print(distance)
+				if distance is not None and distance < 5.0:
+					self.nearestStationDictionary[block] = closestStation
+			self.save_obj(self.nearestStationDictionary, name)
+			print("Pickle Saved " + name + '.pkl')
 		return self.nearestStationDictionary
 
 	def station2Blocks(self):
@@ -101,7 +120,13 @@ class buildingData:
 			self.station2Blocks[station].append(block)
 		return self.station2Blocks
 
+	def save_obj(self, obj, name):
+		with open('obj/'+ name + '.pkl', 'wb') as f:
+			pickle.dump(obj, f, pickle.HIGHEST_PROTOCOL)
 
+	def load_obj(self, name):
+		with open('obj/' + name + '.pkl', 'rb') as f:
+			return pickle.load(f)
 
 
 

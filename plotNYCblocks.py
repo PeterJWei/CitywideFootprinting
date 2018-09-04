@@ -18,7 +18,8 @@ import math
 
 
 class plotNYCblocks:
-	def __init__(self, EUI):
+	def __init__(self, EUI, borough=0):
+		self.borough = borough
 		self.EUI = EUI
 		self.inProj = Proj(init='epsg:32054', preserve_units=True)
 		self.outProj = Proj(init='epsg:4326')
@@ -129,7 +130,7 @@ class plotNYCblocks:
 	def maxBlock(self):
 		MB = 0
 		for block in self.PopulationDictionary:
-			if block[0] == "1" and MB < self.PopulationDictionary[block]:
+			if (self.borough == 0 or block[0] == str(self.borough)) and MB < self.PopulationDictionary[block]:
 				MB = self.PopulationDictionary[block]
 		print("Max Block: " + str(MB))
 		return MB
@@ -137,7 +138,7 @@ class plotNYCblocks:
 	def minBlock(self):
 		MB = 0
 		for block in self.PopulationDictionary:
-			if block[0] == "1" and MB > self.PopulationDictionary[block]:
+			if (self.borough == 0 or block[0] == str(self.borough)) and MB > self.PopulationDictionary[block]:
 				MB = self.PopulationDictionary[block]
 		print("Min Block: " + str(MB))
 		return MB
@@ -148,7 +149,7 @@ class plotNYCblocks:
 		#	if MB < self.EUI[block]:
 		#		MB = self.EUI[block]
 		for block in self.PopulationDictionary:
-			if block[0] == "1" and self.PopulationDictionary[block] > 0 and block in self.EUI:
+			if (self.borough == 0 or block[0] == str(self.borough)) and self.PopulationDictionary[block] > 0 and block in self.EUI:
 				if MB < self.EUI[block]/self.PopulationDictionary[block]:
 					MB = self.EUI[block]/self.PopulationDictionary[block]
 		print("Max Block: " + str(MB))
@@ -221,7 +222,7 @@ class plotNYCblocks:
 			if nparts == 1:
 				#polygon = Polygon(shape.points)
 				polygon = Polygon(newPoints)
-				patch = PolygonPatch(polygon, facecolor=[R,G,B], alpha=1.0, zorder=2)
+				patch = PolygonPatch(polygon, facecolor=[R,G,B], linewidth=0.1, alpha=1.0, zorder=2)
 				self.ax.add_patch(patch)
 			else:
 				for ip in range(nparts):
@@ -232,7 +233,7 @@ class plotNYCblocks:
 						i1 = len(shape.points)
 					#polygon = Polygon(shape.points[i0:i1+1])
 					polygon = Polygon(newPoints[i0:i1+1])
-					patch = PolygonPatch(polygon, facecolor=[R,G,B], alpha=1.0, zorder=2)
+					patch = PolygonPatch(polygon, facecolor=[R,G,B], linewidth=0.1, alpha=1.0, zorder=2)
 					self.ax.add_patch(patch)
 
 	def drawBlocks(self, blockFile):
@@ -257,11 +258,15 @@ class plotNYCblocks:
 				sys.stdout.write("\033[K")
 				print("Drawing shape " + str(i) + " of " + str(recordlen))
 				#print((s.record[3],s.record[4],s.record[5]))
-			if s.record[4] not in self.PopulationDictionary or s.record[4][0] != "1" or s.record[4] not in self.EUI:
+			if s.record[4] not in self.PopulationDictionary: #or s.record[4] not in self.EUI:
 				R = 0.0
 				G = 0.0
 				B = 0.0
 				numout += 1
+			elif s.record[4] in self.PopulationDictionary and (self.borough != 0 and s.record[4][0] != str(self.borough)):
+				R = 0.0
+				G = 0.0
+				B = 0.0
 			elif self.PopulationDictionary[s.record[4]] == 0:
 				R = 1.0
 				G = 1.0
@@ -275,13 +280,13 @@ class plotNYCblocks:
 				#print((pop, self.MB))
 				if pop > 0:
 					frac = float(pop)/float(self.MB)
-					frac = frac/(frac + 0.03) + 0.03/1.03
+					#frac = frac/(frac + 0.03) + 0.03/1.03
 					R = 1.0
 					G = 1.0-frac
 					B = 1.0-frac
 				elif pop < 0:
 					frac = float(pop)/float(self.MB1)
-					frac = frac/(frac + 0.03) + 0.03/1.03
+					#frac = frac/(frac + 0.03) + 0.03/1.03
 					R = 1.0-frac
 					G = 1.0-frac
 					B = 1.0
@@ -294,7 +299,7 @@ class plotNYCblocks:
 			if nparts == 1:
 				#polygon = Polygon(shape.points)
 				polygon = Polygon(newPoints)
-				patch = PolygonPatch(polygon, facecolor=[R,G,B], alpha=1.0, zorder=2)
+				patch = PolygonPatch(polygon, facecolor=[R,G,B], linewidth=0.1, alpha=1.0, zorder=2)
 				self.ax.add_patch(patch)
 			else:
 				for ip in range(nparts):
@@ -305,7 +310,7 @@ class plotNYCblocks:
 						i1 = len(shape.points)
 					#polygon = Polygon(shape.points[i0:i1+1])
 					polygon = Polygon(newPoints[i0:i1+1])
-					patch = PolygonPatch(polygon, facecolor=[R,G,B], alpha=1.0, zorder=2)
+					patch = PolygonPatch(polygon, facecolor=[R,G,B], linewidth=0.1, alpha=1.0, zorder=2)
 					self.ax.add_patch(patch)
 		print((numin, numout))
 
@@ -335,24 +340,43 @@ class plotNYCblocks:
 			plt.plot(newPoints[0][0], newPoints[0][1], marker='o', markersize = 3, color='green')
 
 	def plotGraph(self):
+		axes = {0:[-93.8,-93.38,42.25,42.65],
+				1:[-93.8,-93.68,42.45,42.65],
+				2:None,
+				3:None,
+				4:None,
+				5:None}
+		midpoint = 0.5
+		popRange = self.MB - self.MB1
+		if popRange != 0 and popRange > self.MB:
+			midpoint = float(self.MB)/float(self.MB - self.MB1)
 		cdic = {'red': ((0.0, 0.0, 0.0),
-				(0.5, 1.0, 1.0),
+				(1.0-midpoint, 1.0, 1.0),
 				(1.0, 1.0, 1.0)),
 		'green': ((0.0, 0.0, 0.0),
-				(0.5, 1.0, 1.0),
+				(1.0-midpoint, 1.0, 1.0),
 				(1.0, 0.0, 0.0)),
 		'blue': ((0.0, 1.0, 1.0),
-				(0.5, 1.0, 1.0),
+				(1.0-midpoint, 1.0, 1.0),
+				(1.0, 0.0, 0.0))}
+
+		if self.MB1 == 0:
+			cdic = {'red': ((0.0, 1.0, 1.0),
+				(1.0, 1.0, 1.0)),
+			'green': ((0.0, 1.0, 1.0),
+				(1.0, 0.0, 0.0)),
+			'blue': ((0.0, 1.0, 1.0),
 				(1.0, 0.0, 0.0))}
 		blueRed1 = LinearSegmentedColormap('BlueRed1', cdic)
 		sm = plt.cm.ScalarMappable(cmap=blueRed1, norm = plt.Normalize(vmin=self.MB1, vmax=self.MB))
 		sm._A = []
 		clb = plt.colorbar(sm)
 		clb.ax.tick_params(labelsize=20)
-		clb.set_label('Change in Population', fontsize=30)
+		clb.set_label('Base Population', fontsize=30)
 
 		self.ax.autoscale()
-		plt.axis([-93.8,-93.68,42.45,42.65])
+		#if axes[self.borough] is not None:
+		#	plt.axis(axes[self.borough])
 		#plt.title('Energy Footprint per Capita, Equal Apportionment', fontsize=16)
 		plt.xlabel('Longitude', fontsize=30)
 		plt.ylabel('Latitude', fontsize=30)
@@ -361,7 +385,7 @@ class plotNYCblocks:
 		mng = plt.get_current_fig_manager()
 		mng.resize(*mng.window.maxsize())
 		plt.show()
-		plt.savefig("foo.png")
+		#plt.savefig("foo.png")
 
 #P = plotNYCblocks()
 

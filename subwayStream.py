@@ -3,7 +3,6 @@ from google.transit import gtfs_realtime_pb2
 import urllib
 import datetime
 import csv
-
 from collections import OrderedDict
 # Storing trip related data
 # Note : some trips wont have vehicle data
@@ -53,74 +52,92 @@ class subwayStream:
 						parent = stationName
 					self.stopID2parent[stationName] = parent
 
-	def getData(self):
+	def getData(self, lines=0x1FF):
+
 		stationTrains = {}
-		feed = gtfs_realtime_pb2.FeedMessage()
-		url = 'http://datamine.mta.info/mta_esi.php?key=' + self.KEY + '&feed_id=1'
-		response = urllib.urlopen(url)
-		feed.ParseFromString(response.read())
-		#for entity in feed.entity:
-		#	if entity.HasField('trip_update'):
-		#		print(entity.trip_update)
+		
+		feedDictionary = {1:("1", "123456S"), #123456S
+						  2:("26","ACEHS"), #ACEHS
+						  4:("16", "NQRW"), #NQRW
+						  8:("21", "BDFM"), #BDFM
+						  16:("2", "L"), #L
+						  32:("11", "Staten Island Railway"), #Staten Island Railway
+						  64:("31", "G"), #G
+						  128:("36", "JZ"), #JZ
+						  256:("51", "7"), #7
+						}
+		for i in range(9):
+			feedInfo = feedDictionary[lines & (0x1 << i)]
+			print("Accessing subway stream for feed " + feedInfo[1])
+			feedID = feedInfo[0]
 
-		timestamp = feed.header.timestamp
-		print("Timestamp: " + str(timestamp))
-		nytime = datetime.datetime.fromtimestamp(timestamp, self.TIMEZONE)
-		print("NYC Time: " + str(nytime))
+			feed = gtfs_realtime_pb2.FeedMessage()
+			url = 'http://datamine.mta.info/mta_esi.php?key=' + self.KEY + '&feed_id=' + feedID
+			response = urllib.urlopen(url)
+			feed.ParseFromString(response.read())
 
-		self.timestamp = timestamp
-		self.tripUpdates = []
+			timestamp = feed.header.timestamp
+			#print("Timestamp: " + str(timestamp))
+			nytime = datetime.datetime.fromtimestamp(timestamp, self.TIMEZONE)
+			#print("NYC Time: " + str(nytime))
 
-		for entity in feed.entity:
-			# Trip update represents a change in timetable
-			if entity.trip_update and entity.trip_update.trip.trip_id:
-				# Assign the tripupdate fields
-				t = tripupdate()
-				t.tripId = entity.trip_update.trip.trip_id
-				t.routeId = entity.trip_update.trip.route_id
-				t.startDate = entity.trip_update.trip.start_date
-				t.direction = entity.trip_update.trip.direction_id
+			self.timestamp = timestamp
+			self.tripUpdates = []
 
-				# There can be many StopTimeUpdate messages
-				for st_update in entity.trip_update.stop_time_update:
-					t.nextStop = st_update.stop_id
-					t.nextStopTimes = (st_update.arrival.time, st_update.departure.time)
-					# times = []
-					# times.append({"arrivalTime": st_update.arrival.time})
-					# times.append({"departureTime": st_update.departure.time})
-					# t.futureStops[st_update.stop_id] = times
-					break
-				self.tripUpdates.append(t)
-		for t in self.tripUpdates:
-			if t.tripId not in self.lastStops: #new train
-				self.lastStops[t.tripId] = t.nextStop
-				continue
-			else:
-				nextStation = t.nextStop
-				leftStation = self.lastStops[t.tripId]
-				if leftStation != nextStation: #train has left the station
-					#print((t, leftStation, nextStation))
-					if leftStation not in stationTrains:
-						stationTrains[self.stopID2parent[leftStation]] = 0
-					stationTrains[self.stopID2parent[leftStation]] += 1 # another train has gone through the station
-					self.lastStops[t.tripId] = nextStation #train is now going to the next station
-		removeTrains = []
-		for t in self.lastStops:
-			found = False
-			for t_u in self.tripUpdates:
-				if t_u.tripId == t:
-					found = True
-					break
-			if not found:
-			#if t not in self.tripUpdates: # train has finished
-				lastStation = self.lastStops[t]
-				#print(t)
-				if lastStation not in stationTrains:
-					stationTrains[self.stopID2parent[lastStation]] = 0
-				stationTrains[self.stopID2parent[lastStation]] += 1
-				removeTrains.append(t)
-		for t in removeTrains:
-			self.lastStops.pop(t, None) # remove the train
+			for entity in feed.entity:
+				# Trip update represents a change in timetable
+				if entity.trip_update and entity.trip_update.trip.trip_id:
+					# Assign the tripupdate fields
+					t = tripupdate()
+					t.tripId = entity.trip_update.trip.trip_id
+					t.routeId = entity.trip_update.trip.route_id
+					t.startDate = entity.trip_update.trip.start_date
+					t.direction = entity.trip_update.trip.direction_id
+
+					# There can be many StopTimeUpdate messages
+					for st_update in entity.trip_update.stop_time_update:
+						t.nextStop = st_update.stop_id
+						t.nextStopTimes = (st_update.arrival.time, st_update.departure.time)
+						# times = []
+						# times.append({"arrivalTime": st_update.arrival.time})
+						# times.append({"departureTime": st_update.departure.time})
+						# t.futureStops[st_update.stop_id] = times
+						break
+					self.tripUpdates.append(t)
+			for t in self.tripUpdates:
+				if t.nextStop not in self.stopID2parent: #make sure ID is valid
+					continue
+				if t.tripId not in self.lastStops: #new train
+					self.lastStops[t.tripId] = t.nextStop
+					continue
+				else:
+					nextStation = t.nextStop
+					leftStation = self.lastStops[t.tripId]
+					if leftStation != nextStation: #train has left the station
+						#print((t, leftStation, nextStation))
+						parentStation = self.stopID2parent[leftStation]
+						if parentStation not in stationTrains:
+							stationTrains[parentStation] = 0
+						stationTrains[parentStation] += 1 # another train has gone through the station
+						self.lastStops[t.tripId] = nextStation #train is now going to the next station
+			removeTrains = []
+			for t in self.lastStops:
+				found = False
+				for t_u in self.tripUpdates:
+					if t_u.tripId == t:
+						found = True
+						break
+				if not found:
+				#if t not in self.tripUpdates: # train has finished
+					lastStation = self.lastStops[t]
+					#print(t)
+					parentStation = self.stopID2parent[lastStation]
+					if parentStation not in stationTrains:
+						stationTrains[parentStation] = 0
+					stationTrains[parentStation] += 1
+					removeTrains.append(t)
+			for t in removeTrains:
+				self.lastStops.pop(t, None) # remove the train
 
 		return stationTrains
 

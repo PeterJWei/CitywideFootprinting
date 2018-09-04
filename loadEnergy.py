@@ -1,9 +1,14 @@
 import csv
-
+import time
 class loadEnergy:
 	def __init__(self):
 		self.energyDictionary = {}
-		self.loadLL84("LL84NYCBuildings.csv")
+		name = "LL84NYCBuildings.csv"
+		print("\nLoading Energy Data from " + name + " File...")
+		start = time.time()
+		self.loadLL84(name)
+		end = time.time()
+		print("Finished: " + str(end-start) + " s\n")
 		return
 
 	def loadLL84(self, LL84File):

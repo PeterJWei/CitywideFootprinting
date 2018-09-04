@@ -141,8 +141,8 @@ class remoteDictionary:
 						else:
 							self.timeSeriesDataExits[station][i] = (self.timeSeriesDataExits[station][i-1] + self.timeSeriesDataExits[station][i+1])/2
 			
-			#dp = False
-			#if (dp):
+			dp = False
+			if (dp):
 				if station == "R06":
 					#print(self.timeSeriesDataEntries[station])
 					x = [datetime.datetime(2018, 8, i, j, 0, 0) + datetime.timedelta(hours=4) for i in range(4, 11) for j in range(0,24,4)]
