@@ -12,35 +12,35 @@ urls = (
 
 class MyApplication(web.application):
 	def run(self, port=8080, *middleware):
-		runDynamicPopulation()
+		self.runDynamicPopulation()
 		func = self.wsgifunc(*middleware)
 		return web.httpserver.runsimple(func, ('0.0.0.0', port))
 
+	def runDynamicPopulation(self):
+		run1 = showDynamicPopulation(0)
+		while True:
+			print("\n\nRunning dynamic\n\n")
+			run1.getBlocks2Occupancy(20)
+			run1.startup()
+			#run1.plotRealtime()
+			time.sleep(30)
+		# run1.getBlocks2Occupancy(1)
+		# run1.plotDynamic()
+		# run1.getBlocks2Occupancy(2)
+		# run1.plotDynamic()
+		# run1.getBlocks2Occupancy(3)
+		# run1.plotDynamic()
+		# run1.getBlocks2Occupancy(4)
+		# run1.plotDynamic()
+		# run1.getBlocks2Occupancy(5)
+		# run1.plotDynamic()
+		# run1.getBlocks2Occupancy(6)
+		# run1.plotDynamic()
+
+		return
+
 def notfound():
 	return web.notfound("404 not found")
-
-def runDynamicPopulation():
-	run1 = showDynamicPopulation(0)
-	while True:
-		print("\n\nRunning dynamic\n\n")
-		run1.getBlocks2Occupancy(20)
-		run1.startup()
-		#run1.plotRealtime()
-		time.sleep(30)
-	# run1.getBlocks2Occupancy(1)
-	# run1.plotDynamic()
-	# run1.getBlocks2Occupancy(2)
-	# run1.plotDynamic()
-	# run1.getBlocks2Occupancy(3)
-	# run1.plotDynamic()
-	# run1.getBlocks2Occupancy(4)
-	# run1.plotDynamic()
-	# run1.getBlocks2Occupancy(5)
-	# run1.plotDynamic()
-	# run1.getBlocks2Occupancy(6)
-	# run1.plotDynamic()
-
-	return
 
 def run():
 	app = MyApplication(urls, globals())
