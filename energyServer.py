@@ -22,6 +22,7 @@ class MyApplication(web.application):
 			print("\n\nRunning dynamic\n\n")
 			run1.getBlocks2Occupancy(20)
 			run1.startup()
+			#run1.plotBuildings()
 			#run1.plotRealtime()
 			time.sleep(30)
 		# run1.getBlocks2Occupancy(1)

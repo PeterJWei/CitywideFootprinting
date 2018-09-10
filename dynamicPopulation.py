@@ -101,7 +101,8 @@ class showDynamicPopulation:
 
 	def startup(self):
 		self.P = plotNYCblocks(self.CTEUI, self.borough)
-		self.P.exampleRun()
+		self.P.pedestrianCount()
+		#self.P.exampleRun()
 
 	def plotDynamic(self):
 		self.P = plotNYCblocks(self.CTEUI, self.borough)

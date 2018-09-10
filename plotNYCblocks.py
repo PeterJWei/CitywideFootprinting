@@ -11,6 +11,7 @@ import sys
 import mpld3
 import json
 import math
+import fiona
 #from subwayHistorical import S
 
 #nDictionary = S.loadTurnstile('TurnstileData/turnstile_180811.csv')
@@ -21,9 +22,11 @@ class plotNYCblocks:
 	def __init__(self, EUI, borough=0):
 		self.borough = borough
 		self.EUI = EUI
-		self.inProj = Proj(init='epsg:32054', preserve_units=True)
+		self.inProj = Proj(init='ESRI:102718', preserve_units=True)
+		self.inProjGoogle = Proj(init='epsg:3857')
 		self.outProj = Proj(init='epsg:4326')
 		self.PopulationDictionary = {}
+		self.PopulationBlock = {}
 		self.loadCensusData(1, "CensusData/NYCBlocks/Manhattan.csv")
 		print("Loaded Manhattan...")
 		self.loadCensusData(2, "CensusData/NYCBlocks/Bronx.csv")
@@ -43,6 +46,12 @@ class plotNYCblocks:
 		self.instantiateFigure()
 		self.drawBoroughs("Boroughs/boroughs.shp")
 		self.drawBlocks("BlockLevel/nycb2010.shp")
+		self.plotGraph()
+
+		self.instantiateFigure()
+		self.drawBoroughs("Boroughs/boroughs.shp")
+		print("Drawing Streets...")
+		self.drawStreetLines("Centerline/Centerline.shp")
 		self.plotGraph()
 
 		self.instantiateFigure()
@@ -86,6 +95,12 @@ class plotNYCblocks:
 		self.drawBoroughs("Boroughs/boroughs.shp")
 		print("Plotting Buildings")
 		self.drawBuildings("buildingLevel/shapefile.shp")
+		self.plotGraph()
+
+	def pedestrianCount(self):
+		self.instantiateFigure()
+		self.drawBoroughs("Boroughs/boroughs.shp")
+		self.drawPedestrianCounts()
 		self.plotGraph()
 
 	def clearPopulation(self):
@@ -199,6 +214,73 @@ class plotNYCblocks:
 		#         y = [i[1] for i in shape.shape.points[i_start:i_end]]
 		#         plt.plot(x,y)
 
+	def drawPedestrianCounts(self):
+		traffic = [3184, 12311, 1235, 8776, 4039, 5940, 2207, 4089, 4193, 4462,
+					5968, 4562, 3716, 1572, 5240, 12249, 3732, 3552, 4567, 3355, 2215,
+					3992, 8390, 6764, 8512, 2733, 13723, 15513, 16471, 9162, 21634,
+					25156, 5560, 7519, 5089, 6516, 28123, 11571, 5371, 10653, 11214,
+					4106, 4753, 4356, 3280, 11407, 6685, 5324, 1037]	
+		points = [(40.826655,-73.921791),
+				(40.862179, -73.895379),
+				(40.830343, -73.921037),
+				(40.816908, -73.916384),
+				(40.855620, -73.867638),
+				(40.644282, -74.011191),
+				(40.676060, -73.980738),
+				(40.667289, -73.981310),
+				(40.717581, -73.957973),
+				(40.577295, -73.962866),
+				(40.650784, -73.948961),
+				(40.689388, -73.992571),
+				(40.673031, -73.968125),
+				(40.650860, -73.958793),
+				(40.690882, -73.985871),
+				(40.703439, -73.942496),
+				(40.692818, -73.987235),
+				(40.694597, -73.993433),
+				(40.669274, -73.913119),
+				(40.587546, -73.954714),
+				(40.704616, -74.011551),
+				(40.706358, -74.012894),
+				(40.771767, -73.981967),
+				(40.715985, -74.010148),
+				(40.718795, -73.989450),
+				(40.735682, -73.992701),
+				(40.751741, -73.976758),
+				(40.761425, -73.975213),
+				(40.710603, -74.008393),
+				(40.761275, -73.968957),
+				(40.749998, -73.991275),
+				(40.707348, -74.010987),
+				(40.808286, -73.946872),
+				(40.740474, -74.004083),
+				(40.849654, -73.934336),
+				(40.750468, -73.989218),
+				(40.755222, -73.968382),
+				(40.757552, -73.973958),
+				(40.761805, -73.983905),
+				(40.748890, -73.892245),
+				(40.748621, -73.884198),
+				(40.720383, -73.845341),
+				(40.710978, -73.792547),
+				(40.703782, -73.796478),
+				(40.761208, -73.830909),
+				(40.699827, -73.909963),
+				(40.637750, -74.075988)]
+		self.MB = max(traffic)
+		self.MB1 = min(traffic)
+		newPoints = (0,0)
+		for i in range(len(points)):
+			point = points[i]
+			t = traffic[i]
+			frac = float(t)/float(self.MB)
+			R = 1.0
+			G = 1.0-frac
+			B = 1.0-frac
+			newPoints = point
+			plt.plot(newPoints[1], newPoints[0], marker='o', markersize = 10, color=(R,G,B))
+		return
+
 	def drawBuildings(self,buildingFile):
 		sf = shp.Reader(buildingFile)
 		fields = sf.fields
@@ -214,6 +296,8 @@ class plotNYCblocks:
 				sys.stdout.write("\033[F")
 				sys.stdout.write("\033[K")
 				print("Drawing shape " + str(i) + " of " + str(recordlen))
+
+			BBL = s.record[9]
 			shape = s.shape
 			newPoints = []
 			for point in shape.points:
@@ -314,6 +398,36 @@ class plotNYCblocks:
 					self.ax.add_patch(patch)
 		print((numin, numout))
 
+	def drawStreetLines(self, streetsFile):
+		sf = shp.Reader(streetsFile)
+		fields = sf.fields
+		#print(fields)
+		records = sf.records()
+		recordlen = len(records)
+		print("There are " + str(recordlen) + " records")
+		j = 0
+		for shape in sf.shapeRecords():
+			if j == 10000:
+				break
+			if j % 100 == 0:
+				sys.stdout.write("\033[F")
+				sys.stdout.write("\033[K")
+				print("Drawing shape " + str(j) + " of " + str(recordlen))
+			j += 1
+			for i in range(len(shape.shape.parts)):
+				i_start = shape.shape.parts[i]
+				if i==len(shape.shape.parts)-1:
+					i_end = len(shape.shape.points)
+				else:
+					i_end = shape.shape.parts[i+1]
+				newPoints = []
+				for point in shape.shape.points:
+					newPoints.append(transform(self.inProj, self.outProj, point[0], point[1]))
+				x = [i[0] for i in newPoints[i_start:i_end]]
+				y = [i[1] for i in newPoints[i_start:i_end]]
+				plt.plot(x,y,color='blue')
+			
+
 	def drawSubwayLines(self, subwayLinesFile):
 		sf = shp.Reader(subwayLinesFile)
 		for shape in sf.shapeRecords():
@@ -339,6 +453,16 @@ class plotNYCblocks:
 				newPoints.append(transform(self.inProj, self.outProj, point[0], point[1]))
 			plt.plot(newPoints[0][0], newPoints[0][1], marker='o', markersize = 3, color='green')
 
+	def regularPlot(self):
+		self.ax.autoscale()
+		plt.xlabel('Longitude', fontsize=30)
+		plt.ylabel('Latitude', fontsize=30)
+		plt.xticks(fontsize=20)
+		plt.yticks(fontsize=20)
+		mng = plt.get_current_fig_manager()
+		mng.resize(*mng.window.maxsize())
+		plt.show()
+
 	def plotGraph(self):
 		axes = {0:[-93.8,-93.38,42.25,42.65],
 				1:[-93.8,-93.68,42.45,42.65],
@@ -360,7 +484,7 @@ class plotNYCblocks:
 				(1.0-midpoint, 1.0, 1.0),
 				(1.0, 0.0, 0.0))}
 
-		if self.MB1 == 0:
+		if self.MB1 > 0:
 			cdic = {'red': ((0.0, 1.0, 1.0),
 				(1.0, 1.0, 1.0)),
 			'green': ((0.0, 1.0, 1.0),
@@ -372,7 +496,7 @@ class plotNYCblocks:
 		sm._A = []
 		clb = plt.colorbar(sm)
 		clb.ax.tick_params(labelsize=20)
-		clb.set_label('Base Population', fontsize=30)
+		clb.set_label('Foot Traffic', fontsize=30)
 
 		self.ax.autoscale()
 		#if axes[self.borough] is not None:
