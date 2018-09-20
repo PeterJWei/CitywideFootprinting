@@ -23,11 +23,15 @@ class getStream:
 		file = self.stream.read()
 		encoded_string = base64.b64encode(file)
 		arr = np.asarray(bytearray(file), dtype=np.uint8)
+		
 		img = cv2.imdecode(arr, -1)
-		#byteString = file.decode("utf-8")
-		#cv2.imshow('image', img)
-		#cv2.waitKey(0)
-		#cv2.destroyAllWindows()
+
+		#Do some opencv here
+
+		#At the end, convert back to numpy array to present on the localhost
+
+		arr.tobytes()
+		encoded_string = base64.b64encode(arr)
 		return encoded_string
 
 

@@ -1,0 +1,9 @@
+Code can be run as follows:
+./python_app restart
+./python_app stop
+
+Once the server has started, go to localhost:8000/static/index.html to see the webpage. Click display camera to see the feed.
+
+Peter's TODO List
+TODO: Add form to choose camera feed.
+TODO: Make the website prettier
