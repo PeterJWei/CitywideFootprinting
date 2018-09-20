@@ -39,8 +39,10 @@ class plotNYCblocks:
 		print("Loaded Richmond (Staten Island)...")
 
 		self.MB = self.maxBlock()
-		
 		return
+
+	def testRun(self):
+		self.parkingPlot()
 
 	def exampleRun(self):
 		self.instantiateFigure()
@@ -58,27 +60,6 @@ class plotNYCblocks:
 		self.drawBoroughs("Boroughs/boroughs.shp")
 		self.drawSubwayLines("SubwayLines/SubwayLines.shp")
 		self.drawSubwayStations("SubwayStations/SubwayStations.shp")
-		self.plotGraph()
-
-	def exampleRun3(self):
-		self.instantiateFigure()
-		self.drawBoroughs("Boroughs/boroughs.shp")
-		self.drawSubwayLines("SubwayLines/SubwayLines.shp")
-		self.drawSubwayStations("SubwayStations/SubwayStations.shp")
-		return json.dumps(mpld3.fig_to_dict(self.fig))
-
-	def examplePlot(self):
-		self.instantiateFigure()
-		self.drawBoroughs("Boroughs/boroughs.shp")
-		self.drawBlocks("BlockLevel/nycb2010.shp")
-		self.plotGraph()
-
-	def examplePlot2(self):
-		self.instantiateFigure()
-		self.drawBoroughs("Boroughs/boroughs.shp")
-		self.drawBlocks("BlockLevel/nycb2010.shp")
-		#self.drawSubwayLines("SubwayLines/SubwayLines.shp")
-		#self.drawSubwayStations("SubwayStations/SubwayStations.shp")
 		self.plotGraph()
 		return json.dumps(mpld3.fig_to_dict(self.fig))
 
@@ -102,6 +83,13 @@ class plotNYCblocks:
 		self.drawBoroughs("Boroughs/boroughs.shp")
 		self.drawPedestrianCounts()
 		self.plotGraph()
+
+	def parkingPlot(self):
+		self.instantiateFigure()
+		self.drawBoroughs("Boroughs/boroughs.shp")
+		self.drawParkingGarages(["ParkingCoordinates/parkingGarageFile.csv",
+								"ParkingCoordinates/parkingGarageFile1.csv"])
+		self.regularPlot()
 
 	def clearPopulation(self):
 		for block in self.PopulationDictionary:
@@ -213,6 +201,23 @@ class plotNYCblocks:
 		#         x = [i[0] for i in shape.shape.points[i_start:i_end]]
 		#         y = [i[1] for i in shape.shape.points[i_start:i_end]]
 		#         plt.plot(x,y)
+
+	def drawParkingGarages(self, parkingGarageFiles):
+		points = []
+		for file in parkingGarageFiles:
+			with open(file, 'rb') as csvfile:
+				reader = csv.reader(csvfile, delimiter=',')
+				for row in reader:
+					points.append((float(row[1]), float(row[2])))
+		for i in range(len(points)):
+			print(points[i])
+			point = points[i]
+			R = 1.0
+			G = 0.6
+			B = 0.6
+			newPoints = point
+			plt.plot(newPoints[1], newPoints[0], marker='o', markersize = 4, color=(R,G,B))
+		return
 
 	def drawPedestrianCounts(self):
 		traffic = [3184, 12311, 1235, 8776, 4039, 5940, 2207, 4089, 4193, 4462,

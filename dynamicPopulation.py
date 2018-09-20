@@ -92,32 +92,14 @@ class showDynamicPopulation:
 		self.P = plotNYCblocks(self.CTEUI, self.borough)
 		self.P.examplePlotRealTime(self.blocks2Occupancy)
 
-
-	def serviceStartup(self):
-		self.P = plotNYCblocks(self.CTEUI, self.borough)
-		json = self.P.exampleRun3()
-		print(json)
-		return json
-
 	def startup(self):
 		self.P = plotNYCblocks(self.CTEUI, self.borough)
-		self.P.pedestrianCount()
+		self.P.testRun()
 		#self.P.exampleRun()
 
 	def plotDynamic(self):
 		self.P = plotNYCblocks(self.CTEUI, self.borough)
 		self.P.dynamicPopulation(self.blocks2Occupancy)
 		self.P.examplePlot2()
-
-	def plotBuildings(self):
-		self.P = plotNYCblocks(self.CTEUI, self.borough)
-		self.P.buildingPlot()
-
-#dynamic = showDynamicPopulation()
-#dynamic.getBlocks2Occupancy(13)
-#dynamic.getBlocks2Occupancy(14)
-#dynamic.getBlocks2Occupancy(15)
-#dynamic.getBlocks2Occupancy(16)
-#dynamic.plotDynamic()
 
 doPopulation = web.application(urls, locals());
