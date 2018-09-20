@@ -5,9 +5,17 @@
 <header><title>Dynamic Occupancy</title></header>
 <body>
 
-<div id="fig">
-</div>
+<div id="fig"></div>
+<div id="img"></div>
+
+
 <button onclick="myFunction()">Load Graph</button>
+<button id="cameraButton">Display Camera</button>
+
+
+<h3>Real-Time Web Feed</h3>
+<img id="base64img" src="automobile.png" alt="automobile.png" width="320" height="240" border="2">
+
 <script>
 	function myFunction() {
 			var result = null;
@@ -19,11 +27,27 @@
 		    	var f = mpld3.draw_figure("fig", json);
 		    },'json').fail(function() {
 			    alert('Error!'); // or whatever			    
-			    $btn.button('reset');
+			    //$btn.reset();
 			});
 
 		}
-	
+</script>
+<script>
+	var $btn = document.getElementById("cameraButton");
+	$btn.addEventListener("click", showCamera);
+	function showCamera() {
+			var result = null;
+			$.get("/camera/",{
+				},
+				function(data,status){
+		    	//console.log(data,status);
+		    	var newSource = "data:image/jpg;base64," + data;
+		    	document.getElementById("base64img").src = newSource;
+		    },'text').fail(function() {
+			    alert('Error!'); // or whatever			    
+			    //document.getElementById("cameraButton").reset();
+			});
+		}
 </script>
 </body>
 </html>

@@ -2,9 +2,13 @@ import web
 import os
 import dynamicPopulation
 import time
-from dynamicPopulation import showDynamicPopulation
+#from dynamicPopulation import showDynamicPopulation
+import CarCounting.getDOTstream as D
+
+
 urls = (
-	"/realtime", dynamicPopulation.doPopulation
+	"/realtime", dynamicPopulation.doPopulation,
+	"/camera", D.DOTstream
 	)
 
 #initialization = dynamicPopulation.showDynamicPopulation()
@@ -12,12 +16,16 @@ urls = (
 
 class MyApplication(web.application):
 	def run(self, port=8080, *middleware):
-		self.runDynamicPopulation()
+		#self.runDynamicPopulation()
+		#self.runTrafficCount()
 		func = self.wsgifunc(*middleware)
 		return web.httpserver.runsimple(func, ('0.0.0.0', port))
 
+	#def runTrafficCount(self):
+
+
 	def runDynamicPopulation(self):
-		run1 = showDynamicPopulation(0)
+		run1 = dynamicPopulation.showDynamicPopulation(0)
 		while True:
 			print("\n\nRunning dynamic\n\n")
 			run1.getBlocks2Occupancy(20)
