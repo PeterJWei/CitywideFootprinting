@@ -3,6 +3,26 @@
 <script type="text/javascript" src="http://mpld3.github.io/js/mpld3.v0.2.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <header><title>Dynamic Occupancy</title></header>
+<head>
+	<style>
+* {
+    box-sizing: border-box;
+}
+
+.column {
+    float: left;
+    width: 33.33%;
+    padding: 5px;
+}
+
+/* Clearfix (clear floats) */
+.row::after {
+    content: "";
+    clear: both;
+    display: table;
+}
+</style>
+</head>
 <body>
 
 <div id="fig"></div>
@@ -11,13 +31,24 @@
 
 <button onclick="myFunction()">Load Graph</button>
 <button id="cameraButton">Display Camera</button>
+<button id="testCamera">Test Image</button>
 
 
 <h3>Real-Time Web Feed</h3>
-<img id="base64img" src="automobile.png" alt="automobile.png" width="320" height="240" border="2">
-
+<img id="base64img" src="automobile.png" alt="automobile.png" width="352" height="240" border="1">
+<h3>Test Image</h3>
+<div class="row">
+	<div class="column">
+		<img id="baseImg" src="pic0.jpg" alt="pic0.jpg" width="352" height="240" border="1">
+	</div>
+	<div class="column">
+		<img id="testimg" src="pic0.jpg" alt="pic0.jpg" width="352" height="240" border="1">
+	</div>
+</div>
 <script>
 	function myFunction() {
+		return null;
+	}/*
 			var result = null;
 			$.get("/realtime/",{
 	    		},
@@ -30,6 +61,23 @@
 			    //$btn.reset();
 			});
 
+		}*/
+</script>
+<script>
+	var $btn = document.getElementById("testCamera");
+	$btn.addEventListener("click", testCamera);
+	function testCamera() {
+			var result = null;
+			$.get("/camera/test",{
+				},
+				function(data,status){
+		    	console.log(data,status);
+		    	var newSource = "data:image/jpg;base64," + data;
+		    	document.getElementById("testimg").src = newSource;
+		    },'text').fail(function() {
+			    alert('Error!'); // or whatever			    
+			    //document.getElementById("cameraButton").reset();
+			});
 		}
 </script>
 <script>
@@ -40,7 +88,7 @@
 			$.get("/camera/",{
 				},
 				function(data,status){
-		    	//console.log(data,status);
+		    	console.log(data,status);
 		    	var newSource = "data:image/jpg;base64," + data;
 		    	document.getElementById("base64img").src = newSource;
 		    },'text').fail(function() {

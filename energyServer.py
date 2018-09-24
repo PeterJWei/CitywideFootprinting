@@ -25,7 +25,7 @@ class MyApplication(web.application):
 
 
 	def runDynamicPopulation(self):
-		run1 = dynamicPopulation.showDynamicPopulation(0)
+		run1 = dynamicPopulation.showDynamicPopulation(1)
 		while True:
 			print("\n\nRunning dynamic\n\n")
 			run1.getBlocks2Occupancy(20)

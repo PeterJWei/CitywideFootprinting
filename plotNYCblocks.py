@@ -23,6 +23,7 @@ class plotNYCblocks:
 		self.borough = borough
 		self.EUI = EUI
 		self.inProj = Proj(init='ESRI:102718', preserve_units=True)
+		self.falseProj = Proj(init='ESRI:32054', preserve_units=True)
 		self.inProjGoogle = Proj(init='epsg:3857')
 		self.outProj = Proj(init='epsg:4326')
 		self.PopulationDictionary = {}
@@ -40,9 +41,6 @@ class plotNYCblocks:
 
 		self.MB = self.maxBlock()
 		return
-
-	def testRun(self):
-		self.parkingPlot()
 
 	def exampleRun(self):
 		self.instantiateFigure()
@@ -470,7 +468,7 @@ class plotNYCblocks:
 
 	def plotGraph(self):
 		axes = {0:[-93.8,-93.38,42.25,42.65],
-				1:[-93.8,-93.68,42.45,42.65],
+				1:[-74.034394327,-73.905866485,40.68100549,40.876861617],
 				2:None,
 				3:None,
 				4:None,
@@ -504,8 +502,8 @@ class plotNYCblocks:
 		clb.set_label('Foot Traffic', fontsize=30)
 
 		self.ax.autoscale()
-		#if axes[self.borough] is not None:
-		#	plt.axis(axes[self.borough])
+		if axes[self.borough] is not None:
+			plt.axis(axes[self.borough])
 		#plt.title('Energy Footprint per Capita, Equal Apportionment', fontsize=16)
 		plt.xlabel('Longitude', fontsize=30)
 		plt.ylabel('Latitude', fontsize=30)
