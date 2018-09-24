@@ -54,4 +54,4 @@ def notfound():
 def run():
 	app = MyApplication(urls, globals())
 	app.notfound = notfound
-	app.run(port=8000)
+	app.run(port=8001)
