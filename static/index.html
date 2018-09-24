@@ -30,7 +30,7 @@
 
 
 <button onclick="myFunction()">Load Graph</button>
-<button id="cameraButton">Display Camera</button>
+<button id="cameraButton" value="OFF">Display Camera</button>
 <button id="testCamera">Test Image</button>
 
 
@@ -82,13 +82,26 @@
 </script>
 <script>
 	var $btn = document.getElementById("cameraButton");
-	$btn.addEventListener("click", showCamera);
+	$btn.addEventListener("click", toggleButton);
+
+	function toggleButton() {
+		console.log(document.getElementById("cameraButton").value);
+		if (document.getElementById("cameraButton").value=="ON") {
+			document.getElementById("cameraButton").value="OFF";
+			document.getElementById("cameraButton").style.background='#ff0000';
+		} else {
+			document.getElementById("cameraButton").value="ON";
+			document.getElementById("cameraButton").style.background='#00ff00';
+		}
+	}
+
 	function showCamera() {
+		if (document.getElementById("cameraButton").value=="ON") {
 			var result = null;
 			$.get("/camera/",{
 				},
 				function(data,status){
-		    	console.log(data,status);
+		    	//console.log(data,status);
 		    	var newSource = "data:image/jpg;base64," + data;
 		    	document.getElementById("base64img").src = newSource;
 		    },'text').fail(function() {
@@ -96,6 +109,8 @@
 			    //document.getElementById("cameraButton").reset();
 			});
 		}
+	}
+	setInterval(showCamera, 1500);
 </script>
 </body>
 </html>
