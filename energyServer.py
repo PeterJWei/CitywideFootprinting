@@ -16,7 +16,7 @@ urls = (
 
 class MyApplication(web.application):
 	def run(self, port=8080, *middleware):
-		self.runDynamicPopulation()
+		#self.runDynamicPopulation()
 		#self.runTrafficCount()
 		func = self.wsgifunc(*middleware)
 		return web.httpserver.runsimple(func, ('0.0.0.0', port))
