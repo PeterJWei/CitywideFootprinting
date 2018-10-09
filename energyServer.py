@@ -16,7 +16,7 @@ urls = (
 
 class MyApplication(web.application):
 	def run(self, port=8080, *middleware):
-		#self.runDynamicPopulation()
+		self.runDynamicPopulation()
 		#self.runTrafficCount()
 		func = self.wsgifunc(*middleware)
 		return web.httpserver.runsimple(func, ('0.0.0.0', port))
@@ -28,7 +28,7 @@ class MyApplication(web.application):
 		run1 = dynamicPopulation.showDynamicPopulation(1)
 		while True:
 			print("\n\nRunning dynamic\n\n")
-			run1.getBlocks2Occupancy(20)
+			#run1.getBlocks2Occupancy(20)
 			run1.startup()
 			#run1.plotBuildings()
 			#run1.plotRealtime()

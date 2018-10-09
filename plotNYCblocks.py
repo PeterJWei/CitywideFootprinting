@@ -12,6 +12,7 @@ import mpld3
 import json
 import math
 import fiona
+import csv
 #from subwayHistorical import S
 
 #nDictionary = S.loadTurnstile('TurnstileData/turnstile_180811.csv')
@@ -334,6 +335,9 @@ class plotNYCblocks:
 		numin = 0
 		numout = 0
 		print("\n")
+
+		nodes = {}
+
 		self.MB = self.maxBlock()
 		self.MB1 = self.minBlock()
 		if self.MB == 0:
@@ -386,7 +390,7 @@ class plotNYCblocks:
 			if nparts == 1:
 				#polygon = Polygon(shape.points)
 				polygon = Polygon(newPoints)
-				patch = PolygonPatch(polygon, facecolor=[R,G,B], linewidth=0.1, alpha=1.0, zorder=2)
+				patch = PolygonPatch(polygon, facecolor=[R,G,B], linewidth=0.5, alpha=1.0, zorder=2)
 				self.ax.add_patch(patch)
 			else:
 				for ip in range(nparts):
@@ -396,10 +400,23 @@ class plotNYCblocks:
 					else:
 						i1 = len(shape.points)
 					#polygon = Polygon(shape.points[i0:i1+1])
+					print(newPoints[i0:i1+1])
+					if len(newPoints[i0:i1+1]) > 5:
+						continue
+					else:
+						for point in newPoints[i0:i1]:
+							if point not in nodes:
+								nodes[point] = True
 					polygon = Polygon(newPoints[i0:i1+1])
+
 					patch = PolygonPatch(polygon, facecolor=[R,G,B], linewidth=0.1, alpha=1.0, zorder=2)
 					self.ax.add_patch(patch)
 		print((numin, numout))
+		with open('streetCorners.csv', mode='w') as csv_file:
+			csv_writer = csv.writer(csv_file, delimiter=',')
+			for (x,y) in nodes:
+				csv_writer.writerow([x,y])
+
 
 	def drawStreetLines(self, streetsFile):
 		sf = shp.Reader(streetsFile)
