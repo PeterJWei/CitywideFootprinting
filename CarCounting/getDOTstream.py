@@ -8,7 +8,7 @@ from TF_SSD import CarDetector
 urls = ("/", "stream",
 		"/test", "testCamera")
 
-C = CarDetector('CarCounting/frozen_inference_graph.pb')
+C = CarDetector('CarCounting/InferenceGraph/frozen_inference_graph.pb')
 
 class stream:
 	def GET(self):
