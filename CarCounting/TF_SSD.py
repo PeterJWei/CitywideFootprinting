@@ -3,7 +3,7 @@ import cv2
 import numpy as np
 class CarDetector:
 	def __init__(self, graphFile):
-		PATH_TO_MODEL = graphFile#'CarCounting/frozen_inference_graph.pb'
+		PATH_TO_MODEL = graphFile
 		self.detection_graph = tf.Graph()
 		with self.detection_graph.as_default():
 			od_graph_def = tf.GraphDef()

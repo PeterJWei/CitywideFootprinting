@@ -1,8 +1,8 @@
 import urllib2
 import time
 import sys
-start = 100
-end = 200
+start = 0
+end = 100
 stream1 = "http://207.251.86.238/cctv303.jpg?math=0.29673863811952195"
 stream2 = "http://207.251.86.238/cctv914.jpg?math=0.6789836945555643" #10 ave at 42nd
 stream3 = "http://207.251.86.238/cctv413.jpg?math=0.8986791025384302" #Queens Bridge upper level CM @ Roosevelt
