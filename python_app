@@ -26,7 +26,7 @@ DAEMON_USER=fs2523
 # The process ID of the script when it runs is stored here:
 PIDFILE=/var/run/$DAEMON_NAME.pid
 
-. init-functions
+#. init-functions
 
 do_start () {
     log_daemon_msg "Starting system $DAEMON_NAME daemon"
@@ -37,7 +37,8 @@ do_start () {
 }
 do_stop () {
     log_daemon_msg "Stopping system $DAEMON_NAME daemon"
-    	killall python
+        sudo kill -9 $(ps aux | grep citywidefootprinting/run.py | awk '{print $2}')
+    	#killall python
 	#start-stop-daemon --stop --pidfile $PIDFILE --retry 10
     log_end_msg $?
 }
