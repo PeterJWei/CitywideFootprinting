@@ -22,7 +22,7 @@ class testCamera:
 		#im = im[:, :, ::-1]
 		
 		sensitivity = 0.5
-		C = CarDetector()
+		C = CarDetector('CarCounting/InferenceGraph/frozen_inference_graph.pb')
 		boxes, scores, classes, num = C.getClassification(im)
 		for i in range(scores[0].shape[0]):
 			if scores[0][i] < sensitivity:
