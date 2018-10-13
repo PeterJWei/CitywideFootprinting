@@ -67,8 +67,6 @@ class getStream:
 		file = self.stream.read()
 		encoded_string = base64.b64encode(file)
 		arr = np.asarray(bytearray(file), dtype=np.uint8)
-		print(arr)	
-		print(arr.flags)
 		img = cv2.imdecode(arr, -1)
 
 		boxes, scores, classes, num = C.getClassification(img)
