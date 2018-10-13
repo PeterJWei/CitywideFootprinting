@@ -31,7 +31,7 @@ PIDFILE=/var/run/$DAEMON_NAME.pid
 do_background () {
     echo "Starting system $DAEMON_NAME daemon"
     cd $DIR
-    sudo nohup $DAEMON & > /dev/null
+    sudo nohup $DAEMON &
     echo $?
 }
 do_start () {
