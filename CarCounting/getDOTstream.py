@@ -9,10 +9,11 @@ urls = ("/", "stream",
 		"/test", "testCamera")
 
 C = CarDetector('CarCounting/InferenceGraph/frozen_inference_graph.pb')
-
+#C = CarDetector('CarCounting/InferenceGraph/ssd_lite_graph.pb')
 class stream:
 	def GET(self):
 		self.G = getStream('http://207.251.86.238/cctv303.jpg?math=0.29673863811952195')
+		#self.G = getStream('http://207.251.86.238/cctv797.jpg?math=0.8641532073791593')
 		print("Getting stream...")
 		return self.G.getImage()
 
@@ -69,13 +70,16 @@ class getStream:
 		arr = np.asarray(bytearray(file), dtype=np.uint8)
 		img = cv2.imdecode(arr, -1)
 
+		sensitivity = 0.4
+
 		boxes, scores, classes, num = C.getClassification(img)
 		limit = 0
-
 		for i in range(scores[0].shape[0]):
-			if scores[0][i] < 0.5:
-				limit = i
+			limit = i
+			if scores[0][i] < sensitivity:
 				break
+		print(limit)
+		print(boxes[0][0:limit])
 		nBoxes = boxes[0][0:limit]
 		nScores = scores[0][0:limit]
 		nClasses = classes[0][0:limit]
@@ -90,6 +94,7 @@ class getStream:
 			y1 = min(239,int(round(box1[0]*240)))
 			x2 = min(351,int(round(box1[3]*352)))
 			y2 = min(239,int(round(box1[2]*240)))
+			print((x1, x2, y1, y2))
 			img[y1:y2, x1, 0] = R
 			img[y1:y2, x1, 1] = G
 			img[y1:y2, x1, 2] = B
