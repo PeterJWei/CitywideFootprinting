@@ -43,7 +43,7 @@ do_start () {
 }
 do_stop () {
     echo "Stopping system $DAEMON_NAME daemon"
-        sudo kill -9 $(ps aux | grep citywidefootprinting/run.py | awk '{print $2}')
+        sudo kill -9 $(ps aux | grep CitywideFootprinting/run.py | awk '{print $2}')
     	#killall python
 	#start-stop-daemon --stop --pidfile $PIDFILE --retry 10
     echo $?
