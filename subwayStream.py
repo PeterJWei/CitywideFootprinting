@@ -32,7 +32,8 @@ class subwayStream:
 	def __init__(self):
 		self.stationDefinitions("SubwayStations/stops.csv")
 		self.TIMEZONE = timezone('America/New_York')
-		self.KEY = '914716d7b50514f729f51936174bc790'
+		#self.KEY = '914716d7b50514f729f51936174bc790'
+		self.KEY2 = '3e9ba1300c8e1b66c51e42fe94a8cf54'
 		self.lastStops = {}
 		return
 
@@ -72,9 +73,10 @@ class subwayStream:
 			feedID = feedInfo[0]
 
 			feed = gtfs_realtime_pb2.FeedMessage()
-			url = 'http://datamine.mta.info/mta_esi.php?key=' + self.KEY + '&feed_id=' + feedID
+			url = 'http://datamine.mta.info/mta_esi.php?key=' + self.KEY2 + '&feed_id=' + feedID
 			response = urllib.urlopen(url)
 			feed.ParseFromString(response.read())
+
 
 			timestamp = feed.header.timestamp
 			#print("Timestamp: " + str(timestamp))

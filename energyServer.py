@@ -4,11 +4,12 @@ import dynamicPopulation
 import time
 #from dynamicPopulation import showDynamicPopulation
 import CarCounting.getDOTstream as D
-
+import graphBackend
 
 urls = (
 	"/realtime", dynamicPopulation.doPopulation,
-	"/camera", D.DOTstream
+	"/camera", D.DOTstream,
+	"/graph", graphBackend.G
 	)
 
 #initialization = dynamicPopulation.showDynamicPopulation()
