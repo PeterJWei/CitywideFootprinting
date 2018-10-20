@@ -10,7 +10,6 @@ fetch('data.json', {mode: 'no-cors'})
       layout: {
         name: 'preset'
       },
-
       style: [
         {
           selector: 'node',
