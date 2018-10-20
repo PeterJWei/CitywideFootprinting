@@ -9,6 +9,8 @@
 <header><title>Dynamic Occupancy</title></header>
 <head>
 <link rel="stylesheet" type="text/css" href="tabs.css">
+<link rel="stylesheet" href="https://js.arcgis.com/4.9/esri/themes/dark/main.css">
+<script src="https://js.arcgis.com/4.9/"></script>
 <style>
 * {
     box-sizing: border-box;
@@ -50,11 +52,16 @@ h1 {
 </head>
 <body>
 	<div class="tab">
-  <button class="tablinks" onclick="tabEvents(event, 'CityMap')" id="defaultOpen">City Map</button>
+	<button class="tablinks" onclick="tabEvents(event, 'TaxiData')" id="defaultOpen">Taxi Data</button>
+  <button class="tablinks" onclick="tabEvents(event, 'CityMap')">City Map</button>
   <button class="tablinks" onclick="tabEvents(event, 'TensorFlow')">TensorFlow</button>
 </div>
 
 <!-- Tab content -->
+<div id="TaxiData" class="tabcontent">
+	<h3>Taxi Data</h3>
+	<div id="viewDiv" style="background-color:#cccccc; width:750; height:750"></div>
+</div>
 <div id="CityMap" class="tabcontent">
   <h3>City Graph</h3>
   	<button id="updateGraph" value="OFF">Update Graph</button>
@@ -91,7 +98,41 @@ h1 {
 
 
 
+<script>
+    require([
+	  "esri/Map",
+	  "esri/views/MapView"
+	], function(Map, MapView) {
+	  var map = new Map({
+	    basemap: "gray",
+	    
+	  });
 
+	  var view = new MapView({
+	    container: "viewDiv",  // Reference to the DOM node that will contain the view
+	    center: [-74.006,40.7128],
+        zoom:11,
+	    map: map               // References the map object created in step 3
+	  });
+	});
+
+      // Add a legend instance to the panel of a
+      // ListItem in a LayerList instance
+
+      // const layerList = new LayerList({
+      //   view: view,
+      //   listItemCreatedFunction: function(event) {
+      //     const item = event.item;
+      //     if (item.layer.type != "group") { // don't show legend twice
+      //       item.panel = {
+      //         content: "legend",
+      //         open: true
+      //       };
+      //     }
+      //   }
+      // });
+      // view.ui.add(layerList, "top-right");
+  </script>
 
 <script type="text/javascript">
 	function getMethods(obj) {
