@@ -1,0 +1,38 @@
+<annotation>
+	<folder>Archive 2</folder>
+	<filename>stream5_329.jpg</filename>
+	<path>/Users/shc/Downloads/Archive 2/stream5_329.jpg</path>
+	<source>
+		<database>Unknown</database>
+	</source>
+	<size>
+		<width>352</width>
+		<height>240</height>
+		<depth>3</depth>
+	</size>
+	<segmented>0</segmented>
+	<object>
+		<name>car</name>
+		<pose>Unspecified</pose>
+		<truncated>0</truncated>
+		<difficult>0</difficult>
+		<bndbox>
+			<xmin>192</xmin>
+			<ymin>74</ymin>
+			<xmax>212</xmax>
+			<ymax>91</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>car</name>
+		<pose>Unspecified</pose>
+		<truncated>0</truncated>
+		<difficult>0</difficult>
+		<bndbox>
+			<xmin>166</xmin>
+			<ymin>61</ymin>
+			<xmax>174</xmax>
+			<ymax>69</ymax>
+		</bndbox>
+	</object>
+</annotation>
