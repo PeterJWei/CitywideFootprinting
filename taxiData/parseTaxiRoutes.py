@@ -44,6 +44,20 @@ class loadTaxiRoutes:
 			print(len(self.D["end"]))
 			self.save_obj(self.D, fileName)
 
+	def saveRoutes(self):
+		file = "startLocations.csv"
+		with open(file, 'wb') as csvfile:
+			csvwriter = csv.writer(csvfile, delimiter=',')
+			for row in self.StartLocations:
+				(lat, lon) = row
+				csvwriter.writerow([lat, lon])
+		file = "endLocations.csv"
+		with open(file, 'wb') as csvfile:
+			csvwriter = csv.writer(csvfile, delimiter=',')
+			for row in self.EndLocations:
+				(lat, lon) = row
+				csvwriter.writerow([lat, lon])
+
 	def save_obj(self, obj, name):
 		with open('pklObjects/'+ name + '.pkl', 'wb') as f:
 			pickle.dump(obj, f, pickle.HIGHEST_PROTOCOL)
@@ -54,3 +68,4 @@ class loadTaxiRoutes:
 
 L = loadTaxiRoutes()
 L.loadRoutes("output_1_1")
+L.saveRoutes()
