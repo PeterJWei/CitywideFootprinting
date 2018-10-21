@@ -22,6 +22,13 @@
     padding: 5px;
 }
 
+.mapColumn {
+	float: left;
+	width: 750px;
+	padding: 10px;
+	margin: 10px;
+}
+
 /* Clearfix (clear floats) */
 .row::after {
     content: "";
@@ -61,7 +68,15 @@ h1 {
 <!-- Tab content -->
 <div id="TaxiData" class="tabcontent">
 	<h3>Taxi Data</h3>
-	<div id="viewDiv" style="background-color:#cccccc; width:750; height:750"></div>
+	<div class="row">
+		<div class="mapColumn">
+			<div id="viewDiv1" style="background-color:#cccccc; width:750; height:750"></div>
+		</div>
+		<div class="mapColumn">
+			<div id="viewDiv2" style="background-color:#cccccc; width:750; height:750"></div>
+		</div>
+	</div>
+	
 </div>
 <div id="CityMap" class="tabcontent">
   <h3>City Graph</h3>
@@ -99,53 +114,7 @@ h1 {
 
 
 
-<script>
-    require([
-	  "esri/Map",
-	  "esri/layers/CSVLayer",
-	  "esri/views/MapView"
-	], function(Map, CSVLayer, MapView) {
-		var url = "startLocations.csv";
-		var csvLayer = new CSVLayer({
-		 	url: url,
-		 	copyright: "NYC Taxi Data"
-		});
-		
-		csvLayer.renderer = {
-
-		};
-
-	  	var map = new Map({
-	    	basemap: "dark-gray",
-	    	layers: [csvLayer]
-	  	});
-
-
-	  	var view = new MapView({
-	    	container: "viewDiv",  // Reference to the DOM node that will contain the view
-	    	center: [-74.006,40.7128],
-        	zoom:11,
-	    	map: map               // References the map object created in step 3
-	  	});
-	});
-
-      // Add a legend instance to the panel of a
-      // ListItem in a LayerList instance
-
-      // const layerList = new LayerList({
-      //   view: view,
-      //   listItemCreatedFunction: function(event) {
-      //     const item = event.item;
-      //     if (item.layer.type != "group") { // don't show legend twice
-      //       item.panel = {
-      //         content: "legend",
-      //         open: true
-      //       };
-      //     }
-      //   }
-      // });
-      // view.ui.add(layerList, "top-right");
-</script>
+<script type="text/javascript" src="createTaxiMaps.js"></script>
 
 <script type="text/javascript">
 	function getMethods(obj) {
