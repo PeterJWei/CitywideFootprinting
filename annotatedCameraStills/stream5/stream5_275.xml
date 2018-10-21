@@ -1,0 +1,26 @@
+<annotation>
+	<folder>Archive-Jiaying</folder>
+	<filename>stream5_275.jpg</filename>
+	<path>/Users/yangjiaying/Desktop/city/CitywideFootprinting/annotatedCameraStills/Archive-Jiaying/stream5_275.jpg</path>
+	<source>
+		<database>Unknown</database>
+	</source>
+	<size>
+		<width>352</width>
+		<height>240</height>
+		<depth>3</depth>
+	</size>
+	<segmented>0</segmented>
+	<object>
+		<name>carw</name>
+		<pose>Unspecified</pose>
+		<truncated>0</truncated>
+		<difficult>0</difficult>
+		<bndbox>
+			<xmin>143</xmin>
+			<ymin>64</ymin>
+			<xmax>158</xmax>
+			<ymax>78</ymax>
+		</bndbox>
+	</object>
+</annotation>
