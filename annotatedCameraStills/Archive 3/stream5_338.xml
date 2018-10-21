@@ -1,0 +1,38 @@
+<annotation>
+	<folder>Archive 3</folder>
+	<filename>stream5_338.jpg</filename>
+	<path>/Users/hastingsji/Desktop/Archive 3/stream5_338.jpg</path>
+	<source>
+		<database>Unknown</database>
+	</source>
+	<size>
+		<width>352</width>
+		<height>240</height>
+		<depth>3</depth>
+	</size>
+	<segmented>0</segmented>
+	<object>
+		<name>car</name>
+		<pose>Unspecified</pose>
+		<truncated>0</truncated>
+		<difficult>0</difficult>
+		<bndbox>
+			<xmin>184</xmin>
+			<ymin>89</ymin>
+			<xmax>208</xmax>
+			<ymax>106</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>car</name>
+		<pose>Unspecified</pose>
+		<truncated>0</truncated>
+		<difficult>0</difficult>
+		<bndbox>
+			<xmin>160</xmin>
+			<ymin>67</ymin>
+			<xmax>174</xmax>
+			<ymax>77</ymax>
+		</bndbox>
+	</object>
+</annotation>
