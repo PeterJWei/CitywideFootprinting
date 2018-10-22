@@ -9,6 +9,7 @@
 <header><title>Dynamic Occupancy</title></header>
 <head>
 <link rel="stylesheet" type="text/css" href="tabs.css">
+<link rel="stylesheet" type="text/css" href="slider.css">
 <link rel="stylesheet" href="https://js.arcgis.com/4.9/esri/themes/dark/main.css">
 <script src="https://js.arcgis.com/4.9/"></script>
 <style>
@@ -21,14 +22,12 @@
     width: 33.33%;
     padding: 5px;
 }
-
 .mapColumn {
-	float: left;
-	width: 750px;
-	padding: 10px;
-	margin: 10px;
+  float: left;
+  width: 750px;
+  padding: 10px;
+  margin: 10px;
 }
-
 /* Clearfix (clear floats) */
 .row::after {
     content: "";
@@ -56,6 +55,7 @@ h1 {
   font-size: 1em;
 }
 </style>
+
 </head>
 <body>
 	<div class="tab">
@@ -76,7 +76,26 @@ h1 {
 			<div id="viewDiv2" style="background-color:#cccccc; width:750; height:750"></div>
 		</div>
 	</div>
-	
+	<div id="sliderContainer" class="esri-widget">
+      <span id="sliderValue"></span>
+      <div id="sliderInnerContainer">
+        <div id="sliderLabels">
+          <span>0:00</span>
+          <span>24:00</span>
+        </div>
+        <div id="rangeWrapper">
+          <input id="slider" type="range" min="0" max="24" step="1" value="0" />
+        </div>
+      </div>
+      <div id="playButton" class="esri-widget esri-widget--button toggle-button">
+        <div>
+          <span class="toggle-button-icon esri-icon-play" aria-label="play icon"></span>
+          Play</div>
+        <div>
+          <span class="toggle-button-icon esri-icon-pause" aria-label="pause icon"></span>
+          Pause</div>
+      </div>
+    </div>
 </div>
 <div id="CityMap" class="tabcontent">
   <h3>City Graph</h3>
@@ -111,7 +130,6 @@ h1 {
 		</div>
 	</div>
 </div>
-
 
 
 <script type="text/javascript" src="createTaxiMaps.js"></script>
