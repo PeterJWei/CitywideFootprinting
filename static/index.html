@@ -9,9 +9,28 @@
 <header><title>Dynamic Occupancy</title></header>
 <head>
 <link rel="stylesheet" type="text/css" href="tabs.css">
+<link rel="stylesheet" type="text/css" href="slider.css">
+<link rel="stylesheet" href="https://js.arcgis.com/4.9/esri/themes/dark/main.css">
+<script src="https://js.arcgis.com/4.9/"></script>
 <style>
 * {
     box-sizing: border-box;
+}
+html, body {
+	height:100%;
+	margin: 0;
+}
+#wrapper {
+            min-height: 100%; 
+        }
+.container {
+    height: 90vh;
+    width:100%;
+    overflow: auto;
+}
+.page {
+	width:100%;
+	height:80%;
 }
 
 .column {
@@ -19,7 +38,11 @@
     width: 33.33%;
     padding: 5px;
 }
-
+.mapColumn {
+  float: left;
+  width: 48%;
+  margin: 1%;
+}
 /* Clearfix (clear floats) */
 .row::after {
     content: "";
@@ -47,14 +70,50 @@ h1 {
   font-size: 1em;
 }
 </style>
+
 </head>
 <body>
 	<div class="tab">
-  <button class="tablinks" onclick="tabEvents(event, 'CityMap')" id="defaultOpen">City Map</button>
+		<button class="tablinks" onclick="tabEvents(event, 'CityMap')" id="defaultOpen">City Map</button>
+	<button class="tablinks" onclick="tabEvents(event, 'TaxiData')">Taxi Data</button>
+  
   <button class="tablinks" onclick="tabEvents(event, 'TensorFlow')">TensorFlow</button>
 </div>
 
 <!-- Tab content -->
+<div id="TaxiData" class="tabcontent">
+	<h3>Taxi Data</h3>
+	<div class="page">
+		<div class="row">
+			<div class="mapColumn">
+				<div id="viewDiv1" style="background-color:#cccccc; width:100%; height:90%"></div>
+			</div>
+			<div class="mapColumn">
+				<div id="viewDiv2" style="background-color:#cccccc; width:100%; height:90%"></div>
+			</div>
+		</div>
+		<div id="sliderContainer" class="esri-widget">
+	      <span id="sliderValue"></span>
+	      <div id="sliderInnerContainer">
+	        <div id="sliderLabels">
+	          <span>0:00</span>
+	          <span>24:00</span>
+	        </div>
+	        <div id="rangeWrapper">
+	          <input id="slider" type="range" min="0" max="24" step="1" value="0" />
+	        </div>
+	      </div>
+	      <div id="playButton" class="esri-widget esri-widget--button toggle-button">
+	        <div>
+	          <span class="toggle-button-icon esri-icon-play" aria-label="play icon"></span>
+	          Play</div>
+	        <div>
+	          <span class="toggle-button-icon esri-icon-pause" aria-label="pause icon"></span>
+	          Pause</div>
+	      </div>
+	    </div>
+	</div>
+</div>
 <div id="CityMap" class="tabcontent">
   <h3>City Graph</h3>
   	<button id="updateGraph" value="OFF">Update Graph</button>
@@ -90,8 +149,7 @@ h1 {
 </div>
 
 
-
-
+<script type="text/javascript" src="createTaxiMaps.js"></script>
 
 <script type="text/javascript">
 	function getMethods(obj) {

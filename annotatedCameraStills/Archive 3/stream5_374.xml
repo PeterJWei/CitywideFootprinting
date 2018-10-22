@@ -1,0 +1,38 @@
+<annotation>
+	<folder>Archive 3</folder>
+	<filename>stream5_374.jpg</filename>
+	<path>/Users/hastingsji/Desktop/Archive 3/stream5_374.jpg</path>
+	<source>
+		<database>Unknown</database>
+	</source>
+	<size>
+		<width>352</width>
+		<height>240</height>
+		<depth>3</depth>
+	</size>
+	<segmented>0</segmented>
+	<object>
+		<name>car</name>
+		<pose>Unspecified</pose>
+		<truncated>0</truncated>
+		<difficult>0</difficult>
+		<bndbox>
+			<xmin>202</xmin>
+			<ymin>78</ymin>
+			<xmax>226</xmax>
+			<ymax>98</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>car</name>
+		<pose>Unspecified</pose>
+		<truncated>0</truncated>
+		<difficult>0</difficult>
+		<bndbox>
+			<xmin>161</xmin>
+			<ymin>69</ymin>
+			<xmax>176</xmax>
+			<ymax>80</ymax>
+		</bndbox>
+	</object>
+</annotation>
