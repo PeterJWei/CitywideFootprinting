@@ -12,7 +12,7 @@ C = CarDetector('CarCounting/InferenceGraph/frozen_inference_graph.pb')
 #C = CarDetector('CarCounting/InferenceGraph/ssd_lite_graph.pb')
 class stream:
 	def GET(self):
-		self.G = getStream('http://207.251.86.238/cctv303.jpg?math=0.29673863811952195')
+		self.G = getStream('http://207.251.86.238/cctv492.jpg?math=0.07714356129290212')
 		#self.G = getStream('http://207.251.86.238/cctv797.jpg?math=0.8641532073791593')
 		print("Getting stream...")
 		return self.G.getImage()
