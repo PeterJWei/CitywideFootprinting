@@ -8,11 +8,11 @@ from TF_SSD import CarDetector
 urls = ("/", "stream",
 		"/test", "testCamera")
 
-C = CarDetector('CarCounting/InferenceGraph/frozen_inference_graph.pb')
+C = CarDetector('CarCounting/InferenceGraph/new_stream5_graph.pb')
 #C = CarDetector('CarCounting/InferenceGraph/ssd_lite_graph.pb')
 class stream:
 	def GET(self):
-		self.G = getStream('http://207.251.86.238/cctv492.jpg?math=0.07714356129290212')
+		self.G = getStream('http://207.251.86.238/cctv797.jpg?math=0.15975369761797253')
 		#self.G = getStream('http://207.251.86.238/cctv797.jpg?math=0.8641532073791593')
 		print("Getting stream...")
 		return self.G.getImage()
@@ -22,7 +22,7 @@ class testCamera:
 		im = cv2.imread("CarCounting/pic0.jpg")
 		#im = im[:, :, ::-1]
 		
-		sensitivity = 0.5
+		sensitivity = 0.7
 		C = CarDetector('CarCounting/InferenceGraph/frozen_inference_graph.pb')
 		boxes, scores, classes, num = C.getClassification(im)
 		for i in range(scores[0].shape[0]):
@@ -70,7 +70,7 @@ class getStream:
 		arr = np.asarray(bytearray(file), dtype=np.uint8)
 		img = cv2.imdecode(arr, -1)
 
-		sensitivity = 0.4
+		sensitivity = 0.7
 
 		boxes, scores, classes, num = C.getClassification(img)
 		limit = 0
