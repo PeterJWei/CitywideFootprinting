@@ -1,7 +1,7 @@
 <annotation>
-	<folder>Archive-Jiaying</folder>
+	<folder>stream5</folder>
 	<filename>stream5_274.jpg</filename>
-	<path>/Users/yangjiaying/Desktop/city/CitywideFootprinting/annotatedCameraStills/Archive-Jiaying/stream5_274.jpg</path>
+	<path>/Users/peterwei/Desktop/CitywideFootprinting/annotatedCameraStills/stream5/stream5_274.jpg</path>
 	<source>
 		<database>Unknown</database>
 	</source>
@@ -12,7 +12,7 @@
 	</size>
 	<segmented>0</segmented>
 	<object>
-		<name>carw</name>
+		<name>car</name>
 		<pose>Unspecified</pose>
 		<truncated>0</truncated>
 		<difficult>0</difficult>
@@ -24,7 +24,7 @@
 		</bndbox>
 	</object>
 	<object>
-		<name>carw</name>
+		<name>car</name>
 		<pose>Unspecified</pose>
 		<truncated>0</truncated>
 		<difficult>0</difficult>

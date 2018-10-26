@@ -1,7 +1,7 @@
 <annotation>
-	<folder>Archive-Jiaying</folder>
+	<folder>stream5</folder>
 	<filename>stream5_246.jpg</filename>
-	<path>/Users/yangjiaying/Desktop/city/CitywideFootprinting/annotatedCameraStills/Archive-Jiaying/stream5_246.jpg</path>
+	<path>/Users/peterwei/Desktop/CitywideFootprinting/annotatedCameraStills/stream5/stream5_246.jpg</path>
 	<source>
 		<database>Unknown</database>
 	</source>
@@ -12,7 +12,7 @@
 	</size>
 	<segmented>0</segmented>
 	<object>
-		<name>carw</name>
+		<name>car</name>
 		<pose>Unspecified</pose>
 		<truncated>0</truncated>
 		<difficult>0</difficult>
@@ -24,7 +24,7 @@
 		</bndbox>
 	</object>
 	<object>
-		<name>carw</name>
+		<name>car</name>
 		<pose>Unspecified</pose>
 		<truncated>0</truncated>
 		<difficult>0</difficult>
@@ -36,7 +36,7 @@
 		</bndbox>
 	</object>
 	<object>
-		<name>carw</name>
+		<name>car</name>
 		<pose>Unspecified</pose>
 		<truncated>0</truncated>
 		<difficult>0</difficult>
@@ -48,7 +48,7 @@
 		</bndbox>
 	</object>
 	<object>
-		<name>carw</name>
+		<name>car</name>
 		<pose>Unspecified</pose>
 		<truncated>0</truncated>
 		<difficult>0</difficult>
@@ -60,7 +60,7 @@
 		</bndbox>
 	</object>
 	<object>
-		<name>carw</name>
+		<name>car</name>
 		<pose>Unspecified</pose>
 		<truncated>0</truncated>
 		<difficult>0</difficult>
@@ -72,15 +72,15 @@
 		</bndbox>
 	</object>
 	<object>
-		<name>carw</name>
+		<name>car</name>
 		<pose>Unspecified</pose>
 		<truncated>0</truncated>
 		<difficult>0</difficult>
 		<bndbox>
 			<xmin>182</xmin>
-			<ymin>80</ymin>
+			<ymin>81</ymin>
 			<xmax>201</xmax>
-			<ymax>96</ymax>
+			<ymax>97</ymax>
 		</bndbox>
 	</object>
 </annotation>
