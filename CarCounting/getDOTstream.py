@@ -5,6 +5,7 @@ import numpy as np
 import web
 import base64
 from TF_SSD import CarDetector
+from utility.correlation import correlationClass
 
 urls = ("/", "stream",
 		"/test", "testCamera")
@@ -64,6 +65,8 @@ class testCamera:
 class getStream:
 	def __init__(self, url):
 		self.stream = urllib2.urlopen(url)
+		self.boundingBoxes = []
+		self.corr = correlationClass()
 
 	def getImage(self):
 		file = self.stream.read()
@@ -90,33 +93,45 @@ class getStream:
 		R = 0
 		G = 255
 		B = 0
+		currentBoxes = []
 		for box1 in nBoxes:
 			x1 = min(351,int(round(box1[1]*352)))
 			y1 = min(239,int(round(box1[0]*240)))
 			x2 = min(351,int(round(box1[3]*352)))
 			y2 = min(239,int(round(box1[2]*240)))
 			print((x1, x2, y1, y2))
-			img[y1:y2, x1, 0] = R
-			img[y1:y2, x1, 1] = G
-			img[y1:y2, x1, 2] = B
-			img[y1:y2, x2, 0] = R
-			img[y1:y2, x2, 1] = G
-			img[y1:y2, x2, 2] = B
-			img[y1, x1:x2, 0] = R
-			img[y1, x1:x2, 1] = G
-			img[y1, x1:x2, 2] = B
-			img[y2, x1:x2, 0] = R
-			img[y2, x1:x2, 1] = G
-			img[y2, x1:x2, 2] = B
-		#Do some opencv here
+			currentBoxes.append((x1, x2, y1, y2))
 
-		#At the end, convert back to numpy array to present on the localhost
+		#do classification here
 
-		#arr.tobytes()
+		for (x1, x2, y1, y2) in currentBoxes:
+			img = self.drawBox(img, x1, x2, y1, y2, R, G, B)
+		
+		for img1 in self.boundingBoxes:
+			for img2 in currentBoxes:
+				self.corr.correlate(img1, img2)
+		print("Number of correlations: " + str(self.corr.numCorrelations))
+		self.boundingBoxes = currentBoxes
+
 		retval, b = cv2.imencode('.jpg', img)
 		encoded_string = base64.b64encode(b)
 		#encoded_string = base64.b64encode(arr)
 		return encoded_string
+
+	def drawBox(self, img, x1, x2, y1, y2, R, G, B):
+		img[y1:y2, x1, 0] = R
+		img[y1:y2, x1, 1] = G
+		img[y1:y2, x1, 2] = B
+		img[y1:y2, x2, 0] = R
+		img[y1:y2, x2, 1] = G
+		img[y1:y2, x2, 2] = B
+		img[y1, x1:x2, 0] = R
+		img[y1, x1:x2, 1] = G
+		img[y1, x1:x2, 2] = B
+		img[y2, x1:x2, 0] = R
+		img[y2, x1:x2, 1] = G
+		img[y2, x1:x2, 2] = B
+		return img
 
 
 DOTstream = web.application(urls, locals());
