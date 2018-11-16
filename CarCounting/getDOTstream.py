@@ -10,11 +10,20 @@ from utility.correlation import correlationClass
 urls = ("/", "stream",
 		"/test", "testCamera")
 
-C = CarDetector('CarCounting/InferenceGraph/new_stream5_graph.pb')
+C = CarDetector('CarCounting/InferenceGraph/frozen_inference_graph.pb')
 #C = CarDetector('CarCounting/InferenceGraph/ssd_lite_graph.pb')
+
+class tempData:
+	def __init__(self):
+		self.boundingBoxes = []
+
+T = tempData()
+
 class stream:
-	def GET(self):
+	def __init__(self):
 		self.G = getStream('http://207.251.86.238/cctv797.jpg?math=0.15975369761797253')
+
+	def GET(self):
 		#self.G = getStream('http://207.251.86.238/cctv797.jpg?math=0.8641532073791593')
 		print("Getting stream...")
 		return self.G.getImage()
@@ -65,10 +74,10 @@ class testCamera:
 class getStream:
 	def __init__(self, url):
 		self.stream = urllib2.urlopen(url)
-		self.boundingBoxes = []
 		self.corr = correlationClass()
 
 	def getImage(self):
+		boundingBoxes = T.boundingBoxes
 		file = self.stream.read()
 		encoded_string = base64.b64encode(file)
 		arr = np.asarray(bytearray(file), dtype=np.uint8)
@@ -82,12 +91,9 @@ class getStream:
 			limit = i
 			if scores[0][i] < sensitivity:
 				break
-		print(limit)
-		print(boxes[0][0:limit])
 		nBoxes = boxes[0][0:limit]
 		nScores = scores[0][0:limit]
 		nClasses = classes[0][0:limit]
-		#print(nBoxes)
 
 		#Box colors
 		R = 0
@@ -107,11 +113,17 @@ class getStream:
 		for (x1, x2, y1, y2) in currentBoxes:
 			img = self.drawBox(img, x1, x2, y1, y2, R, G, B)
 		
-		for img1 in self.boundingBoxes:
-			for img2 in currentBoxes:
+		for img1coords in boundingBoxes:
+			(x1, x2, y1, y2) = img1coords
+			img1 = img[y1:y2, x1:x2]
+			for img2coords in currentBoxes:
+				(x1, x2, y1, y2) = img2coords
+				img2 = img[y1:y2, x1:x2]
 				self.corr.correlate(img1, img2)
+		print("Image 1 bounding boxes: " + str(len(boundingBoxes)))
+		print("Image 2 bounding boxes: " + str(len(currentBoxes)))
 		print("Number of correlations: " + str(self.corr.numCorrelations))
-		self.boundingBoxes = currentBoxes
+		T.boundingBoxes = currentBoxes
 
 		retval, b = cv2.imencode('.jpg', img)
 		encoded_string = base64.b64encode(b)
