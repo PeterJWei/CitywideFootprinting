@@ -16,6 +16,7 @@ C = CarDetector('CarCounting/InferenceGraph/frozen_inference_graph.pb')
 class tempData:
 	def __init__(self):
 		self.boundingBoxes = []
+		self.total = 0
 
 T = tempData()
 
@@ -76,6 +77,7 @@ class getStream:
 		self.stream = urllib2.urlopen(url)
 
 	def getImage(self):
+		total = T.total
 		boundingBoxes = T.boundingBoxes
 		file = self.stream.read()
 		encoded_string = base64.b64encode(file)
@@ -127,7 +129,10 @@ class getStream:
 		print("Image 2 bounding boxes: " + str(len(currentBoxes)))
 		print("Number of correlations: " + str(self.corr.numCorrelations))
 		T.boundingBoxes = currentBoxes
-
+		T.total += len(new)
+		font = cv2.FONT_HERSHEY_SIMPLEX
+		cv2.putText(img,'Car Count: ' + str(T.total),(10,230), font, 0.5,(255,255,255),2,cv2.LINE_AA)
+		
 		retval, b = cv2.imencode('.jpg', img)
 		encoded_string = base64.b64encode(b)
 		#encoded_string = base64.b64encode(arr)
