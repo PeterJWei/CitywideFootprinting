@@ -74,7 +74,6 @@ class testCamera:
 class getStream:
 	def __init__(self, url):
 		self.stream = urllib2.urlopen(url)
-		self.corr = correlationClass()
 
 	def getImage(self):
 		boundingBoxes = T.boundingBoxes
@@ -96,9 +95,7 @@ class getStream:
 		nClasses = classes[0][0:limit]
 
 		#Box colors
-		R = 0
-		G = 255
-		B = 0
+
 		currentBoxes = []
 		for box1 in nBoxes:
 			x1 = min(351,int(round(box1[1]*352)))
@@ -109,17 +106,23 @@ class getStream:
 			currentBoxes.append((x1, x2, y1, y2))
 
 		#do classification here
-
-		for (x1, x2, y1, y2) in currentBoxes:
-			img = self.drawBox(img, x1, x2, y1, y2, R, G, B)
 		
-		for img1coords in boundingBoxes:
-			(x1, x2, y1, y2) = img1coords
-			img1 = img[y1:y2, x1:x2]
-			for img2coords in currentBoxes:
-				(x1, x2, y1, y2) = img2coords
-				img2 = img[y1:y2, x1:x2]
-				self.corr.correlate(img1, img2)
+		self.corr = correlationClass(boundingBoxes, currentBoxes)
+		# for img1coords in boundingBoxes:
+		# 	(x1, x2, y1, y2) = img1coords
+		# 	img1 = img[y1:y2, x1:x2]
+		# 	for img2coords in currentBoxes:
+		# 		(x1, x2, y1, y2) = img2coords
+		# 		img2 = img[y1:y2, x1:x2]
+		tracked, new = self.corr.correlateBoxes(img)
+
+		for i in range(len(currentBoxes)):
+			(x1, x2, y1, y2) = currentBoxes[i]
+			if i in new:
+				img = self.drawBox(img, x1, x2, y1, y2, [0, 255, 0])
+			else:
+				img = self.drawBox(img, x1, x2, y1, y2, [0, 0, 255])
+
 		print("Image 1 bounding boxes: " + str(len(boundingBoxes)))
 		print("Image 2 bounding boxes: " + str(len(currentBoxes)))
 		print("Number of correlations: " + str(self.corr.numCorrelations))
@@ -130,7 +133,10 @@ class getStream:
 		#encoded_string = base64.b64encode(arr)
 		return encoded_string
 
-	def drawBox(self, img, x1, x2, y1, y2, R, G, B):
+	def drawBox(self, img, x1, x2, y1, y2, colors):
+		R = colors[0]
+		G = colors[1]
+		B = colors[2]
 		img[y1:y2, x1, 0] = R
 		img[y1:y2, x1, 1] = G
 		img[y1:y2, x1, 2] = B
