@@ -342,11 +342,11 @@ $(document).ready(function(){
 			$.get("/camera/",{
 				},
 				function(data,status){
-		    	//console.log(data,status);
-		    	var obj = JSON.parse(data);
-		    	var newSource = "data:image/jpg;base64," + obj.im1;
+		    	console.log(data,status);
+		    	//var obj = JSON.parse(data);
+		    	var newSource = "data:image/jpg;base64," + data.im1;
 		    	document.getElementById("base64img").src = newSource;
-		    	newSource = "data:image/jpg;base64," + obj.im2;
+		    	newSource = "data:image/jpg;base64," + data.im2;
 		    	document.getElementById("base64imgSubtract").src = newSource;
 		    },'json').fail(function() {
 			    alert('Error!'); // or whatever			    
