@@ -86,7 +86,7 @@ class getStream:
 
 		#filter out background
 		img2 = img.copy()
-		self.filter(img2)
+		img2 = self.filter(img2)
 
 		sensitivity = 0.7
 
@@ -128,7 +128,7 @@ class getStream:
 				img = self.drawBox(img, x1, x2, y1, y2, [0, 255, 0])
 			else:
 				img = self.drawBox(img, x1, x2, y1, y2, [0, 0, 255])
-
+		img = self.filter(img)
 		print("Image 1 bounding boxes: " + str(len(boundingBoxes)))
 		print("Image 2 bounding boxes: " + str(len(currentBoxes)))
 		print("Number of correlations: " + str(self.corr.numCorrelations))
@@ -153,6 +153,7 @@ class getStream:
 						img[i, j, 0] = 0
 						img[i, j, 1] = 0
 						img[i, j, 2] = 0
+		return img
 
 	def drawBox(self, img, x1, x2, y1, y2, colors):
 		R = colors[0]
