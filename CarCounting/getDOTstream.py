@@ -6,6 +6,7 @@ import web
 import base64
 from TF_SSD import CarDetector
 from utility.correlation import correlationClass
+import json
 
 urls = ("/", "stream",
 		"/test", "testCamera")
@@ -128,7 +129,7 @@ class getStream:
 				img = self.drawBox(img, x1, x2, y1, y2, [0, 255, 0])
 			else:
 				img = self.drawBox(img, x1, x2, y1, y2, [0, 0, 255])
-		img = self.filter(img)
+		#img = self.filter(img)
 		print("Image 1 bounding boxes: " + str(len(boundingBoxes)))
 		print("Image 2 bounding boxes: " + str(len(currentBoxes)))
 		print("Number of correlations: " + str(self.corr.numCorrelations))
@@ -137,16 +138,24 @@ class getStream:
 		font = cv2.FONT_HERSHEY_SIMPLEX
 		cv2.putText(img,'Car Count: ' + str(T.total),(10,230), font, 0.5,(255,255,255),2,cv2.LINE_AA)
 		
+
 		retval, b = cv2.imencode('.jpg', img)
+		retval2, b2 = cv2.imencode('.jpg', img2)
 		encoded_string = base64.b64encode(b)
+		encoded_string2 = base64.b64encode(b2)
+		D = {
+			"im1":encoded_string,
+			"im2":encoded_string2
+		}
+		json_data = json.dumps(D)
 		#encoded_string = base64.b64encode(arr)
-		return encoded_string
+		return json_data
 
 	def filter(self, img, regions=None):
 		if regions is None:
-			img[0:146, 135, 0] = 0
-			img[0:146, 135, 1] = 0
-			img[0:146, 135, 2] = 0
+			img[0:146, 0:135, 0] = 0
+			img[0:146, 0:135, 1] = 0
+			img[0:146, 0:135, 2] = 0
 			for i in range(141):
 				for j in range(84,352):
 					if (i*148.0/78 + 84 < j):

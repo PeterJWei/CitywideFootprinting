@@ -72,6 +72,7 @@ h1 {
 </style>
 
 </head>
+
 <body>
 	<div class="tab">
 		<button class="tablinks" onclick="tabEvents(event, 'CityMap')" id="defaultOpen">City Map</button>
@@ -137,8 +138,15 @@ h1 {
 			<img id="base64img2" src="automobile.png" alt="automobile.png" width="352" height="240" border="1">
 		</div>
 	</div>
-	<h3>Test Image</h3>
-	<div class="row">
+	<h3>Test Images</h3>
+	<button id="toggleBackground">Show Background Subtract</button>
+	<div id="backgroundSubtract" class="row">
+		<div class="column">
+			<img id="base64imgSubtract" src="automobile.jpg" alt="automobile.jpg" width="352" height="240" border="1">
+		</div>
+	</div>
+	<button id="toggleTest">Show Test Images</button>
+	<div id="testImages" class="row">
 		<div class="column">
 			<img id="baseImg" src="pic0.jpg" alt="pic0.jpg" width="352" height="240" border="1">
 		</div>
@@ -148,7 +156,18 @@ h1 {
 	</div>
 </div>
 
-
+<script>
+$(document).ready(function(){
+    $("#toggleTest").click(function(){
+        $("#testImages").toggle();
+    });
+});
+$(document).ready(function(){
+    $("#toggleBackground").click(function(){
+        $("#backgroundSubtract").toggle();
+    });
+});
+</script>
 <script type="text/javascript" src="createTaxiMaps.js"></script>
 
 <script type="text/javascript">
@@ -324,9 +343,12 @@ h1 {
 				},
 				function(data,status){
 		    	//console.log(data,status);
-		    	var newSource = "data:image/jpg;base64," + data;
+		    	var obj = JSON.parse(data);
+		    	var newSource = "data:image/jpg;base64," + obj.im1;
 		    	document.getElementById("base64img").src = newSource;
-		    },'text').fail(function() {
+		    	newSource = "data:image/jpg;base64," + obj.im2;
+		    	document.getElementById("base64imgSubtract").src = newSource;
+		    },'json').fail(function() {
 			    alert('Error!'); // or whatever			    
 			    //document.getElementById("cameraButton").reset();
 			});
