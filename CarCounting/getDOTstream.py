@@ -84,9 +84,13 @@ class getStream:
 		arr = np.asarray(bytearray(file), dtype=np.uint8)
 		img = cv2.imdecode(arr, -1)
 
+		#filter out background
+		img2 = img.copy()
+		self.filter(img2)
+
 		sensitivity = 0.7
 
-		boxes, scores, classes, num = C.getClassification(img)
+		boxes, scores, classes, num = C.getClassification(img2)
 		limit = 0
 		for i in range(scores[0].shape[0]):
 			limit = i
@@ -137,6 +141,18 @@ class getStream:
 		encoded_string = base64.b64encode(b)
 		#encoded_string = base64.b64encode(arr)
 		return encoded_string
+
+	def filter(self, img, regions=None):
+		if regions is None:
+			img[0:146, 135, 0] = 0
+			img[0:146, 135, 1] = 0
+			img[0:146, 135, 2] = 0
+			for i in range(141):
+				for j in range(84,352):
+					if (i*148.0/78 + 84 < j):
+						img[i, j, 0] = 0
+						img[i, j, 1] = 0
+						img[i, j, 2] = 0
 
 	def drawBox(self, img, x1, x2, y1, y2, colors):
 		R = colors[0]
