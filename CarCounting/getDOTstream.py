@@ -26,8 +26,9 @@ class stream:
 		self.G = getStream('http://207.251.86.238/cctv797.jpg?math=0.15975369761797253')
 
 	def GET(self):
+		data = web.input(URL='http://207.251.86.238/cctv797.jpg?math=0.15975369761797253')
 		#self.G = getStream('http://207.251.86.238/cctv797.jpg?math=0.8641532073791593')
-		print("Getting stream...")
+		print("Getting stream from " + URL + "...")
 		return self.G.getImage()
 
 class testCamera:

@@ -333,7 +333,7 @@ function changeURL() {
 <script>
 	var $btn = document.getElementById("cameraButton");
 	$btn.addEventListener("click", toggleButton);
-
+	document.getElementById("URLvalue").value = "http://207.251.86.238/cctv797.jpg?math=0.15975369761797253";
 	function toggleButton() {
 		console.log(document.getElementById("cameraButton").value);
 		if (document.getElementById("cameraButton").value=="ON") {
@@ -348,12 +348,12 @@ function changeURL() {
 	function showCamera() {
 		if (document.getElementById("cameraButton").value=="ON") {
 			document.getElementById("base64img2").src = document.getElementById("base64img").src;
+			var URL = document.getElementById("URLvalue").value;
+		    console.log(URL);
 			var result = null;
-			$.get("/camera/",{
+			$.get("/camera/",{"URL":URL
 				},
 				function(data,status){
-				var URL = document.getElementById("URLvalue").value;
-		    	console.log(URL);
 		    	//console.log(data,status);
 		    	//var obj = JSON.parse(data);
 		    	var newSource = "data:image/jpg;base64," + data.im1;
@@ -361,7 +361,7 @@ function changeURL() {
 		    	newSource = "data:image/jpg;base64," + data.im2;
 		    	document.getElementById("base64imgSubtract").src = newSource;
 		    },'json').fail(function() {
-			    alert('Error!'); // or whatever			    
+			    alert('URL ' + URL + ' not found!'); // or whatever			    
 			    //document.getElementById("cameraButton").reset();
 			});
 		}
