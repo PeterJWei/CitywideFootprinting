@@ -130,6 +130,7 @@ h1 {
 
 
 	<h3>Real-Time Web Feed</h3>
+	<button onclick="defaultCamera();">Default Camera</button>
 	<form id="form" onsubmit="return false;">
 		<input type="text" id="userInput" />
     	<input type="submit" onclick="changeURL();" />
@@ -175,7 +176,11 @@ $(document).ready(function(){
 function changeURL() {
     var input = document.getElementById("userInput").value;
     document.getElementById("URLvalue").value = input;
-    alert(input);
+    alert("Switching to new URL: " + input);
+}
+function defaultCamera() {
+	var defaultURL = "http://207.251.86.238/cctv797.jpg?math=0.3242905505088779";
+	document.getElementById("URLvalue").value = defaultURL;
 }
 </script>
 <script type="text/javascript" src="createTaxiMaps.js"></script>

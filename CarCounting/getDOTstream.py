@@ -23,12 +23,19 @@ T = tempData()
 
 class stream:
 	def __init__(self):
-		self.G = getStream('http://207.251.86.238/cctv797.jpg?math=0.15975369761797253')
+		return
 
 	def GET(self):
-		data = web.input(URL='http://207.251.86.238/cctv797.jpg?math=0.15975369761797253')
+		data = web.input()
+		print(data)
 		#self.G = getStream('http://207.251.86.238/cctv797.jpg?math=0.8641532073791593')
+		if "URL" in data:
+			URL = data["URL"]
+			print("found in data")
+		else:
+			URL='http://207.251.86.238/cctv797.jpg?math=0.15975369761797253'
 		print("Getting stream from " + URL + "...")
+		self.G = getStream(URL)
 		return self.G.getImage()
 
 class testCamera:
