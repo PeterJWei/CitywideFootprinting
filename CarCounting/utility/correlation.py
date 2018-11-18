@@ -1,4 +1,5 @@
 import random
+from pyemd import emd_samples
 class correlationClass:
 	def __init__(self, previousBoxes, currentBoxes):
 		self.previousBoxes = previousBoxes
@@ -31,4 +32,7 @@ class correlationClass:
 
 	def correlate(self, img1, img2):
 		self.numCorrelations += 1
-		return random.uniform(0, 1)
+		HOG_1 = []
+		HOG_2 = []
+
+		return emd_samples(HOG_1,HOG_2)
