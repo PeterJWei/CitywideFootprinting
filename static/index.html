@@ -77,7 +77,7 @@ h1 {
 	<div class="tab">
 		<button class="tablinks" onclick="tabEvents(event, 'CityMap')" id="defaultOpen">City Map</button>
 	<button class="tablinks" onclick="tabEvents(event, 'TaxiData')">Taxi Data</button>
-  
+	<button class="tablinks" onclick="tabEvents(event, 'Foursquare')">Foursquare Data</button>
   <button class="tablinks" onclick="tabEvents(event, 'TensorFlow')">TensorFlow</button>
 </div>
 
@@ -113,6 +113,36 @@ h1 {
 	          Pause</div>
 	      </div>
 	    </div>
+	</div>
+</div>
+<div id="Foursquare" class="tabcontent">
+	<h3>Foursquare Data</h3>
+	<div class="page">
+		<div class="row">
+			<div class="mapColumn">
+				<div id="viewDiv3" style="background-color:#cccccc; width:100%; height:90%"></div>
+				<div id="sliderContainer3" class="esri-widget">
+			      <span id="sliderValue3"></span>
+				      <div id="sliderInnerContainer3">
+				        <div id="sliderLabels3">
+				          <span>0:00</span>
+				          <span>24:00</span>
+				        </div>
+				        <div id="rangeWrapper3">
+				          <input id="slider3" type="range" min="0" max="24" step="1" value="0" />
+				        </div>
+				      </div>
+				      <div id="playButton3" class="esri-widget esri-widget--button toggle-button">
+				        <div>
+				          <span class="toggle-button-icon esri-icon-play" aria-label="play icon"></span>
+				          Play</div>
+				        <div>
+				          <span class="toggle-button-icon esri-icon-pause" aria-label="pause icon"></span>
+				          Pause</div>
+				      </div>
+			    </div>
+			</div>
+		</div>
 	</div>
 </div>
 <div id="CityMap" class="tabcontent">
@@ -184,6 +214,7 @@ function defaultCamera() {
 }
 </script>
 <script type="text/javascript" src="createTaxiMaps.js"></script>
+<script type="text/javascript" src="createFoursquareData.js"></script>
 
 <script type="text/javascript">
 	function getMethods(obj) {

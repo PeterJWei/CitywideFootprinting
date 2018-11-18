@@ -1,3 +1,71 @@
+#sliderContainer3 {
+  flex: 0 0 80px;
+  order: 2;
+
+  display: flex;
+  flex-flow: row;
+
+  padding: 0 12px;
+}
+
+#sliderValue3 {
+  flex: 0 0 100px;
+  order: 1;
+
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  text-align: center;
+
+  font-size: 300%;
+}
+
+#sliderInnerContainer3 {
+  flex: 1 1 auto;
+  order: 2;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0 20px;
+}
+
+#sliderLabels3 {
+  flex: 1 1 auto;
+  order: 1;
+
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+#rangeWrapper3 {
+  flex: 1 1 auto;
+  order: 2;
+
+  position: relative;
+  padding: 0 20px;
+}
+
+#slider3 {
+  width: 100%;
+}
+/**
+* Play/Stop toggle button
+*/
+
+#playButton3 {
+  flex: 0 0 100px;
+  order: 3;
+
+  margin: 20px 0;
+}
+
+
+
+
+
+
 #sliderContainer {
   flex: 0 0 80px;
   order: 2;
