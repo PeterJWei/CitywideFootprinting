@@ -16,6 +16,15 @@ bin_num = 8
 im_size = [32,32]
 
 
+#image path must be wrt current working directory
+def create_array(image_path):
+	
+	image = Image.open(os.path.join(cwd,image_path)).convert('L')
+	image_array = np.asarray(image,dtype=float)
+	
+	return image_array
+
+
 #uses a [-1 0 1 kernel]
 def create_grad_array(image_array):
 	image_array = Image.fromarray(image_array)
@@ -120,4 +129,11 @@ def apply_hog(image_array):
 	hog_features = np.expand_dims(hog_features,axis=0)
 
 	return hog_features
+
+
+def hog_from_path(image_path):
+	image_array = create_array(image_path)
+	final_array = apply_hog(image_array)
+	
+	return final_array
 
