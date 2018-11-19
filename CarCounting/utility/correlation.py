@@ -14,25 +14,50 @@ class correlationClass:
 		self.numCorrelations = 0
 		return
 
-	def correlateBoxes(self, image):
-		maxCorrelation = [0] * len(self.currentBoxes)
-		for img1coords in self.previousBoxes:
+	def correlateBoxes(self, prevImage, image):
+		correlations = []
+		correlationIndices = []
+
+		#maxCorrelation = [0] * len(self.currentBoxes)
+		for j in range(len(self.previousBoxes)):
+			img1coords = self.previousBoxes[j]
+			if prevImage is None:
+				return ([], range(len(self.currentBoxes)))
 			(x1, x2, y1, y2) = img1coords
-			img1 = image[y1:y2, x1:x2]
+			img1 = prevImage[y1:y2, x1:x2]
 			for i in range(len(self.currentBoxes)):
 				img2coords = self.currentBoxes[i]
 				(x1, x2, y1, y2) = img2coords
 				img2 = image[y1:y2, x1:x2]
 				c = self.correlate(img1, img2)
-				if c > maxCorrelation[i]:
-					maxCorrelation[i] = c
+				correlations.append(c)
+				correlationIndices.append((j, i))
+
+		correlations, correlationIndices = zip(*sorted(zip(correlations, correlationIndices), reverse=True))
+		correlations = list(correlations)
+		correlationIndices = list(correlationIndices)
+
+		maxCorrelation = [None] * len(self.currentBoxes)
+		counted = [False] * len(self.previousBoxes)
+		for i in range(len(correlations)):
+			score = correlations[i]
+			if score < self.threshold:
+				break
+			(prev, curr) = correlationIndices[i]
+			if counted[prev]:
+				continue
+			else:
+				maxCorrelation[curr] = prev
+				counted[prev] = True
+
 		tracked = []
 		new = []
 		for i in range(len(maxCorrelation)):
-			if maxCorrelation[i] > self.threshold:
-				tracked.append(i)
-			else:
+			if maxCorrelation[i] is None:
 				new.append(i)
+			else:
+				tracked.append(i)
+
 		return (tracked, new)
 
 	def correlate(self, img1, img2):
