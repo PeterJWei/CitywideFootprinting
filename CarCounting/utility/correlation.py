@@ -1,6 +1,6 @@
 import random
 import numpy as np
-from pyemd import emd_samples
+#from pyemd import emd_samples
 from compute_hog import hog_from_path
 from scipy.stats import wasserstein_distance
 from scipy.ndimage import imread
@@ -15,6 +15,8 @@ class correlationClass:
 		return
 
 	def correlateBoxes(self, prevImage, image):
+		if len(self.previousBoxes) == 0 or len(self.currentBoxes) == 0:
+			return ([], range(len(self.currentBoxes)))
 		correlations = []
 		correlationIndices = []
 
@@ -61,17 +63,17 @@ class correlationClass:
 		return (tracked, new)
 
 	def correlate(self, img1, img2):
-		# self.numCorrelations += 1
+		self.numCorrelations += 1
 		# a = imread(img1)
 		# b = imread(img2)
 		# a_hist = get_histogram(a)
 		# b_hist = get_histogram(b)
 		# dist = wasserstein_distance(a_hist, b_hist)
-		HOG_1 = hog_from_path(img1)
-		HOG_2 = hog_from_path(img2)
-		emd_score = emd_samples(HOG_1,HOG_2)
-		score = calc_similar_by_path(img1, img2)
-		return emd_score, str(score*100)+"%"
+		#HOG_1 = hog_from_path(img1)
+		#HOG_2 = hog_from_path(img2)
+		#emd_score = emd_samples(HOG_1,HOG_2)
+		#score = calc_similar_by_path(img1, img2)
+		return random.uniform(0, 1)#emd_score, str(score*100)+"%"
 
 
 if __name__ == "__main__":
