@@ -18,6 +18,7 @@ class tempData:
 	def __init__(self):
 		self.boundingBoxes = []
 		self.total = 0
+		self.prevImage = None
 
 T = tempData()
 
@@ -88,6 +89,7 @@ class getStream:
 	def getImage(self):
 		total = T.total
 		boundingBoxes = T.boundingBoxes
+		prevImage = T.prevImage
 		file = self.stream.read()
 		encoded_string = base64.b64encode(file)
 		arr = np.asarray(bytearray(file), dtype=np.uint8)
@@ -129,7 +131,7 @@ class getStream:
 		# 	for img2coords in currentBoxes:
 		# 		(x1, x2, y1, y2) = img2coords
 		# 		img2 = img[y1:y2, x1:x2]
-		tracked, new = self.corr.correlateBoxes(img)
+		tracked, new = self.corr.correlateBoxes(prevImage, img)
 
 		for i in range(len(currentBoxes)):
 			(x1, x2, y1, y2) = currentBoxes[i]
@@ -143,10 +145,10 @@ class getStream:
 		print("Number of correlations: " + str(self.corr.numCorrelations))
 		T.boundingBoxes = currentBoxes
 		T.total += len(new)
+		T.prevImage = img
 		font = cv2.FONT_HERSHEY_SIMPLEX
 		cv2.putText(img,'Car Count: ' + str(T.total),(10,230), font, 0.5,(255,255,255),2,cv2.LINE_AA)
 		
-
 		retval, b = cv2.imencode('.jpg', img)
 		retval2, b2 = cv2.imencode('.jpg', img2)
 		encoded_string = base64.b64encode(b)

@@ -26,6 +26,7 @@
   var layer = new FeatureLayer({
         url: "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/MAPPLUTO/FeatureServer/0",
         //"https://services1.arcgis.com/jjVcwHv9AQEq3DH3/ArcGIS/rest/services/Buildings/FeatureServer/0",
+        definitionExpression: "Borough = 'MN'",
         renderer: null,
         popupTemplate: { // autocasts as new PopupTemplate()
           title: "PLUTO",
@@ -37,6 +38,9 @@
             }, {
               fieldName: "YearBuilt",
               label: "Year Built"
+            }, {
+              fieldName: "Borough",
+              label: "Borough"
             }]
           }]
         },
