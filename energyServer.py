@@ -5,15 +5,28 @@ import time
 #from dynamicPopulation import showDynamicPopulation
 import CarCounting.getDOTstream as D
 import graphBackend
-
+import staticData.foursquareCheckinData as FS
 urls = (
+	#"/(.*)", 'Service',
 	"/realtime", dynamicPopulation.doPopulation,
 	"/camera", D.DOTstream,
-	"/graph", graphBackend.G
+	"/foursquareData", FS.foursquareData,
+	"/graph", graphBackend.G,
+	"/"
 	)
 
 #initialization = dynamicPopulation.showDynamicPopulation()
 #initialization.startup()
+class Service:
+	def GET(self, name):
+		web.header('Access-Control-Allow-Origin',      '*')
+		web.header('Access-Control-Allow-Credentials', 'true')
+		return {'message': 'GET OK!'}
+	def POST(self, name):
+		web.header('Access-Control-Allow-Origin',      '*')
+		web.header('Access-Control-Allow-Credentials', 'true')
+		data = web.data()
+		return {'message': "POST OK! %s" % data}
 
 class MyApplication(web.application):
 	def run(self, port=8080, *middleware):
@@ -34,18 +47,7 @@ class MyApplication(web.application):
 			#run1.plotBuildings()
 			#run1.plotRealtime()
 			time.sleep(30)
-		# run1.getBlocks2Occupancy(1)
-		# run1.plotDynamic()
-		# run1.getBlocks2Occupancy(2)
-		# run1.plotDynamic()
-		# run1.getBlocks2Occupancy(3)
-		# run1.plotDynamic()
-		# run1.getBlocks2Occupancy(4)
-		# run1.plotDynamic()
-		# run1.getBlocks2Occupancy(5)
-		# run1.plotDynamic()
-		# run1.getBlocks2Occupancy(6)
-		# run1.plotDynamic()
+
 
 		return
 
