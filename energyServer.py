@@ -12,11 +12,18 @@ urls = (
 	"/camera", D.DOTstream,
 	"/foursquareData", FS.foursquareData,
 	"/graph", graphBackend.G,
-	"/"
+	"/", "baseURL"
 	)
 
 #initialization = dynamicPopulation.showDynamicPopulation()
 #initialization.startup()
+
+class baseURL:
+	def GET(self):
+		return "200 OK"
+	def POST(self):
+		return "200 OK"
+
 class Service:
 	def GET(self, name):
 		web.header('Access-Control-Allow-Origin',      '*')
