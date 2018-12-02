@@ -264,7 +264,7 @@
 
     setInterval(function() {
       console.log("changing features...")
-      $.get("http://localhost:8001/taxiData/taxiOriginData",{
+      $.get("http://icsl.ee.columbia.edu:8001/taxiData/taxiOriginData",{
         },
         function(data,status){
           console.log(status);
@@ -285,7 +285,7 @@
 
     setInterval(function() {
       console.log("changing features...")
-      $.get("http://localhost:8001/taxiData/taxiDestinationData",{
+      $.get("http://icsl.ee.columbia.edu:8001/taxiData/taxiDestinationData",{
         },
         function(data,status){
           for (var i = 0; i < data.length; i++) {
