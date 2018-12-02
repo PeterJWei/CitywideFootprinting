@@ -141,65 +141,30 @@
         },
       renderer: null
     });
-    var censusDict = {};
-    
-
-    var initializeCensusData = function(callback) {
-      console.log("Started initialization");
-      $.get("http://localhost:8001/censusData/censusData",{
-        },
-        function(data,status){
-          console.log(status);
-          for (var i = 0; i < data.length; i++) {
-            //console.log(data[i][1]);
-            //console.log(data[i][2]);
-            console.log(typeof parseInt(data[i][1]));
-            censusDict[[parseInt(data[i][1]), parseInt(data[i][2])]] = parseInt(data[i][3]);
-          }
-        },'json').fail(function(xhr, status, error) {
-          var err = eval("(" + xhr.responseText + ")");
-          alert(err.Message);
-      }).done(function() {
-        console.log("Finished initialization");
-        callback();
-      });
-    }
 
     var manhattanZipCodeList = [10027, 10026, 10030, 10037, 10036, 10029, 10035, 10010, 10016, 10017, 10022, 10012, 10013, 10014, 10004, 10005, 10006, 10007, 10038, 10280, 10002, 10003, 10009, 10021, 10028, 10044, 10065, 10075, 10128, 10023, 10024, 10025, 10031, 10032, 10033, 10034, 10040, 10019, 10018, 10001, 10011];
-    var addFeatures = function() {
-      console.log("Beginning add features");
-      for (var i=0; i < manhattanZipCodeList.length; i++) {
-        var query = layer.createQuery();
-        var queryString = "ZipCode = " + manhattanZipCodeList[i].toString();
-        //console.log(queryString);
-        query.where = queryString;
-        query.outFields = ["*"];
-        addLayerFeatures(query);
-      }
+
+    for (var i=0; i < manhattanZipCodeList.length; i++) {
+      var query = layer.createQuery();
+      var queryString = "ZipCode = " + manhattanZipCodeList[i].toString();
+      console.log(queryString);
+      query.where = queryString;
+      query.outFields = ["*"];
+      addLayerFeatures(query);
     }
-    initializeCensusData(addFeatures);
     // var query = layer.createQuery();
     // query.where = "Address = '519 WEST 121 STREET'";
     // query.outFields = ["Address", "YearBuilt"];
     
-
     function addLayerFeatures(query) {
       layer.queryFeatures(query).then(function(response) {
         var editFeatures = [];
         console.log("Features: " + response.features.length.toString())
         for (var i=0; i<response.features.length; i++) {
           var editFeature = response.features[i];
-          var block = editFeature.attributes["Block"];
-          var lot = editFeature.attributes["Lot"];
-          console.log(typeof block);
-          if ([block, lot] in censusDict) {
-            editFeature.attributes["Dynamic"] = censusDict[[block, lot]];
-          } else {
-            editFeature.attributes["Dynamic"] = 0;
-          }
           //console.log(editFeature.attributes["YearBuilt"]);
           //editFeature.attributes["YearBuilt"] = 1881;
-          
+          editFeature.attributes["Dynamic"] = 0;
           //console.log(editFeature.attributes["YearBuilt"]);
           editFeatures.push(editFeature);
         }
@@ -218,7 +183,7 @@
       });
     }
 
-    function changeDynamicFeatures(query, dynamic, set) {
+    function changeDynamicFeatures(query, dynamic) {
       newLayer.queryFeatures(query).then(function(response) {
         var editFeatures = [];
         console.log("Found " + response.features.length);
@@ -229,11 +194,7 @@
           var editFeature = response.features[i];
           console.log(editFeature.attributes["Dynamic"]);
           //editFeature.attributes["YearBuilt"] = 1950;
-          if (set == 0) {
-            editFeature.attributes["Dynamic"] = editFeature.attributes["Dynamic"] + dynamic;
-          } else {
-            editFeature.attributes["Dynamic"] = dynamic;
-          }
+          editFeature.attributes["Dynamic"] = editFeature.attributes["Dynamic"] + dynamic;
           console.log(editFeature.attributes["Dynamic"]);
           editFeatures.push(editFeature);
         }
@@ -259,11 +220,11 @@
       layers: [newLayer]
     });
 
-
+    
 
     setInterval(function() {
       console.log("changing features...")
-      $.get("http://localhost:8001/taxiData/taxiOriginData",{
+      $.get("http://localhost:8001/foursquareData/checkinData",{
         },
         function(data,status){
           console.log(status);
@@ -274,36 +235,15 @@
             console.log(queryString);
             query.where = queryString;
             query.outFields = ["*"];
-            changeDynamicFeatures(query, -1, 0);
+            changeDynamicFeatures(query, 1);
           }
         },'json').fail(function(xhr, status, error) {
           var err = eval("(" + xhr.responseText + ")");
           alert(err.Message);
       });
       setRenderer();
-    }, 60 * 1000);
 
-    setInterval(function() {
-      console.log("changing features...")
-      $.get("http://localhost:8001/taxiData/taxiDestinationData",{
-        },
-        function(data,status){
-          console.log(status);
-          console.log(data);
-          for (var i = 0; i < data.length; i++) {
-            var query = newLayer.createQuery();
-            var queryString = "Borough = 'MN' and Block = " + data[i][1] + " and Lot = " + data[i][2];
-            console.log(queryString);
-            query.where = queryString;
-            query.outFields = ["*"];
-            changeDynamicFeatures(query, 1, 0);
-          }
-        },'json').fail(function(xhr, status, error) {
-          var err = eval("(" + xhr.responseText + ")");
-          alert(err.Message);
-      });
-      setRenderer();
-    }, 60 * 1000);
+    }, 30 * 1000);
 
     var applicationDiv = document.getElementById("applicationDiv");
     var slider = document.getElementById("slider");
