@@ -206,7 +206,7 @@ function createRenderer(year) {
         };
       }
 
-	var url2 = "http://icsl.columbia.edu:8001/static/endLocations.csv";
+	var url2 = "http://icsl.ee.columbia.edu:8001/static/endLocations.csv";
 	var csvLayer2 = new CSVLayer({
 	 	url: url2,
 	 	copyright: "NYC Taxi Data",
