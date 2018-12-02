@@ -16,6 +16,7 @@
       "esri/views/MapView",
       "esri/widgets/Legend",
       "esri/widgets/Home",
+      "esri/widgets/Print",
       "esri/widgets/Fullscreen",
       "esri/tasks/support/Query",
       "esri/layers/support/Field"
@@ -23,7 +24,7 @@
       Map,
       FeatureLayer,
       MapView,
-      Legend, Home, Fullscreen
+      Legend, Home, Print, Fullscreen
     ) {  
     var layer = new FeatureLayer({
         url: "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/MAPPLUTO/FeatureServer/0",
@@ -153,7 +154,7 @@
           for (var i = 0; i < data.length; i++) {
             //console.log(data[i][1]);
             //console.log(data[i][2]);
-            console.log(typeof parseInt(data[i][1]));
+            //console.log(typeof parseInt(data[i][1]));
             censusDict[[parseInt(data[i][1]), parseInt(data[i][2])]] = parseInt(data[i][3]);
           }
         },'json').fail(function(xhr, status, error) {
@@ -191,7 +192,7 @@
           var editFeature = response.features[i];
           var block = editFeature.attributes["Block"];
           var lot = editFeature.attributes["Lot"];
-          console.log(typeof block);
+          //console.log(typeof block);
           if ([block, lot] in censusDict) {
             editFeature.attributes["Dynamic"] = censusDict[[block, lot]];
           } else {
@@ -221,20 +222,20 @@
     function changeDynamicFeatures(query, dynamic, set) {
       newLayer.queryFeatures(query).then(function(response) {
         var editFeatures = [];
-        console.log("Found " + response.features.length);
+        //console.log("Found " + response.features.length);
         if (response.features.length == 0) {
           return;
         }
         for (var i=0; i<response.features.length; i++) {
           var editFeature = response.features[i];
-          console.log(editFeature.attributes["Dynamic"]);
+          //console.log(editFeature.attributes["Dynamic"]);
           //editFeature.attributes["YearBuilt"] = 1950;
           if (set == 0) {
             editFeature.attributes["Dynamic"] = editFeature.attributes["Dynamic"] + dynamic;
           } else {
             editFeature.attributes["Dynamic"] = dynamic;
           }
-          console.log(editFeature.attributes["Dynamic"]);
+          //console.log(editFeature.attributes["Dynamic"]);
           editFeatures.push(editFeature);
         }
         var edits = {
@@ -271,7 +272,6 @@
           for (var i = 0; i < data.length; i++) {
             var query = newLayer.createQuery();
             var queryString = "Borough = 'MN' and Block = " + data[i][1] + " and Lot = " + data[i][2];
-            console.log(queryString);
             query.where = queryString;
             query.outFields = ["*"];
             changeDynamicFeatures(query, -1, 0);
@@ -288,12 +288,9 @@
       $.get("http://localhost:8001/taxiData/taxiDestinationData",{
         },
         function(data,status){
-          console.log(status);
-          console.log(data);
           for (var i = 0; i < data.length; i++) {
             var query = newLayer.createQuery();
             var queryString = "Borough = 'MN' and Block = " + data[i][1] + " and Lot = " + data[i][2];
-            console.log(queryString);
             query.where = queryString;
             query.outFields = ["*"];
             changeDynamicFeatures(query, 1, 0);
@@ -310,6 +307,7 @@
     var sliderValue = document.getElementById("sliderValue");
     var playButton = document.getElementById("playButton");
     var titleDiv = document.getElementById("titleDiv");
+    var reroute = document.getElementById("extraDiv");
     var animation = null;
 
     var view = new MapView({
@@ -320,12 +318,18 @@
     });
     view.ui.empty("top-left");
     view.ui.add(titleDiv, "top-left");
+    view.ui.add(reroute, "top-left");
     view.ui.add(new Home({
       view: view
     }), "top-left");
+    // view.ui.add(new Print({
+    //   view: view
+    // }), "top-left");
     view.ui.add(new Legend({
       view: view
     }), "bottom-left");
+    
+
     view.ui.add(new Fullscreen({
       view: view,
       element: applicationDiv
@@ -429,21 +433,21 @@
               title: "Dynamic Population"
             },
             stops: [{
-              value: 25,
+              value: 3125,
               color: "#f9f871",
-              label: "25"
+              label: "3125"
             },{
-              value: 20,
+              value: 625,
               color: "#ffc070",
-              label: "20"
+              label: "625"
             },{
-              value: 15,
+              value: 125,
               color: "#ed9481",
-              label: "15"
+              label: "125"
             }, {
-              value: 10,
+              value: 25,
               color: "#b67887",
-              label: "10"
+              label: "25"
             }, {
               value: 5,
               color: "#786374",
@@ -597,6 +601,26 @@
       padding: 10px;
     }
 
+    input.button-add {
+      background-image: url('ICSL_Logo.png');
+      background-color: #D6FFF6;
+      background-repeat: no-repeat;
+      height: 34px;
+      width: 34px;
+      vertical-align: middle;
+      cursor:pointer;
+      border: 10px;
+      border-color: #D6FFF6;
+    }
+
+    #extraDiv {
+      font-weight: 400;
+      font-style: normal;
+      font-size: 1.2019rem;
+      padding: 10px;
+      background-color: #D6FFF6;
+    }
+
     #sliderContainer {
       flex: 0 0 80px;
       order: 2;
@@ -706,9 +730,12 @@
 </head>
 
 <body>
-  <div id="applicationDiv">
+  <div id="applicationDiv" style="background-color: #333333">
     <div id="viewDiv">
-      <div id="titleDiv" class="esri-widget">Foursquare Checkins in New York</div>
+      <div id="titleDiv" class="esri-widget">Dynamic Population in New York</div>
+      <div id="extraDiv" class="esri-widget">
+        <input type="button" class="button-add" onclick="location.href='index.html';"/>
+      </div>
     </div>
   </div>
 </body>
