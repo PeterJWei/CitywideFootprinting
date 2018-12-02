@@ -6,7 +6,7 @@ require([
   "esri/widgets/Home",
   "esri/layers/support/Field"
 ], function(Map, CSVLayer, MapView, Legend, Home, Field) {
-	var url = "http://icsl.columbia.edu:8001/static/startLocations.csv";
+	var url = "http://icsl.ee.columbia.edu:8001/static/startLocations.csv";
 	var csvLayer = new CSVLayer({
 	 	url: url,
 	 	copyright: "NYC Taxi Data",

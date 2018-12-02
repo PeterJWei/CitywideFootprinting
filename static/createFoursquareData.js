@@ -6,7 +6,7 @@ require([
   "esri/widgets/Home",
   "esri/layers/support/Field"
 ], function(Map, CSVLayer, MapView, Legend, Home, Field) {
-	var url3 = "http://icsl.columbia.edu:8001/static/venueLocations.csv";
+	var url3 = "http://icsl.ee.columbia.edu:8001/static/venueLocations.csv";
 	var csvLayer3 = new CSVLayer({
 	 	url: url3,
 	 	copyright: "Foursquare Data",
