@@ -64,7 +64,7 @@ class reverseGeocode:
 					dataLon = float(row[1])
 					hour = row[2]
 					minute = row[3]
-					m = 1000
+					m = .05
 					bestBBL = None
 					for coord in self.buildingCoordinates:
 						(lon, lat) = coord
@@ -89,7 +89,7 @@ class reverseGeocode:
 
 R = reverseGeocode()
 R.parseBuildingCSV("../datasets/PLUTO_Manhattan.csv")
-R.parseDataCSV("../static/venueLocations.csv")
-R.saveCSV("BBLData.csv")
+R.parseDataCSV("../static/endLocations.csv")
+R.saveCSV("TaxiDestinationBBL.csv")
 
 

@@ -6,7 +6,7 @@ require([
   "esri/widgets/Home",
   "esri/layers/support/Field"
 ], function(Map, CSVLayer, MapView, Legend, Home, Field) {
-	var url = "http://localhost:8001/static/startLocations.csv";
+	var url = "http://icsl.ee.columbia.edu:8001/static/startLocations.csv";
 	var csvLayer = new CSVLayer({
 	 	url: url,
 	 	copyright: "NYC Taxi Data",
@@ -206,7 +206,7 @@ function createRenderer(year) {
         };
       }
 
-	var url2 = "http://localhost:8001/static/endLocations.csv";
+	var url2 = "http://icsl.ee.columbia.edu:8001/static/endLocations.csv";
 	var csvLayer2 = new CSVLayer({
 	 	url: url2,
 	 	copyright: "NYC Taxi Data",

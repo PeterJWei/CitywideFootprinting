@@ -35,7 +35,7 @@ class buildingData:
 		with open (PLUTOfile, 'rb') as csvfile:
 			reader = csv.reader(csvfile, delimiter=',')
 			i = True
-			for row in reader: 
+			for row in reader:
 				if i: #skip the first line
 					i = False
 					continue

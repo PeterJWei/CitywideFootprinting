@@ -87,9 +87,9 @@ class getStream:
 		self.stream = urllib2.urlopen(url)
 
 	def getImage(self):
-		total = T.total
-		boundingBoxes = T.boundingBoxes
-		prevImage = T.prevImage
+		total = T.total	#total number of bounding boxes
+		boundingBoxes = T.boundingBoxes #stored bounding box coordinates from last frame
+		prevImage = T.prevImage #stored image from previous frame
 		file = self.stream.read()
 		encoded_string = base64.b64encode(file)
 		arr = np.asarray(bytearray(file), dtype=np.uint8)
@@ -97,11 +97,11 @@ class getStream:
 
 		#filter out background
 		img2 = img.copy()
-		img2 = self.filter(img2)
+		img2 = self.filter(img2) #hacked solution to black out the non-essential parts of the image
 
-		sensitivity = 0.7
+		sensitivity = 0.7 #threshold to filter out detections
 
-		boxes, scores, classes, num = C.getClassification(img2)
+		boxes, scores, classes, num = C.getClassification(img2) #runs the image through ssd-mobilenet
 		limit = 0
 		for i in range(scores[0].shape[0]):
 			limit = i
@@ -111,7 +111,6 @@ class getStream:
 		nScores = scores[0][0:limit]
 		nClasses = classes[0][0:limit]
 
-		#Box colors
 
 		currentBoxes = []
 		for box1 in nBoxes:
@@ -121,18 +120,32 @@ class getStream:
 			y2 = min(239,int(round(box1[2]*240)))
 			print((x1, x2, y1, y2))
 			currentBoxes.append((x1, x2, y1, y2))
-
-		#do classification here
+		#currentBoxes now holds the coordinates of the bounding boxes for this frame
 		
-		self.corr = correlationClass(boundingBoxes, currentBoxes)
-		# for img1coords in boundingBoxes:
-		# 	(x1, x2, y1, y2) = img1coords
-		# 	img1 = img[y1:y2, x1:x2]
-		# 	for img2coords in currentBoxes:
-		# 		(x1, x2, y1, y2) = img2coords
-		# 		img2 = img[y1:y2, x1:x2]
-		tracked, new = self.corr.correlateBoxes(prevImage, img)
+		#TODO: Run the current bounding boxes through VGG
+		#EXAMPLE
+		for coord in currentBoxes:
+			(x1, x2, y1, y2) = coord
+			boundingBox = img[y1:y2, x1:x2, :]
+			#Determine whether this bounding box is a car or not by passing through VGG
 
+			#remove bounding box if below score threshold
+
+
+
+
+
+
+
+
+		#instantiates a correlation object with the boxes from the previous frame and this frame
+		self.corr = correlationClass(boundingBoxes, currentBoxes)
+		
+		#correlates the bounding boxes. method to be implemented in correlation.py.
+		#tracked and new each contain a list of indices for the bounding boxes in this frame,
+		#whether the car in the box is matched with a bounding box in the previous frame, or not.
+		tracked, new = self.corr.correlateBoxes(prevImage, img)
+		
 		for i in range(len(currentBoxes)):
 			(x1, x2, y1, y2) = currentBoxes[i]
 			if i in new:

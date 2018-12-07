@@ -6,11 +6,15 @@ import time
 import CarCounting.getDOTstream as D
 import graphBackend
 import staticData.foursquareCheckinData as FS
+import staticData.staticTaxiData as TD
+import staticData.staticCensusData as CD
 urls = (
 	#"/(.*)", 'Service',
 	"/realtime", dynamicPopulation.doPopulation,
 	"/camera", D.DOTstream,
 	"/foursquareData", FS.foursquareData,
+	"/taxiData", TD.taxiData,
+	"/censusData", CD.censusData,
 	"/graph", graphBackend.G,
 	"/", "baseURL"
 	)
