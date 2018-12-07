@@ -10,7 +10,7 @@ class correlationClass:
 	def __init__(self, previousBoxes, currentBoxes):
 		self.previousBoxes = previousBoxes
 		self.currentBoxes = currentBoxes
-		self.threshold = 0.9
+		self.threshold = 0.7
 		self.numCorrelations = 0
 		return
 
@@ -20,49 +20,50 @@ class correlationClass:
 		correlations = []
 		correlationIndices = []
 
-		#maxCorrelation = [0] * len(self.currentBoxes)
 		for j in range(len(self.previousBoxes)):
 			img1coords = self.previousBoxes[j]
 			if prevImage is None:
 				return ([], range(len(self.currentBoxes)))
 			(x1, x2, y1, y2) = img1coords
-			img1 = prevImage[y1:y2, x1:x2]
+			img1 = prevImage[y1:y2, x1:x2, :]
 			for i in range(len(self.currentBoxes)):
 				img2coords = self.currentBoxes[i]
 				(x1, x2, y1, y2) = img2coords
-				img2 = image[y1:y2, x1:x2]
+				img2 = image[y1:y2, x1:x2, :]
 				c = self.correlate(img1, img2)
 				correlations.append(c)
 				correlationIndices.append((j, i))
+		#Double for loop to correlate each pair of bounding boxes O(n*m)
 
 		correlations, correlationIndices = zip(*sorted(zip(correlations, correlationIndices), reverse=True))
 		correlations = list(correlations)
 		correlationIndices = list(correlationIndices)
+		#sort the scores, along with the box indices O(n*m*log(n*m))
 
 		maxCorrelation = [None] * len(self.currentBoxes)
 		counted = [False] * len(self.previousBoxes)
-		for i in range(len(correlations)):
+		for i in range(len(correlations)): #worst case: O(n*m)
 			score = correlations[i]
-			if score < self.threshold:
+			if score < self.threshold: #keep looking at scores until we reach the confidence threshold
 				break
 			(prev, curr) = correlationIndices[i]
-			if counted[prev]:
-				continue
+			if counted[prev]: #if the bounding box in the previous frame (prev) was already matched
+				continue #then prev was already matched with a higher score
 			else:
 				maxCorrelation[curr] = prev
 				counted[prev] = True
-
 		tracked = []
 		new = []
-		for i in range(len(maxCorrelation)):
+		for i in range(len(maxCorrelation)): #worst case O(n*m)
 			if maxCorrelation[i] is None:
 				new.append(i)
 			else:
 				tracked.append(i)
-
 		return (tracked, new)
 
 	def correlate(self, img1, img2):
+		#return a correlation score between img1 and img2. The higher the better!
+
 		self.numCorrelations += 1
 		# a = imread(img1)
 		# b = imread(img2)
