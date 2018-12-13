@@ -34,7 +34,7 @@ class stream:
 			URL = data["URL"]
 			print("found in data")
 		else:
-			URL='http://207.251.86.238/cctv797.jpg?math=0.15975369761797253'
+			URL='http://207.251.86.238/cctv797.jpg?math=0.658582090996567'
 		print("Getting stream from " + URL + "...")
 		self.G = getStream(URL)
 		return self.G.getImage()
