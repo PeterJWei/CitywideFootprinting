@@ -5,7 +5,10 @@ from compute_hog import hog_from_path
 from scipy.stats import wasserstein_distance
 from scipy.ndimage import imread
 from histogram import calc_similar_by_path
+from VGG.VGG_feature_extract import feature_extract
+from scipy.spatial.distance import correlation
 import os
+
 class correlationClass:
 	def __init__(self, previousBoxes, currentBoxes):
 		self.previousBoxes = previousBoxes
@@ -20,17 +23,21 @@ class correlationClass:
 		correlations = []
 		correlationIndices = []
 
+		previousBoxesFeature = feature_extract(self.previousBoxes)
+		currentBoxesFeature = feature_extract(self.currentBoxes)
+
+
 		for j in range(len(self.previousBoxes)):
-			img1coords = self.previousBoxes[j]
+			# img1coords = self.previousBoxes[j]
 			if prevImage is None:
 				return ([], range(len(self.currentBoxes)))
-			(x1, x2, y1, y2) = img1coords
-			img1 = prevImage[y1:y2, x1:x2, :]
+			# (x1, x2, y1, y2) = img1coords
+			# img1 = prevImage[y1:y2, x1:x2, :]
 			for i in range(len(self.currentBoxes)):
-				img2coords = self.currentBoxes[i]
-				(x1, x2, y1, y2) = img2coords
-				img2 = image[y1:y2, x1:x2, :]
-				c = self.correlate(img1, img2)
+				# img2coords = self.currentBoxes[i]
+				# (x1, x2, y1, y2) = img2coords
+				# img2 = image[y1:y2, x1:x2, :]
+				c = self.correlate(previousBoxesFeature[i], currentBoxesFeature[j])
 				correlations.append(c)
 				correlationIndices.append((j, i))
 		#Double for loop to correlate each pair of bounding boxes O(n*m)
@@ -61,10 +68,14 @@ class correlationClass:
 				tracked.append(i)
 		return (tracked, new)
 
-	def correlate(self, img1, img2):
+	def correlate(self, preFeature, curFeature):
 		#return a correlation score between img1 and img2. The higher the better!
 
-		self.numCorrelations += 1
+		#Feature for VGG
+		return 1-correlation(preFeature,curFeature)
+
+		#self.numCorrelations += 1
+
 		# a = imread(img1)
 		# b = imread(img2)
 		# a_hist = get_histogram(a)
@@ -74,7 +85,7 @@ class correlationClass:
 		#HOG_2 = hog_from_path(img2)
 		#emd_score = emd_samples(HOG_1,HOG_2)
 		#score = calc_similar_by_path(img1, img2)
-		return random.uniform(0, 1)#emd_score, str(score*100)+"%"
+		#return random.uniform(0, 1)#emd_score, str(score*100)+"%"
 
 
 if __name__ == "__main__":
