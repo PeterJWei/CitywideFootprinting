@@ -56,7 +56,7 @@ def VGG16(include_top=True, weights='imagenet',
     # Create model.
     model = Model(inputs, x, name='vgg16')
 
-    weights_path = 'vgg16_weights_tf_dim_ordering_tf_kernels_notop.h5'
+    weights_path = '/home/icsl/CitywideFootprinting/CarCounting/utility/VGG/vgg16_weights_tf_dim_ordering_tf_kernels_notop.h5'
     model.load_weights(weights_path,by_name=True)
     
     return model
