@@ -67,11 +67,11 @@ model = VGG16()
 
 # Input is the list of bounding boxes
 def feature_extract(img_array_list):
-	feature_list = []
-	for img in img_array_list:
-		img = np.expand_dims(img, axis=0)
-		out = model.predict(img).flatten()
-		feature_list.append(out)
+    feature_list = []
+    for img in img_array_list:
+        img = np.expand_dims(img, axis=0)
+        out = model.predict(img).flatten()
+        feature_list.append(out)
 
     return feature_list
 
