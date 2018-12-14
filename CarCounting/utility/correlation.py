@@ -31,21 +31,19 @@ class correlationClass:
 		for i in range(len(self.previousBoxes)):
 			img1coords = self.previousBoxes[i]
 			(x1, x2, y1, y2) = img1coords
-			#img1 = prevImage[y1:y2, x1:x2, :]
-			img1 = prevImage.crop((x1, x2, y1, y2))
+			img1 = prevImage[y1:y2, x1:x2, :]
+			#img1 = prevImage.crop((x1, x2, y1, y2))
 
 			im1 = cv2.resize(img1,(48,48)).astype(np.float32)/255.
-			im1 = np.expand_dims(im1, axis = 0)
 			previousImgBoxes.append(im1)
 
 		for i in range(len(self.currentBoxes)):
 			img2coords = self.currentBoxes[i]
 			(x1, x2, y1, y2) = img2coords
-			#img2 = image[y1:y2, x1:x2, :]
-			img2 = image.crop((x1, x2, y1, y2))
+			img2 = image[y1:y2, x1:x2, :]
+			#img2 = image.crop((x1, x2, y1, y2))
 
 			im2 = cv2.resize(img2, (48, 48)).astype(np.float32) / 255.
-			im2 = np.expand_dims(im2, axis=0)
 			currentImgBoxes.append(im2)
 
 		previousBoxesFeature = feature_extract(previousImgBoxes)
