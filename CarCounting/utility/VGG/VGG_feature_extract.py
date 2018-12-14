@@ -61,9 +61,8 @@ def VGG16(include_top=True, weights='imagenet',
     
     return model
 
-K.clear_session()
 model = VGG16()
-
+model._make_predict_function()
 
 # Input is the list of bounding boxes
 def feature_extract(img_array_list):
