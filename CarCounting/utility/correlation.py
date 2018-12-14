@@ -8,6 +8,7 @@ from histogram import calc_similar_by_path
 from VGG.VGG_feature_extract import feature_extract
 from scipy.spatial.distance import correlation
 import os
+import cv2
 
 class correlationClass:
 	def __init__(self, previousBoxes, currentBoxes):
@@ -30,13 +31,17 @@ class correlationClass:
 			img1coords = self.previousBoxes[i]
 			(x1, x2, y1, y2) = img1coords
 			img1 = prevImage[y1:y2, x1:x2, :]
-			previousImgBoxes.append(img1)
+			im1 = cv2.resize(img1,(48,48)).astype(np.float32)/255.
+			im1 = np.expand_dims(im1, axis = 0)
+			previousImgBoxes.append(im1)
 
 		for i in range(len(self.currentBoxes)):
 			img2coords = self.currentBoxes[i]
 			(x1, x2, y1, y2) = img2coords
 			img2 = image[y1:y2, x1:x2, :]
-			currentImgBoxes.append(img2)
+			im2 = cv2.resize(img2, (48, 48)).astype(np.float32) / 255.
+			im2 = np.expand_dims(im2, axis=0)
+			currentImgBoxes.append(im2)
 
 		previousBoxesFeature = feature_extract(previousImgBoxes)
 		currentBoxesFeature = feature_extract(currentImgBoxes)
