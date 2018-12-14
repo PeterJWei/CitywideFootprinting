@@ -61,7 +61,7 @@ def VGG16(include_top=True, weights='imagenet',
     
     return model
 
-
+K.clear_session()
 model = VGG16()
 
 
