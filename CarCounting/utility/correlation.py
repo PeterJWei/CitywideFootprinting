@@ -23,20 +23,36 @@ class correlationClass:
 		correlations = []
 		correlationIndices = []
 
-		previousBoxesFeature = feature_extract(self.previousBoxes)
-		currentBoxesFeature = feature_extract(self.currentBoxes)
+		previousImgBoxes = []
+		currentImgBoxes = []
+
+		for i in range(len(self.previousBoxes)):
+			img1coords = self.previousBoxes[i]
+			(x1, x2, y1, y2) = img1coords
+			img1 = prevImage[y1:y2, x1:x2, :]
+			previousImgBoxes.append(img1)
+
+		for i in range(len(self.currentBoxes)):
+			img2coords = self.currentBoxes[i]
+			(x1, x2, y1, y2) = img2coords
+			img2 = image[y1:y2, x1:x2, :]
+			currentImgBoxes.append(img2)
+
+		previousBoxesFeature = feature_extract(previousImgBoxes)
+		currentBoxesFeature = feature_extract(currentImgBoxes)
 
 
-		for j in range(len(self.previousBoxes)):
+		for j in range(len(previousBoxesFeature)):
 			# img1coords = self.previousBoxes[j]
 			if prevImage is None:
 				return ([], range(len(self.currentBoxes)))
 			# (x1, x2, y1, y2) = img1coords
 			# img1 = prevImage[y1:y2, x1:x2, :]
-			for i in range(len(self.currentBoxes)):
+			for i in range(len(currentBoxesFeature)):
 				# img2coords = self.currentBoxes[i]
 				# (x1, x2, y1, y2) = img2coords
 				# img2 = image[y1:y2, x1:x2, :]
+
 				c = self.correlate(previousBoxesFeature[i], currentBoxesFeature[j])
 				correlations.append(c)
 				correlationIndices.append((j, i))
