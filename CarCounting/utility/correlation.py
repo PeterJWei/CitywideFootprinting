@@ -34,7 +34,7 @@ class correlationClass:
 			img1 = prevImage[y1:y2, x1:x2, :]
 			img = Image.fromarray(img1, 'RGB')
 
-			im1 = cv2.resize(img,(48,48)).astype(np.float32)/255.
+			im1 = cv2.resize(cv2.imread(img),(48,48)).astype(np.float32)/255.
 			im1 = np.expand_dims(im1, axis = 0)
 			previousImgBoxes.append(im1)
 
@@ -44,7 +44,7 @@ class correlationClass:
 			img2 = image[y1:y2, x1:x2, :]
 			img = Image.fromarray(img2, 'RGB')
 
-			im2 = cv2.resize(img, (48, 48)).astype(np.float32) / 255.
+			im2 = cv2.resize(cv2.imread(img), (48, 48)).astype(np.float32) / 255.
 			im2 = np.expand_dims(im2, axis=0)
 			currentImgBoxes.append(im2)
 
