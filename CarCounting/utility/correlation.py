@@ -61,7 +61,7 @@ class correlationClass:
 				# (x1, x2, y1, y2) = img2coords
 				# img2 = image[y1:y2, x1:x2, :]
 
-				c = self.correlate(previousBoxesFeature[i], currentBoxesFeature[j])
+				c = self.correlate(previousBoxesFeature[j], currentBoxesFeature[i])
 				correlations.append(c)
 				correlationIndices.append((j, i))
 		#Double for loop to correlate each pair of bounding boxes O(n*m)
