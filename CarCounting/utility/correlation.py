@@ -17,6 +17,7 @@ class correlationClass:
 		self.currentBoxes = currentBoxes
 		self.threshold = 0.4
 		self.numCorrelations = 0
+		self.delta = 20
 		return
 
 	def correlateBoxes(self, prevImage, image):
@@ -51,18 +52,20 @@ class correlationClass:
 
 
 		for j in range(len(previousBoxesFeature)):
-			# img1coords = self.previousBoxes[j]
+			img1coords = self.previousBoxes[j]
 			if prevImage is None:
 				return ([], range(len(self.currentBoxes)))
-			# (x1, x2, y1, y2) = img1coords
+			(x1, x2, y1, y2) = img1coords
 			# img1 = prevImage[y1:y2, x1:x2, :]
 			for i in range(len(currentBoxesFeature)):
-				# img2coords = self.currentBoxes[i]
-				# (x1, x2, y1, y2) = img2coords
+				img2coords = self.currentBoxes[i]
+				(x3, x4, y3, y4) = img2coords
 				# img2 = image[y1:y2, x1:x2, :]
-
-				c = self.correlate(previousBoxesFeature[j], currentBoxesFeature[i])
-				correlations.append(c)
+				if x3 >= (x1 - self.delta) and y3 >= (y1 - self.delta):
+					c = self.correlate(previousBoxesFeature[j], currentBoxesFeature[i])
+					correlations.append(c)
+				else:
+					correlations.append(0)
 				correlationIndices.append((j, i))
 		#Double for loop to correlate each pair of bounding boxes O(n*m)
 
@@ -110,6 +113,12 @@ class correlationClass:
 		#emd_score = emd_samples(HOG_1,HOG_2)
 		#score = calc_similar_by_path(img1, img2)
 		#return random.uniform(0, 1)#emd_score, str(score*100)+"%"
+	# def isComparable(self, preBox, curBox):
+    #
+	# 	if preBox[0] >= curBox[0] and preBox[2] >= curBox[2]:
+	# 		return True
+    #
+	# 	return False
 
 
 if __name__ == "__main__":
