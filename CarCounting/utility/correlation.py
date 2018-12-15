@@ -15,7 +15,7 @@ class correlationClass:
 	def __init__(self, previousBoxes, currentBoxes):
 		self.previousBoxes = previousBoxes
 		self.currentBoxes = currentBoxes
-		self.threshold = 0.5
+		self.threshold = 0.4
 		self.numCorrelations = 0
 		return
 
