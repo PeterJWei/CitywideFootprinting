@@ -176,9 +176,9 @@ class getStream:
 
 	def filter(self, img, regions=None):
 		if regions is None:
-			img[0:146, 0:135, 0] = 0
-			img[0:146, 0:135, 1] = 0
-			img[0:146, 0:135, 2] = 0
+			img[:, 0:135, 0] = 0
+			img[:, 0:135, 1] = 0
+			img[:, 0:135, 2] = 0
 			for i in range(141):
 				for j in range(84,352):
 					if (i*148.0/78 + 84 < j):
