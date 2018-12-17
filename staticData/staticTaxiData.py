@@ -39,6 +39,8 @@ class dataClass:
 					data[index].append([borough, block, lot])
 		return data
 
+	
+
 	def taxiPickups(self, hour, minute):
 		index = int(hour) * 60 + int(minute)
 		return self.taxiOriginData[index]

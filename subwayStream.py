@@ -68,15 +68,22 @@ class subwayStream:
 						  256:("51", "7"), #7
 						}
 		for i in range(9):
-			feedInfo = feedDictionary[lines & (0x1 << i)]
+			arrIndex = lines & (0x1 << i)
+			if arrIndex not in [1, 2, 4, 8, 16, 32, 64, 128, 256]:
+				continue
+			feedInfo = feedDictionary[arrIndex]
 			print("Accessing subway stream for feed " + feedInfo[1])
 			feedID = feedInfo[0]
 
 			feed = gtfs_realtime_pb2.FeedMessage()
 			url = 'http://datamine.mta.info/mta_esi.php?key=' + self.KEY2 + '&feed_id=' + feedID
 			response = urllib.urlopen(url)
-			feed.ParseFromString(response.read())
-
+			try:	
+				feed.ParseFromString(response.read())
+			except:
+				print(response.read())
+				print("Decode Error!")
+				continue
 
 			timestamp = feed.header.timestamp
 			#print("Timestamp: " + str(timestamp))

@@ -1,16 +1,19 @@
 import csv
-from googlegeocoder import GoogleGeocoder
+#from googlegeocoder import GoogleGeocoder
 from pyproj import Proj, transform
 import geopy.distance
 import sys
 import math
-
+import pickle
+sys.path.append('..')
+from Remote2StopID import remoteDictionary
 class reverseGeocode:
 	def __init__(self):
 		self.inProj = Proj(init='epsg:2263', preserve_units=True)
 		self.outProj = Proj(init='epsg:4326')
 		self.buildingCoordinates = {}
 		self.geocoding = []
+		self.stationDictionary = {}
 
 	def parseBuildingCSV(self, file):
 		print("Parsing Building CSV...")
@@ -76,6 +79,26 @@ class reverseGeocode:
 						self.geocoding.append((bestBBL[0], bestBBL[1], bestBBL[2], hour, minute))
 		print("Checkpoint 2: " + str(len(self.geocoding)) + " data written")
 
+	def constructStationBuildings(self, stationCoordinates, name):
+		i = 0
+		for station in stationCoordinates:
+			i+=1
+			print("Constructing building library for station " + station + " " + str(i) + "/" + str(len(stationCoordinates)))
+			coords2 = stationCoordinates[station]
+			if station not in self.stationDictionary:
+				self.stationDictionary[station] = []
+			for coords1 in self.buildingCoordinates:
+				(borough, block, lot) = self.buildingCoordinates[coords1]
+				lon, lat = coords1
+				coords1_rev = (lat, lon)
+				d = geopy.distance.vincenty(coords1_rev, coords2).miles
+				#print(d)
+				if d < 0.1:
+					self.stationDictionary[station].append((borough, block, lot, d))
+			print("Added " + str(len(self.stationDictionary[station])) + " buildings")
+		self.save_obj(self.stationDictionary, name)
+		print("Pickle Saved " + name + '.pkl')
+
 	def saveCSV(self, fileName):
 		print("Saving Data...")
 		with open(fileName, 'wb') as csvfile:
@@ -86,10 +109,20 @@ class reverseGeocode:
 				csvwriter.writerow([datum[0], datum[1], datum[2], datum[3], datum[4]])
 				i += 1
 
+	def save_obj(self, obj, name):
+		with open('obj/'+ name + '.pkl', 'wb') as f:
+			pickle.dump(obj, f, pickle.HIGHEST_PROTOCOL)
+
+	def load_obj(self, name):
+		with open('obj/' + name + '.pkl', 'rb') as f:
+			return pickle.load(f)
 
 R = reverseGeocode()
 R.parseBuildingCSV("../datasets/PLUTO_Manhattan.csv")
-R.parseDataCSV("../static/endLocations.csv")
-R.saveCSV("TaxiDestinationBBL.csv")
+S = remoteDictionary()
+R.constructStationBuildings(S.coordinates, "station2buildings")
+# R.parseDataCSV("../static/endLocations.csv")
+# R.saveCSV("TaxiDestinationBBL.csv")
+
 
 

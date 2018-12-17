@@ -260,7 +260,27 @@
       layers: [newLayer]
     });
 
-
+    setInterval(function() {
+      console.log("changing features...")
+      $.get("http://icsl.ee.columbia.edu:8001/subway/subwayData",{
+        },
+        function(data,status){
+          console.log(status);
+          console.log(data);
+          for (var i = 0; i < data.length; i++) {
+            var query = newLayer.createQuery();
+            var queryString = "Borough = 'MN' and Block = " + data[i][1] + " and Lot = " + data[i][2];
+            var popChange = data[i][3];
+            query.where = queryString;
+            query.outFields = ["*"];
+            changeDynamicFeatures(query, popChange, 0);
+          }
+        },'json').fail(function(xhr, status, error) {
+          var err = eval("(" + xhr.responseText + ")");
+          alert(err.Message);
+      });
+      setRenderer();
+    }, 60 * 1000);
 
     setInterval(function() {
       console.log("changing features...")
