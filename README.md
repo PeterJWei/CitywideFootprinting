@@ -2,6 +2,7 @@
 This is the project repository for the city-wide energy footprinting project from the Intelligent and Connected Systems Laboratory at Columbia University. For any questions, contact Peter Wei at pw2428@columbia.edu or Professor Xiaofan Jiang at xj2179@columbia.edu.
 
 We will soon setup a website for this project. Stay tuned!
+Until then, if you want to learn how to run it, you can read the documentation (Documentation_Updated.pdf)
 
 ## Project Publications
 If you want to learn more about this project, you can read our publications in:  
@@ -16,6 +17,8 @@ sudo nohup ./python_app restart > /dev/null
 ~~~~
 
 Once the server has started, go to localhost:8000/static/index.html to see the webpage. Click display camera to see the feed.
+
+
 
 ## License
 MIT License

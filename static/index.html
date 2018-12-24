@@ -1,12 +1,36 @@
 <html>
+
+
 <script src="https://d3js.org/d3.v3.min.js"></script>
+<script src="libraries/cytoscape.js" type="text/javascript"></script>
 <script type="text/javascript" src="http://mpld3.github.io/js/mpld3.v0.2.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
 <header><title>Dynamic Occupancy</title></header>
 <head>
-	<style>
+<link rel="stylesheet" type="text/css" href="tabs.css">
+<link rel="stylesheet" type="text/css" href="slider.css">
+<link rel="stylesheet" href="https://js.arcgis.com/4.9/esri/themes/dark/main.css">
+<script src="https://js.arcgis.com/4.9/"></script>
+<style>
 * {
     box-sizing: border-box;
+}
+html, body {
+	height:100%;
+	margin: 0;
+}
+#wrapper {
+            min-height: 100%; 
+        }
+.container {
+    height: 90vh;
+    width:100%;
+    overflow: auto;
+}
+.page {
+	width:100%;
+	height:100%;
 }
 
 .column {
@@ -14,54 +38,232 @@
     width: 33.33%;
     padding: 5px;
 }
-
+.mapColumn {
+  float: left;
+  width: 48%;
+  margin: 1%;
+}
 /* Clearfix (clear floats) */
 .row::after {
     content: "";
     clear: both;
     display: table;
 }
+body {
+  font-family: helvetica;
+  font-size: 14px;
+}
+
+a:link {
+	text-decoration: none
+}
+
+a:hover {
+	text-decoration: underline;
+	text-decoration-color: rgba(21, 57, 96, 1.0);
+	-webkit-text-decoration-color: rgba(21, 57, 96, 1.0);
+}
+#cy {
+  width: 1000px;
+  height: 500px;
+  display: block;
+  background: #000;
+  /*position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 999;*/
+}
+
+h1 {
+  opacity: 0.5;
+  font-size: 1em;
+}
+
+
 </style>
+
 </head>
+
 <body>
+	<div class="tab">
+		<button class="tablinks" onclick="tabEvents(event, 'FrontPage')" id="defaultOpen">ICSL Population</button>
+		<!-- <button class="tablinks" onclick="tabEvents(event, 'CityMap')">City Map</button> -->
+	<button class="tablinks" onclick="tabEvents(event, 'TaxiData')">Taxi Data</button>
+	<button class="tablinks" onclick="tabEvents(event, 'Foursquare')">Foursquare Data</button>
+  <button class="tablinks" onclick="tabEvents(event, 'TensorFlow')">TensorFlow</button>
+  <button class="tablinks" onclick="location.href='NYCDynamicPopulation.html';">Dynamic Population</button>
+</div>
 
-<div id="fig"></div>
-<div id="img"></div>
-
-
-<button onclick="myFunction()">Load Graph</button>
-<button id="cameraButton" value="OFF">Display Camera</button>
-<button id="testCamera">Test Image</button>
-
-
-<h3>Real-Time Web Feed</h3>
-<img id="base64img" src="automobile.png" alt="automobile.png" width="352" height="240" border="1">
-<h3>Test Image</h3>
-<div class="row">
-	<div class="column">
-		<img id="baseImg" src="pic0.jpg" alt="pic0.jpg" width="352" height="240" border="1">
-	</div>
-	<div class="column">
-		<img id="testimg" src="pic0.jpg" alt="pic0.jpg" width="352" height="240" border="1">
+<!-- Tab content -->
+<div id="FrontPage" class="tabcontent" style="background-image: url(LandingPage.png); padding: 0; border: 0; background-size:100% auto;background-color: rgba(0,0,0,0.9); background-repeat: no-repeat; height:-webkit-calc(100% - 49px); height:calc(100% - 49px);display: none;">
+<!-- 	<h1>ICSL Dynamics</h1> -->
+	<div style="height:100%; width:100%; background-size:100% 100%; background-color: rgba(0,0,0,0.6);">
+		<div style="position: absolute; top: 30%; left: 50%; width:100%; height:400px; transform: translate(-50%, 0%); background-color:rgba(0,0,0,0.8); background-size:100% 100%;">
+			<h1 style="font-size: 40pt; font-family: 'Courier';text-align: center; position:relative; color:rgba(255,255,255,0.9); ">ICSL Citywide Population</h1>
+			<img src="ICSL_Logo_old.png" style="max-height:25%; height: auto; vertical-align: middle;display:block; margin-left: auto; margin-right:auto;">
+			<p style="font-size: 20pt; font-family: 'Courier'; text-align: center; position:relative; color:rgba(255,255,255,0.9);">Citywide Population Estimation Project Page from the <br><a href="http://icsl.ee.columbia.edu"><span style="color: rgba(176, 35, 24, 1.0);">Intelligent and Connected Systems Laboratory</span></a> at Columbia University.</p>
+		</div>
 	</div>
 </div>
+<div id="TaxiData" class="tabcontent">
+	<div style="height:100%; width:100%; background-size:100% 100%; background-color: rgba(0,0,0,0.8);">
+	<div class="page">
+		<div class="row">
+			<div class="mapColumn">
+				<div id="viewDiv1" style="background-color:#cccccc; width:100%; height:90%"></div>
+			</div>
+			<div class="mapColumn">
+				<div id="viewDiv2" style="background-color:#cccccc; width:100%; height:90%"></div>
+			</div>
+		</div>
+		<div id="sliderContainer" class="esri-widget">
+	      <span id="sliderValue"></span>
+	      <div id="sliderInnerContainer">
+	        <div id="sliderLabels">
+	          <span>0:00</span>
+	          <span>24:00</span>
+	        </div>
+	        <div id="rangeWrapper">
+	          <input id="slider" type="range" min="0" max="24" step="1" value="0" />
+	        </div>
+	      </div>
+	      <div id="playButton" class="esri-widget esri-widget--button toggle-button">
+	        <div>
+	          <span class="toggle-button-icon esri-icon-play" aria-label="play icon"></span>
+	          Play</div>
+	        <div>
+	          <span class="toggle-button-icon esri-icon-pause" aria-label="pause icon"></span>
+	          Pause</div>
+	      </div>
+	    </div>
+	</div>
+</div>
+</div>
+<div id="Foursquare" class="tabcontent">
+	<div style="height:100%; width:100%; background-size:100% 100%; background-color: rgba(0,0,0,0.8);">
+	<div class="page">
+		<div class="row">
+			<div class="mapColumn">
+				<div id="viewDiv3" style="background-color:#cccccc; width:100%; height:90%"></div>
+				<div id="sliderContainer3" class="esri-widget">
+			      <span id="sliderValue3"></span>
+				      <div id="sliderInnerContainer3">
+				        <div id="sliderLabels3">
+				          <span>0:00</span>
+				          <span>24:00</span>
+				        </div>
+				        <div id="rangeWrapper3">
+				          <input id="slider3" type="range" min="0" max="24" step="1" value="0" />
+				        </div>
+				      </div>
+				      <div id="playButton3" class="esri-widget esri-widget--button toggle-button">
+				        <div>
+				          <span class="toggle-button-icon esri-icon-play" aria-label="play icon"></span>
+				          Play</div>
+				        <div>
+				          <span class="toggle-button-icon esri-icon-pause" aria-label="pause icon"></span>
+				          Pause</div>
+				      </div>
+			    </div>
+			</div>
+		</div>
+	</div>
+</div>
+</div>
+<!-- <div id="CityMap" class="tabcontent">
+  <h3>City Graph</h3>
+  	<button id="updateGraph" value="OFF">Update Graph</button>
+	<div id="cy">
+	</div>
+</div> -->
+
+<div id="TensorFlow" style="background-image: none; background-color: #666666;" class="tabcontent">
+
+  	<button onclick="myFunction()">Load Graph</button>
+	<button id="cameraButton" value="OFF">Display Camera</button>
+	<button id="testCamera">Test Image</button>
+
+
+	<h3>Real-Time Web Feed</h3>
+	<button onclick="defaultCamera();">Default Camera</button>
+	<form id="form" onsubmit="return false;">
+		<input type="text" id="userInput" />
+    	<input type="submit" onclick="changeURL();" />
+    	<div id="URLvalue" value="http://207.251.86.238/cctv797.jpg?math=0.658582090996567"></div>
+	</form>
+	<div class="row">
+		<div class="column">
+			<img id="base64img" src="automobile.png" alt="automobile.png" width="352" height="240" border="1">
+		</div>
+		<div class="column">
+			<img id="base64img2" src="automobile.png" alt="automobile.png" width="352" height="240" border="1">
+		</div>
+	</div>
+	<h3>Test Images</h3>
+	<button id="toggleBackground">Show Background Subtract</button>
+	<div id="backgroundSubtract" class="row">
+		<div class="column">
+			<img id="base64imgSubtract" src="automobile.png" alt="automobile.png" width="352" height="240" border="1">
+		</div>
+	</div>
+	<button id="toggleTest">Show Test Images</button>
+	<div id="testImages" class="row">
+		<div class="column">
+			<img id="baseImg" src="pic0.jpg" alt="pic0.jpg" width="352" height="240" border="1">
+		</div>
+		<div class="column">
+			<img id="testimg" src="pic0.jpg" alt="pic0.jpg" width="352" height="240" border="1">
+		</div>
+	</div>
+</div>
+
+<script>
+$(document).ready(function(){
+    $("#toggleTest").click(function(){
+        $("#testImages").toggle();
+    });
+});
+$(document).ready(function(){
+    $("#toggleBackground").click(function(){
+        $("#backgroundSubtract").toggle();
+    });
+});
+function changeURL() {
+    var input = document.getElementById("userInput").value;
+    document.getElementById("URLvalue").value = input;
+    alert("Switching to new URL: " + input);
+}
+function defaultCamera() {
+	var defaultURL = "http://207.251.86.238/cctv797.jpg?math=0.3242905505088779";
+	document.getElementById("URLvalue").value = defaultURL;
+}
+</script>
+<script type="text/javascript" src="createTaxiMaps.js"></script>
+<script type="text/javascript" src="createFoursquareData.js"></script>
+<!-- <script type="text/javascript" src="createDynamicGraph.js"></script> -->
+<script type="text/javascript">
+	function getMethods(obj) {
+	  var result = [];
+	  for (var id in obj) {
+	    try {
+	      if (typeof(obj[id]) == "function") {
+	        result.push(id + ": " + obj[id].toString());
+	      }
+	    } catch (err) {
+	      result.push(id + ": inaccessible");
+	    }
+	  }
+	  return result;
+	}
+</script>
+
+
+
+
 <script>
 	function myFunction() {
 		return null;
-	}/*
-			var result = null;
-			$.get("/realtime/",{
-	    		},
-		    	function(data,status){
-		    	console.log(data,status);
-		    	var json = data;
-		    	var f = mpld3.draw_figure("fig", json);
-		    },'json').fail(function() {
-			    alert('Error!'); // or whatever			    
-			    //$btn.reset();
-			});
-
-		}*/
+	}
 </script>
 <script>
 	var $btn = document.getElementById("testCamera");
@@ -83,7 +285,7 @@
 <script>
 	var $btn = document.getElementById("cameraButton");
 	$btn.addEventListener("click", toggleButton);
-
+	document.getElementById("URLvalue").value = "http://207.251.86.238/cctv797.jpg?math=0.6513754353253693";
 	function toggleButton() {
 		console.log(document.getElementById("cameraButton").value);
 		if (document.getElementById("cameraButton").value=="ON") {
@@ -97,20 +299,54 @@
 
 	function showCamera() {
 		if (document.getElementById("cameraButton").value=="ON") {
+			document.getElementById("base64img2").src = document.getElementById("base64img").src;
+			var URL = document.getElementById("URLvalue").value;
+		    console.log(URL);
 			var result = null;
-			$.get("/camera/",{
+			$.get("/camera/",{"URL":URL
 				},
 				function(data,status){
 		    	//console.log(data,status);
-		    	var newSource = "data:image/jpg;base64," + data;
+		    	//var obj = JSON.parse(data);
+		    	var newSource = "data:image/jpg;base64," + data.im1;
 		    	document.getElementById("base64img").src = newSource;
-		    },'text').fail(function() {
-			    alert('Error!'); // or whatever			    
+		    	newSource = "data:image/jpg;base64," + data.im2;
+		    	document.getElementById("base64imgSubtract").src = newSource;
+		    },'json').fail(function() {
+			    alert('URL ' + URL + ' not found!'); // or whatever			    
 			    //document.getElementById("cameraButton").reset();
 			});
 		}
 	}
 	setInterval(showCamera, 1500);
+</script>
+<script src="code.js">
+</script>
+<script>
+function tabEvents(evt, cityName) {
+    // Declare all variables
+    var i, tabcontent, tablinks;
+
+    // Get all elements with class="tabcontent" and hide them
+    tabcontent = document.getElementsByClassName("tabcontent");
+    for (i = 0; i < tabcontent.length; i++) {
+        tabcontent[i].style.display = "none";
+    }
+
+    // Get all elements with class="tablinks" and remove the class "active"
+    tablinks = document.getElementsByClassName("tablinks");
+    for (i = 0; i < tablinks.length; i++) {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+    }
+
+    // Show the current tab, and add an "active" class to the button that opened the tab
+    document.getElementById(cityName).style.display = "block";
+    evt.currentTarget.className += " active";
+}
+</script>
+<script>
+// Get the element with id="defaultOpen" and click on it
+document.getElementById("defaultOpen").click();
 </script>
 </body>
 </html>
