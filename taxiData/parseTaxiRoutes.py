@@ -54,29 +54,30 @@ class loadTaxiRoutes:
 				#2013-01-01 15:11:48
 				P = line[pickup_time]
 				datetime_object = datetime.strptime(P, '%Y-%m-%d %H:%M:%S')
-				self.PickupTime.append(datetime_object.hour)
+				self.PickupTime.append((datetime_object.hour, datetime_object.minute))
 				D = line[dropoff_time]
 				datetime_object = datetime.strptime(D, '%Y-%m-%d %H:%M:%S')
-				self.DropoffTime.append(datetime_object.hour)
+				self.DropoffTime.append((datetime_object.hour, datetime_object.minute))
+
 			self.save_obj(self.D, fileName)
 
 	def saveRoutes(self):
 		file = "startLocations.csv"
 		with open(file, 'wb') as csvfile:
 			csvwriter = csv.writer(csvfile, delimiter=',')
-			csvwriter.writerow(["latitude", "longitude", "time"])
+			csvwriter.writerow(["latitude", "longitude", "hour", "minute"])
 			for i in range(len(self.StartLocations)):
 				row = self.StartLocations[i]
 				(lat, lon) = row
-				csvwriter.writerow([lat, lon, self.PickupTime[i]])
+				csvwriter.writerow([lat, lon, self.PickupTime[i][0], self.PickupTime[i][1]])
 		file = "endLocations.csv"
 		with open(file, 'wb') as csvfile:
 			csvwriter = csv.writer(csvfile, delimiter=',')
-			csvwriter.writerow(["latitude", "longitude", "time"])
+			csvwriter.writerow(["latitude", "longitude", "hour", "minute"])
 			for i in range(len(self.EndLocations)):
 				row = self.EndLocations[i]
 				(lat, lon) = row
-				csvwriter.writerow([lat, lon, self.DropoffTime[i]])
+				csvwriter.writerow([lat, lon, self.DropoffTime[i][0], self.DropoffTime[i][1]])
 
 	def save_obj(self, obj, name):
 		with open('pklObjects/'+ name + '.pkl', 'wb') as f:
@@ -88,3 +89,4 @@ class loadTaxiRoutes:
 
 L = loadTaxiRoutes()
 L.loadRoutes("output_1_1")
+L.saveRoutes()

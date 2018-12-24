@@ -6,14 +6,30 @@ import time
 import CarCounting.getDOTstream as D
 import graphBackend
 import staticData.foursquareCheckinData as FS
+import staticData.staticTaxiData as TD
+import staticData.staticCensusData as CD
+#from streamDaemon import streams
+import streamDaemon
+import dynamicData.subwayData as SD
+
+
+
+
+Stream = streamDaemon.S
+print("Assigned stream")
 urls = (
 	#"/(.*)", 'Service',
 	"/realtime", dynamicPopulation.doPopulation,
 	"/camera", D.DOTstream,
 	"/foursquareData", FS.foursquareData,
+	"/taxiData", TD.taxiData,
+	"/censusData", CD.censusData,
 	"/graph", graphBackend.G,
+	"/subway", SD.subwayData,
 	"/", "baseURL"
 	)
+
+
 
 #initialization = dynamicPopulation.showDynamicPopulation()
 #initialization.startup()
@@ -46,7 +62,7 @@ class MyApplication(web.application):
 
 
 	def runDynamicPopulation(self):
-		run1 = dynamicPopulation.showDynamicPopulation(1)
+		#run1 = dynamicPopulation.showDynamicPopulation(1)
 		while True:
 			print("\n\nRunning dynamic\n\n")
 			#run1.getBlocks2Occupancy(20)

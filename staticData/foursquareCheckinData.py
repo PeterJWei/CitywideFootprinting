@@ -2,7 +2,9 @@ import csv
 import web
 import json
 import datetime
-urls = ("/data", "FS",
+urls = ("/checkinData", "FScheckin",
+	#"/taxiOriginData", "FSorigin",
+	#"/taxiDestinationData", "FSdestination",
 	"/", "check")
 
 class check:
@@ -10,14 +12,15 @@ class check:
 		return "200 OK"
 class dataClass:
 	def __init__(self):
-		self.timeData = []
-		for i in range(60*60):
-			self.timeData.append([])
-		assert(len(self.timeData) == 60*60)
-		self.loadCheckinData("staticData/BBLData.csv")
-		print("\nFoursquare Data Class Initialized, \n" + str(len(self.timeData)))
+		self.timeData = self.loadTimeSeriesData("staticData/BBLData.csv")
+		#self.taxiOriginData = self.loadTimeSeriesData("staticData/TaxiOriginBBL.csv")
+		#self.taxiDestinationData = self.loadTimeSeriesData("staticData/TaxiDestinationBBL.csv")
+		print("\nData Class Initialized, \n" + str(len(self.timeData)))
 
-	def loadCheckinData(self, dataFile):
+	def loadTimeSeriesData(self, dataFile):
+		data = []
+		for i in range(60*60):
+			data.append([])
 		with open (dataFile, 'rb') as csvfile:
 			reader = csv.reader(csvfile, delimiter=',')
 			i = True
@@ -32,24 +35,47 @@ class dataClass:
 					hour = row[3]
 					minute = row[4]
 					index = int(hour) * 60 + int(minute)
-					self.timeData[index].append([borough, block, lot])
+					data[index].append([borough, block, lot])
+		return data
 
 	def buildingCheckins(self, hour, minute):
 		index = int(hour) * 60 + int(minute)
 		return self.timeData[index]
 
+	# def taxiPickups(self, hour, minute):
+	# 	index = int(hour) * 60 + int(minute)
+	# 	return self.taxiOriginData[index]
+
+	# def taxiDropoffs(self, hour, minute):
+	# 	index = int(hour) * 60 + int(minute)
+	# 	return self.taxiDestinationData[index]
+
 FSData = dataClass()
 
-class FS:
+def getTime():
+	web.header('Access-Control-Allow-Origin', '*')
+	web.header('Access-Control-Allow-Credentials', 'true')
+	now = datetime.datetime.now()
+	hour = now.hour
+	minute = now.minute
+	return (hour, minute)
+
+# class FSdestination:
+# 	def GET(self):
+# 		hour, minute = getTime()
+# 		BC = FSData.taxiPickups(hour, minute)
+# 		return json.dumps(BC)
+
+# class FSorigin:
+# 	def GET(self):
+# 		hour, minute = getTime()
+# 		BC = FSData.taxiPickups(hour, minute)
+# 		return json.dumps(BC)
+
+class FScheckin:
 	def GET(self):
-		web.header('Access-Control-Allow-Origin', '*')
-		web.header('Access-Control-Allow-Credentials', 'true')
-		now = datetime.datetime.now()
-		hour = now.hour
-		minute = now.minute
+		hour, minute = getTime()
 		BC = FSData.buildingCheckins(hour, minute)
-		j = json.dumps(BC)
-		print(j)
 		return json.dumps(BC)#"runDynamic(" + json.dumps(BC) + ");"
 
 foursquareData = web.application(urls, locals());

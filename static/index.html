@@ -30,7 +30,7 @@ html, body {
 }
 .page {
 	width:100%;
-	height:80%;
+	height:100%;
 }
 
 .column {
@@ -54,6 +54,15 @@ body {
   font-size: 14px;
 }
 
+a:link {
+	text-decoration: none
+}
+
+a:hover {
+	text-decoration: underline;
+	text-decoration-color: rgba(21, 57, 96, 1.0);
+	-webkit-text-decoration-color: rgba(21, 57, 96, 1.0);
+}
 #cy {
   width: 1000px;
   height: 500px;
@@ -69,21 +78,35 @@ h1 {
   opacity: 0.5;
   font-size: 1em;
 }
+
+
 </style>
 
 </head>
 
 <body>
 	<div class="tab">
-		<button class="tablinks" onclick="tabEvents(event, 'CityMap')" id="defaultOpen">City Map</button>
+		<button class="tablinks" onclick="tabEvents(event, 'FrontPage')" id="defaultOpen">ICSL Population</button>
+		<!-- <button class="tablinks" onclick="tabEvents(event, 'CityMap')">City Map</button> -->
 	<button class="tablinks" onclick="tabEvents(event, 'TaxiData')">Taxi Data</button>
 	<button class="tablinks" onclick="tabEvents(event, 'Foursquare')">Foursquare Data</button>
   <button class="tablinks" onclick="tabEvents(event, 'TensorFlow')">TensorFlow</button>
+  <button class="tablinks" onclick="location.href='NYCDynamicPopulation.html';">Dynamic Population</button>
 </div>
 
 <!-- Tab content -->
+<div id="FrontPage" class="tabcontent" style="background-image: url(LandingPage.png); padding: 0; border: 0; background-size:100% auto;background-color: rgba(0,0,0,0.9); background-repeat: no-repeat; height:-webkit-calc(100% - 49px); height:calc(100% - 49px);display: none;">
+<!-- 	<h1>ICSL Dynamics</h1> -->
+	<div style="height:100%; width:100%; background-size:100% 100%; background-color: rgba(0,0,0,0.6);">
+		<div style="position: absolute; top: 30%; left: 50%; width:100%; height:400px; transform: translate(-50%, 0%); background-color:rgba(0,0,0,0.8); background-size:100% 100%;">
+			<h1 style="font-size: 40pt; font-family: 'Courier';text-align: center; position:relative; color:rgba(255,255,255,0.9); ">ICSL Citywide Population</h1>
+			<img src="ICSL_Logo_old.png" style="max-height:25%; height: auto; vertical-align: middle;display:block; margin-left: auto; margin-right:auto;">
+			<p style="font-size: 20pt; font-family: 'Courier'; text-align: center; position:relative; color:rgba(255,255,255,0.9);">Citywide Population Estimation Project Page from the <br><a href="http://icsl.ee.columbia.edu"><span style="color: rgba(176, 35, 24, 1.0);">Intelligent and Connected Systems Laboratory</span></a> at Columbia University.</p>
+		</div>
+	</div>
+</div>
 <div id="TaxiData" class="tabcontent">
-	<h3>Taxi Data</h3>
+	<div style="height:100%; width:100%; background-size:100% 100%; background-color: rgba(0,0,0,0.8);">
 	<div class="page">
 		<div class="row">
 			<div class="mapColumn">
@@ -115,8 +138,9 @@ h1 {
 	    </div>
 	</div>
 </div>
+</div>
 <div id="Foursquare" class="tabcontent">
-	<h3>Foursquare Data</h3>
+	<div style="height:100%; width:100%; background-size:100% 100%; background-color: rgba(0,0,0,0.8);">
 	<div class="page">
 		<div class="row">
 			<div class="mapColumn">
@@ -145,15 +169,16 @@ h1 {
 		</div>
 	</div>
 </div>
-<div id="CityMap" class="tabcontent">
+</div>
+<!-- <div id="CityMap" class="tabcontent">
   <h3>City Graph</h3>
   	<button id="updateGraph" value="OFF">Update Graph</button>
 	<div id="cy">
 	</div>
-</div>
+</div> -->
 
-<div id="TensorFlow" class="tabcontent">
-  <h3>Traffic Flow</h3>
+<div id="TensorFlow" style="background-image: none; background-color: #666666;" class="tabcontent">
+
   	<button onclick="myFunction()">Load Graph</button>
 	<button id="cameraButton" value="OFF">Display Camera</button>
 	<button id="testCamera">Test Image</button>
@@ -164,7 +189,7 @@ h1 {
 	<form id="form" onsubmit="return false;">
 		<input type="text" id="userInput" />
     	<input type="submit" onclick="changeURL();" />
-    	<div id="URLvalue" value="http://207.251.86.238/cctv797.jpg?math=0.15975369761797253"></div>
+    	<div id="URLvalue" value="http://207.251.86.238/cctv797.jpg?math=0.658582090996567"></div>
 	</form>
 	<div class="row">
 		<div class="column">
@@ -178,7 +203,7 @@ h1 {
 	<button id="toggleBackground">Show Background Subtract</button>
 	<div id="backgroundSubtract" class="row">
 		<div class="column">
-			<img id="base64imgSubtract" src="automobile.jpg" alt="automobile.jpg" width="352" height="240" border="1">
+			<img id="base64imgSubtract" src="automobile.png" alt="automobile.png" width="352" height="240" border="1">
 		</div>
 	</div>
 	<button id="toggleTest">Show Test Images</button>
@@ -215,7 +240,7 @@ function defaultCamera() {
 </script>
 <script type="text/javascript" src="createTaxiMaps.js"></script>
 <script type="text/javascript" src="createFoursquareData.js"></script>
-
+<!-- <script type="text/javascript" src="createDynamicGraph.js"></script> -->
 <script type="text/javascript">
 	function getMethods(obj) {
 	  var result = [];
@@ -232,116 +257,7 @@ function defaultCamera() {
 	}
 </script>
 
-<script type="text/javascript">
-	var $btn = document.getElementById("updateGraph");
-	$btn.addEventListener("click", toggleButtonGraph);
 
-	function toggleButtonGraph() {
-		console.log(document.getElementById("updateGraph").value);
-		if (document.getElementById("updateGraph").value=="ON") {
-			document.getElementById("updateGraph").value="OFF";
-			document.getElementById("updateGraph").style.background='#ff0000';
-		} else {
-			document.getElementById("updateGraph").value="ON";
-			document.getElementById("updateGraph").style.background='#00ff00';
-		}
-	}
-
-	function printElements(data) {
-		var i = 0;
-		for (i=0; i<data.length; i++) {
-			console.log(data[i].id());
-		}
-	}
-
-	function clearData() {
-		var cy = window.value;
-		var all = cy.$();
-		var i = 0;
-		for (i=0; i<all.length; i++) {
-			if (all[i].isEdge()) {
-				all[i].style({'line-color':'#D3C0CD'});
-			} else {
-				all[i].style({'background-color':'#E3DFFF'});
-			}
-		}
-	}
-
-	function updateGraphEdges() {
-		var result = null;
-		$.get("/graph/",{
-			},
-			function(data,status){
-	    	console.log(data,status);
-	    	paintGraph(data);
-	    },'json').fail(function() {
-		    alert('Error!'); // or whatever			    
-		    //document.getElementById("cameraButton").reset();
-		});
-
-		
-
-	}
-	setInterval(updateGraphEdges, 10000);
-	function hexToRgb(hex) {
-	    var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-	    return result ? {
-	        r: parseInt(result[1], 16),
-	        g: parseInt(result[2], 16),
-	        b: parseInt(result[3], 16)
-	    } : null;
-	}
-	function rgbToHex(r, g, b) {
-    	return "#" + componentToHex(r) + componentToHex(g) + componentToHex(b);
-	}
-	function paintGraph(data) {
-		if (document.getElementById("updateGraph").value=="OFF") {
-			clearData();
-		} else {
-			console.log(data.length);
-			for (var k=0; k < data.length; k++) {
-				var obj = data[k];
-				console.log(obj.traffic);
-				var cy = window.value;
-				var N = cy.getElementById(obj.id);
-				var neighborhood = cy.$('#'+obj.id).neighborhood();
-				var oldNeighborhood = neighborhood.add(N);
-				//printElements(oldNeighborhood);
-				var newNeighborhood = oldNeighborhood.openNeighborhood();
-				newNeighborhood = newNeighborhood.subtract(oldNeighborhood);
-				//console.log("new Neighborhood");
-				//#printElements(newNeighborhood);
-				N.style({'background-color':'#FFDFFF'});
-				var i = 0;
-				setTimeout( function () {
-					for (i=0; i < neighborhood.length; i++) {
-						//console.log(neighborhood[i].id());
-						if (neighborhood[i].isEdge()) {
-							var lineColor = neighborhood[i].data('line-color');
-							//console.log(lineColor);
-							//console.log(hexToRgb(lineColor).r);
-							neighborhood[i].style({'line-color':'#A3DFFF'});
-						} else {
-							neighborhood[i].style({'background-color':'#A3DFFF'});
-						}
-					}
-				},1000);
-				
-				i = 0;
-				setTimeout( function() {
-					for (i=0; i < newNeighborhood.length; i++) {
-						//console.log(newNeighborhood[i].id());
-						if (newNeighborhood[i].isEdge()) {
-							newNeighborhood[i].style({'line-color':'#73DFFF'});
-						} else {
-							newNeighborhood[i].style({'background-color':'#73DFFF'});
-						}
-					}
-				},2000);
-			}
-		}
-	}
-</script>
 
 
 <script>
@@ -369,7 +285,7 @@ function defaultCamera() {
 <script>
 	var $btn = document.getElementById("cameraButton");
 	$btn.addEventListener("click", toggleButton);
-	document.getElementById("URLvalue").value = "http://207.251.86.238/cctv797.jpg?math=0.15975369761797253";
+	document.getElementById("URLvalue").value = "http://207.251.86.238/cctv797.jpg?math=0.6513754353253693";
 	function toggleButton() {
 		console.log(document.getElementById("cameraButton").value);
 		if (document.getElementById("cameraButton").value=="ON") {
