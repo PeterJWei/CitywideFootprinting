@@ -1,0 +1,159 @@
+<html>
+
+
+<script src="https://d3js.org/d3.v3.min.js"></script>
+<script type="text/javascript" src="http://mpld3.github.io/js/mpld3.v0.2.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+<header><title>Dynamic Occupancy</title></header>
+<style>
+* {
+    box-sizing: border-box;
+}
+html, body {
+	height:100%;
+	margin: 0;
+}
+#wrapper {
+            min-height: 100%; 
+        }
+.container {
+    height: 90vh;
+    width:100%;
+    overflow: auto;
+}
+.page {
+	width:100%;
+	height:100%;
+}
+
+.column {
+    float: left;
+    width: 33.33%;
+    padding: 5px;
+}
+.mapColumn {
+  float: left;
+  width: 48%;
+  margin: 1%;
+}
+/* Clearfix (clear floats) */
+.row::after {
+    content: "";
+    clear: both;
+    display: table;
+}
+body {
+  font-family: helvetica;
+  font-size: 14px;
+}
+
+a:link {
+	text-decoration: none
+}
+
+a:hover {
+	text-decoration: underline;
+	text-decoration-color: rgba(21, 57, 96, 1.0);
+	-webkit-text-decoration-color: rgba(21, 57, 96, 1.0);
+}
+#cy {
+  width: 1000px;
+  height: 500px;
+  display: block;
+  background: #000;
+  /*position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 999;*/
+}
+
+h1 {
+  opacity: 0.5;
+  font-size: 1em;
+}
+
+
+</style>
+<head>
+<link rel="stylesheet" type="text/css" href="tabs.css">
+<link rel="stylesheet" type="text/css" href="slider.css">
+<link rel="stylesheet" href="https://js.arcgis.com/4.9/esri/themes/dark/main.css">
+<script src="https://js.arcgis.com/4.9/"></script>
+</head>
+
+<body>
+<div class="tab">
+	<button class="tablinks" onclick="tabEvents(event, 'Foursquare')" id="defaultOpen">Population Evolution</button>
+</div>
+<div id="Foursquare" class="tabcontent">
+	<div style="height:100%; width:100%; background-size:100% 100%; background-color: rgba(0,0,0,0.8);">
+		<div class="page">
+			<div class="row">
+				<div class="mapColumn">
+					<div id="viewDiv3" style="background-color:#cccccc; width:100%; height:90%"></div>
+					<div id="sliderContainer3" class="esri-widget">
+				      <span id="sliderValue3"></span>
+					      <div id="sliderInnerContainer3">
+					        <div id="sliderLabels3">
+					          <span>0:00</span>
+					          <span>24:00</span>
+					        </div>
+					        <div id="rangeWrapper3">
+					          <input id="slider3" type="range" min="0" max="24" step="1" value="0" />
+					        </div>
+					      </div>
+					      <div id="playButton3" class="esri-widget esri-widget--button toggle-button">
+					        <div>
+					          <span class="toggle-button-icon esri-icon-play" aria-label="play icon"></span>
+					          Play</div>
+					        <div>
+					          <span class="toggle-button-icon esri-icon-pause" aria-label="pause icon"></span>
+					          Pause</div>
+					      </div>
+				    </div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script type="text/javascript" src="createCuebiqData.js"></script>
+<script>
+function tabEvents(evt, cityName) {
+    // Declare all variables
+    var i, tabcontent, tablinks;
+
+    // Get all elements with class="tabcontent" and hide them
+    tabcontent = document.getElementsByClassName("tabcontent");
+    for (i = 0; i < tabcontent.length; i++) {
+        tabcontent[i].style.display = "none";
+    }
+
+    // Get all elements with class="tablinks" and remove the class "active"
+    tablinks = document.getElementsByClassName("tablinks");
+    for (i = 0; i < tablinks.length; i++) {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+    }
+
+    // Show the current tab, and add an "active" class to the button that opened the tab
+    document.getElementById(cityName).style.display = "block";
+    evt.currentTarget.className += " active";
+}
+</script>
+<script>
+// Get the element with id="defaultOpen" and click on it
+document.getElementById("defaultOpen").click();
+</script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
