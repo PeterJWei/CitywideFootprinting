@@ -1,12 +1,12 @@
 import csv
 from datetime import datetime
-
+import os
 class loadCuebiq:
 	def __init__(self):
 		self.times = []
 
 	def loadRoutes(self, fileName):
-		csvFile = fileName + ".csv"
+		csvFile = fileName# + ".csv"
 		with open(csvFile, 'rb') as csvfile:
 			reader = csv.reader(csvfile, delimiter='\t')
 			for line in reader:
@@ -26,5 +26,15 @@ class loadCuebiq:
 				csvwriter.writerow(list(self.times[i]))
 		
 L = loadCuebiq()
-L.loadRoutes("part-00000")
-L.saveRoutes("testTimes.csv")
+
+directory = "/Users/peterwei/Desktop/CitywideFootprinting/static/data/"
+fileNo=0
+for filename in os.listdir(directory):
+    if filename.endswith(".csv"):
+    	print("File Number: " + str(fileNo))
+    	L.loadRoutes(directory+filename)
+        # print(os.path.join(directory, filename))
+        fileNo += 1
+L.saveRoutes("bostonCuebiq.csv")
+#L.loadRoutes("part-00000")
+#L.saveRoutes("testTimes.csv")

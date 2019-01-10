@@ -5,3 +5,5 @@ nohup.out
 Centerline/geo_export_d9dabc42-04f8-4b02-9f2d-eadd7ebf1dbf.dbf
 buildingLevel/shapefile.shp
 buildingLevel/shapefile.dbf
+static/data/*
+static/data/
