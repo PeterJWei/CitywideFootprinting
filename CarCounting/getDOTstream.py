@@ -11,7 +11,7 @@ import json
 urls = ("/", "stream",
 		"/test", "testCamera")
 
-C = CarDetector('CarCounting/InferenceGraph/frozen_inference_graph.pb')
+C = CarDetector('CarCounting/InferenceGraph/citycam_graph.pb')
 #C = CarDetector('CarCounting/InferenceGraph/ssd_lite_graph.pb')
 
 class tempData:
