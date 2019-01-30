@@ -98,7 +98,7 @@ class getStream:
 
 		#filter out background
 		img2 = img.copy()
-		img2 = self.filter2(img2) #hacked solution to black out the non-essential parts of the image
+		img2 = self.filter2(79, 104, 43, 240, 141, 108, 351, 195, img2) #hacked solution to black out the non-essential parts of the image
 
 		sensitivity = 0.4 #threshold to filter out detections
 
