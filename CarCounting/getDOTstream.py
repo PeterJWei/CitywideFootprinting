@@ -206,6 +206,7 @@ class getStream:
 					img[i, j, 0] = 0
 					img[i, j, 1] = 0
 					img[i, j, 2] = 0
+		return img
 	def drawBox(self, img, x1, x2, y1, y2, colors):
 		R = colors[0]
 		G = colors[1]
