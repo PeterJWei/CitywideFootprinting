@@ -98,7 +98,7 @@ class getStream:
 
 		#filter out background
 		img2 = img.copy()
-		img2 = self.filter(img2) #hacked solution to black out the non-essential parts of the image
+		img2 = self.filter2(img2) #hacked solution to black out the non-essential parts of the image
 
 		sensitivity = 0.4 #threshold to filter out detections
 
@@ -197,6 +197,15 @@ class getStream:
 						img[i, j, 2] = 0
 		return img
 
+	def filter2(self, x1, y1, x2, y2, x3, y3, x4, y4, img):
+		m = (y1-y2)*1.0/(x1-x2)
+		b = y1 - m*x1
+		for i in range(240):
+			for j in range(352):
+				if (m*j+b < i):
+					img[i, j, 0] = 0
+					img[i, j, 1] = 0
+					img[i, j, 2] = 0
 	def drawBox(self, img, x1, x2, y1, y2, colors):
 		R = colors[0]
 		G = colors[1]
