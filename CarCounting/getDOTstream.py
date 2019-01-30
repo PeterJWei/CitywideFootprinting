@@ -200,11 +200,11 @@ class getStream:
 	def filter2(self, x1, y1, x2, y2, x3, y3, x4, y4, img):
 		m = (y1-y2)*1.0/(x1-x2)
 		b = y1 - m*x1
-		m1 = (y1-y3)*1.0/(x1-x3)
-		b1 = y1-m1*x1
+		m1 = (y3-y4)*1.0/(x3-x4)
+		b1 = y3-m1*x3
 		for i in range(240):
 			for j in range(352):
-				if (m*j+b > i) or (m1*j+b > b1):
+				if (m*j+b > i) or (m1*j+b1 > i):
 					img[i, j, 0] = 0
 					img[i, j, 1] = 0
 					img[i, j, 2] = 0
