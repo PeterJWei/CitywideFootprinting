@@ -45,7 +45,7 @@ class testCamera:
 		im = cv2.imread("CarCounting/pic0.jpg")
 		#im = im[:, :, ::-1]
 		
-		sensitivity = 0.7
+		sensitivity = 0.5
 		C = CarDetector('CarCounting/InferenceGraph/frozen_inference_graph.pb')
 		boxes, scores, classes, num = C.getClassification(im)
 		for i in range(scores[0].shape[0]):
@@ -100,7 +100,7 @@ class getStream:
 		img2 = img.copy()
 		img2 = self.filter(img2) #hacked solution to black out the non-essential parts of the image
 
-		sensitivity = 0.7 #threshold to filter out detections
+		sensitivity = 0.4 #threshold to filter out detections
 
 		boxes, scores, classes, num = C.getClassification(img2) #runs the image through ssd-mobilenet
 		limit = 0

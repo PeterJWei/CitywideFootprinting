@@ -189,7 +189,7 @@ h1 {
 	<form id="form" onsubmit="return false;">
 		<input type="text" id="userInput" />
     	<input type="submit" onclick="changeURL();" />
-    	<div id="URLvalue" value="http://207.251.86.238/cctv31.jpg"></div>
+    	<div id="URLvalue" value="http://207.251.86.238/cctv797.jpg"></div>
 	</form>
 	<div class="row">
 		<div class="column">
@@ -234,7 +234,7 @@ function changeURL() {
     alert("Switching to new URL: " + input);
 }
 function defaultCamera() {
-	var defaultURL = "http://207.251.86.238/cctv31.jpg";
+	var defaultURL = "http://207.251.86.238/cctv797.jpg";
 	document.getElementById("URLvalue").value = defaultURL;
 }
 </script>
@@ -285,7 +285,7 @@ function defaultCamera() {
 <script>
 	var $btn = document.getElementById("cameraButton");
 	$btn.addEventListener("click", toggleButton);
-	document.getElementById("URLvalue").value = "http://207.251.86.238/cctv31.jpg";
+	document.getElementById("URLvalue").value = "http://207.251.86.238/cctv797.jpg";
 	function toggleButton() {
 		console.log(document.getElementById("cameraButton").value);
 		if (document.getElementById("cameraButton").value=="ON") {
