@@ -46,10 +46,10 @@ def preProcess(img):
   return dst,hist,image
 
 
-def feature_extract(img_array_list):
+def feature_extract_ch(img_array_list):
     feature_list = []
     for img in img_array_list:
-        out = preProcess(img)
-        feature_list.append(out)
+        dst,hist,image = preProcess(img)
+        feature_list.append(hist)
 
     return feature_list

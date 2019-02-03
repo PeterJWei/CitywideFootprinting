@@ -6,6 +6,7 @@ from scipy.stats import wasserstein_distance
 from scipy.ndimage import imread
 from histogram import calc_similar_by_path
 from VGG.VGG_feature_extract import feature_extract
+from CH.CH_feature_extrac import feature_extract_ch
 from scipy.spatial.distance import correlation
 import os
 import cv2
@@ -50,6 +51,9 @@ class correlationClass:
 		previousBoxesFeature = feature_extract(previousImgBoxes)
 		currentBoxesFeature = feature_extract(currentImgBoxes)
 
+		previousBoxesFeatureCH = feature_extract_ch(previousImgBoxes)
+		currentBoxesFeatureCH = feature_extract_ch(currentImgBoxes)
+
 
 		for j in range(len(previousBoxesFeature)):
 			img1coords = self.previousBoxes[j]
@@ -63,6 +67,8 @@ class correlationClass:
 				# img2 = image[y1:y2, x1:x2, :]
 				if x3 >= (x1 - self.delta) and y3 >= (y1 - self.delta):
 					c = self.correlate(previousBoxesFeature[j], currentBoxesFeature[i])
+					# c = self.correlate(previousBoxesFeatureCH[j], currentBoxesFeatureCH[i])
+
 					correlations.append(c)
 				else:
 					correlations.append(0)
@@ -101,6 +107,8 @@ class correlationClass:
 		#Feature for VGG
 		return 1-correlation(preFeature,curFeature)
 
+
+		return cv2.compareHist(preFeature, curFeature, cv2.HISTCMP_CORREL)
 		#self.numCorrelations += 1
 
 		# a = imread(img1)
