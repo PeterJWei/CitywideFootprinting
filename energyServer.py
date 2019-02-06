@@ -15,7 +15,7 @@ import dynamicData.subwayData as SD
 
 
 
-Stream = streamDaemon.S
+#Stream = streamDaemon.S
 print("Assigned stream")
 urls = (
 	#"/(.*)", 'Service',
@@ -66,7 +66,7 @@ class MyApplication(web.application):
 		while True:
 			print("\n\nRunning dynamic\n\n")
 			#run1.getBlocks2Occupancy(20)
-			run1.startup()
+			#run1.startup()
 			#run1.plotBuildings()
 			#run1.plotRealtime()
 			time.sleep(30)
