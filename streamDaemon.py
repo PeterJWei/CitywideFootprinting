@@ -40,7 +40,7 @@ class streams:
 	def clearList(self):
 		self.buildingChanges = {}
 		self.buildingChangesList = []
-		
+
 	def subwayChanges(self):
 		stationTrains = self.MTAstream.getData(0x1)
 		#for station in stationTrains:
@@ -68,6 +68,7 @@ class streams:
 					self.buildingChanges[(Borough, Block, Lot)] += diff
 				else:
 					self.buildingChanges[(Borough, Block, Lot)] = diff
+		self.buildingChangesList = []
 		for BBL in self.buildingChanges:
 			(borough, block, lot) = BBL
 			diff = self.buildingChanges[BBL]
@@ -75,4 +76,4 @@ class streams:
 		print(len(self.buildingChangesList))
 		print("Completed subway changes")
 
-S=streams()
+#S=streams()
