@@ -19,7 +19,7 @@ import dynamicData.subwayData as SD
 print("Assigned stream")
 urls = (
 	#"/(.*)", 'Service',
-	"/realtime", dynamicPopulation.doPopulation,
+#	"/realtime", dynamicPopulation.doPopulation,
 	"/camera", D.DOTstream,
 	"/foursquareData", FS.foursquareData,
 	"/taxiData", TD.taxiData,
