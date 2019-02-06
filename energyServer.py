@@ -1,6 +1,6 @@
 import web
 import os
-import dynamicPopulation
+#import dynamicPopulation
 import time
 #from dynamicPopulation import showDynamicPopulation
 import CarCounting.getDOTstream as D
