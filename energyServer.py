@@ -11,6 +11,7 @@ import staticData.staticCensusData as CD
 #from streamDaemon import streams
 import streamDaemon
 import dynamicData.subwayData as SD
+import dynamicData.GPSendpoint as GPSendpoint
 
 
 
@@ -26,6 +27,7 @@ urls = (
 	"/censusData", CD.censusData,
 	"/graph", graphBackend.G,
 	"/subway", SD.subwayData,
+	"/GPSdata", GPSendpoint.GPSreport,
 	"/", "baseURL"
 	)
 
