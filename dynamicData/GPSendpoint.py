@@ -99,7 +99,7 @@ class loadBuildings:
 						continue
 					lon, lat = transform(self.inProj, self.outProj, xcoord, ycoord)
 					buildingCoords = (lat, lon)
-					self.coords.append(buildingCoords)
+					self.coordinates.append(buildingCoords)
 					self.buildingParams[buildingCoords] = (BBL, address)
 LBuildings = loadBuildings()
 GPSreport = web.application(urls, locals())
