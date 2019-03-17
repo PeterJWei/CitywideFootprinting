@@ -59,6 +59,8 @@ class loadBuildings:
 							"BK":3,
 							"QN":4,
 							"SI":5}
+		self.inProj = Proj(init='epsg:2263', preserve_units=True)
+		self.outProj = Proj(init='epsg:4326')
 		self.coordinates = []
 		self.buildingParams = {}
 		print("Initializing nearest building")
