@@ -11,24 +11,16 @@ class check:
 	def GET(self):
 		return "200 OK"
 
+
 class nearestBuilding:
 	def __init__(self):
-		self.coordinates = []
-		self.buildingParams = {}
-		print("Initializing nearest building")
-		self.loadPLUTO("datasets/PLUTO_Manhattan.csv", "Manhattan")
+		self.coordinates = LBuildings.coordinates
+		self.buildingParams = LBuildings.buildingParams
+		
 		# self.loadPLUTO("datasets/PLUTO_Bronx.csv", "Bronx")
 		# self.loadPLUTO("datasets/PLUTO_Brooklyn.csv", "Brooklyn")
 		# self.loadPLUTO("datasets/PLUTO_Queens.csv", "Queens")
 		# self.loadPLUTO("datasets/PLUTO_Staten.csv", "Staten Island")
-
-	def loadPLUTO(self, PLUTOfile, name):
-		print("Loading PLUTO " + name + " File...")
-		start = time.time()
-		self.loadCSV(PLUTOfile)
-		end = time.time()
-		print("Finished: " + str(end-start) + " s\n")
-
 
 	def GET(self):
 		print("Received GPS coordinate")
@@ -53,7 +45,22 @@ class nearestBuilding:
 		end = time.time()
 		print("Finished GPS localization, " + str(end-start) + " s\n")
 		return "200 OK"
-		
+
+	
+class loadBuildings:
+	def __init__(self):
+		self.coordinates = []
+		self.buildingParams = {}
+		print("Initializing nearest building")
+		self.loadPLUTO("datasets/PLUTO_Manhattan.csv", "Manhattan")
+
+	def loadPLUTO(self, PLUTOfile, name):
+		print("Loading PLUTO " + name + " File...")
+		start = time.time()
+		self.loadCSV(PLUTOfile)
+		end = time.time()
+		print("Finished: " + str(end-start) + " s\n")
+
 	def loadCSV(self, PLUTOfile):
 		with open (PLUTOfile, 'rb') as csvfile:
 			reader = csv.reader(csvfile, delimiter=',')
@@ -82,6 +89,5 @@ class nearestBuilding:
 					buildingCoords = (lat, lon)
 					self.coords.append(buildingCoords)
 					self.buildingParams[buildingCoords] = (BBL, address)
-
-
+LBuildings = loadBuildings()
 GPSreport = web.application(urls, locals())
