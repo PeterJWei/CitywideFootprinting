@@ -54,6 +54,11 @@ class nearestBuilding:
 	
 class loadBuildings:
 	def __init__(self):
+		self.boroughCode = {"MN":1,
+							"BX":2,
+							"BK":3,
+							"QN":4,
+							"SI":5}
 		self.coordinates = []
 		self.buildingParams = {}
 		print("Initializing nearest building")
