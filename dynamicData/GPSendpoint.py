@@ -14,6 +14,11 @@ class check:
 
 class nearestBuilding:
 	def __init__(self):
+		self.boroughCode = {"MN":1,
+							"BX":2,
+							"BK":3,
+							"QN":4,
+							"SI":5}
 		self.coordinates = LBuildings.coordinates
 		self.buildingParams = LBuildings.buildingParams
 		
