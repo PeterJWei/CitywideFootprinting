@@ -24,7 +24,7 @@ class interpolation:
 			
 	def loadEnergy(self):
 		for f in self.fileNames:
-			with open ('NewYorkReference/' + f + '.csv', 'rb') as csvfile:
+			with open ('energyModels/NewYorkReference/' + f + '.csv', 'rb') as csvfile:
 				reader = csv.reader(csvfile, delimiter=',')
 				header = True
 				i = 0
