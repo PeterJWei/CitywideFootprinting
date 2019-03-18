@@ -12,7 +12,7 @@ class DBMgr(object):
 
 	def recordCoordinates(self, user, lat, lon):
 		self.coords.insert({
-			"timestamp": datetime.datetime.now()
+			"timestamp": datetime.datetime.now(),
 			"user": user,
 			"lat": lat,
 			"lon": lon
