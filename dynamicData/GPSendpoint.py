@@ -8,7 +8,8 @@ import pickle
 from sklearn import linear_model 
 import math
 import energyServer
-
+from energyModels import dailyInterpolation
+from datetime import datetime
 urls = ("/GPSendpoint", "nearestBuilding",
 		"/", "check")
 
@@ -27,6 +28,8 @@ class nearestBuilding:
 		self.coordinates = LBuildings.coordinates
 		self.buildingParams = LBuildings.buildingParams
 		self.model = LBuildings.model
+		self.referenceModels = LBuildings.referenceModels
+		self.totals = LBuildings.totals
 		
 		# self.loadPLUTO("datasets/PLUTO_Bronx.csv", "Bronx")
 		# self.loadPLUTO("datasets/PLUTO_Brooklyn.csv", "Brooklyn")
@@ -45,6 +48,9 @@ class nearestBuilding:
 		longitude=float(coords[1])
 		minDist = None
 		minCoords = None
+
+		month = datetime.now().month-1
+
 		for (lat, lon) in self.coordinates:
 			d = geopy.distance.vincenty((lat, lon), (latitude, longitude))
 			if minDist is None or d.miles < minDist:
@@ -53,6 +59,7 @@ class nearestBuilding:
 		if minCoords is not None:
 			print("Found nearest building")
 			
+			# Get the closest building
 			(address, MN, BK, QN, BX, SI,
 			totalArea, YB0, YB1, YB2, YB3, YB4, residential, office, retail,
 			garage, storage, factory) = self.buildingParams[minCoords]
@@ -60,9 +67,25 @@ class nearestBuilding:
 			datapoint = [[MN, BK, QN, BX, SI, 24, 20, 22, 51, 34, 42, totalArea,
 			YB0, YB1, YB2, YB3, YB4, residential, office, retail, garage, storage, factory]]
 			print(address)
+
+			# Get energy prediction
 			prediction = self.model.predict(datapoint)[0][0]
 			print(str(math.exp(prediction)) + " kWh")
+			referenceTotal = self.totals['MidriseApartment']*residential + self.totals['LargeOffice']*office + self.totals['Stand-aloneRetail']*retail
+			scaling = math.exp(prediction)/referenceTotal
+			
+			# get hours since Jan 1
+			dt = datetime(year, month, day, hour)
+			start = datetime(2019, 1, 1, 1)
+			index = int((dt - start).total_seconds()/3600)
+			
+			# get power prediction
+			powerPrediction = self.referenceModels['MidriseApartment'][index]*residential + self.referenceModels['LargeOffice'][index]*office + self.referenceModels['Stand-aloneRetail'][index]*retail # get prediction
+			powerPrediction = scaling*powerPrediction
+			print("Power Consumption: " + str(powerPrediction) + " kW")
+
 			energyServer.db.recordCoordinates("fe937490cb3a36a1", latitude, longitude)
+		
 		end = time.time()
 		print("Finished GPS localization, " + str(end-start) + " s\n")
 		return "200 OK"
@@ -70,6 +93,8 @@ class nearestBuilding:
 	
 class loadBuildings:
 	def __init__(self):
+		self.referenceModels = dailyInterpolation.I.footprints
+		self.totals = dailyInterpolation.I.totals
 		self.boroughCode = {"MN":1,
 							"BX":2,
 							"BK":3,
