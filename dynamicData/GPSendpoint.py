@@ -39,7 +39,7 @@ class nearestBuilding:
 		longitude=float(coords[1])
 		minDist = None
 		minCoords = None
-		for (lat, lon) in self.coords:
+		for (lat, lon) in self.coordinates:
 			d = geopy.distance.vincenty((lat, lon), (latitude, longitude))
 			if minDist is None or d.miles < minDist:
 				minDist = d.miles
