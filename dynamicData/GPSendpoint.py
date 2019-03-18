@@ -71,7 +71,7 @@ class nearestBuilding:
 			# Get energy prediction
 			prediction = self.model.predict(datapoint)[0][0]
 			print(str(math.exp(prediction)) + " kWh")
-			referenceTotal = self.totals['MidriseApartment']*residential + self.totals['LargeOffice']*office + self.totals['Stand-aloneRetail']*retail
+			referenceTotal = self.totals['MidriseApartment'][month]*residential + self.totals['LargeOffice'][month]*office + self.totals['Stand-aloneRetail'][month]*retail
 			scaling = math.exp(prediction)/referenceTotal
 			
 			# get hours since Jan 1
