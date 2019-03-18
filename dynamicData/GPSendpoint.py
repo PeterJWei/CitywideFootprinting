@@ -27,15 +27,16 @@ class nearestBuilding:
 		# self.loadPLUTO("datasets/PLUTO_Queens.csv", "Queens")
 		# self.loadPLUTO("datasets/PLUTO_Staten.csv", "Staten Island")
 
-	def GET(self):
+	def POST(self):
 		print("Received GPS coordinate")
 		start = time.time()
 		web.header('Access-Control-Allow-Origin', '*')
 		web.header('Access-Control-Allow-Credentials', 'true')
 		raw_data=web.data()
-		data=json.loads(raw_data)
-		latitude=data["lat"]
-		longitude=data["lon"]
+		coords = raw_data.split(',')
+		#data=json.loads(raw_data)
+		latitude=float(coords[0])
+		longitude=float(coords[1])
 		minDist = None
 		minCoords = None
 		for (lat, lon) in self.coords:
