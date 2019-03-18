@@ -12,8 +12,9 @@ import staticData.staticCensusData as CD
 import streamDaemon
 import dynamicData.subwayData as SD
 import dynamicData.GPSendpoint as GPSendpoint
+import DBMgr
 
-
+db = DBMgr.DBMgr()
 
 
 #Stream = streamDaemon.S

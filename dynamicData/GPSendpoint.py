@@ -7,7 +7,7 @@ import time
 import pickle
 from sklearn import linear_model 
 import math
-
+from ... import energyServer
 
 urls = ("/GPSendpoint", "nearestBuilding",
 		"/", "check")
@@ -60,8 +60,9 @@ class nearestBuilding:
 			datapoint = [[MN, BK, QN, BX, SI, 24, 20, 22, 51, 34, 42, totalArea,
 			YB0, YB1, YB2, YB3, YB4, residential, office, retail, garage, storage, factory]]
 			print(address)
-			prediction = self.model.predict(datapoint)
-			print(prediction)
+			prediction = self.model.predict(datapoint)[0][0]
+			print(str(math.exp(prediction)) + " kWh")
+			energyServer.db.recordCoordinates("fe937490cb3a36a1", latitude, longitude)
 		end = time.time()
 		print("Finished GPS localization, " + str(end-start) + " s\n")
 		return "200 OK"
