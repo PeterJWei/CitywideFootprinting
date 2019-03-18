@@ -7,7 +7,7 @@ import time
 import pickle
 from sklearn import linear_model 
 import math
-from ... import energyServer
+import energyServer
 
 urls = ("/GPSendpoint", "nearestBuilding",
 		"/", "check")
