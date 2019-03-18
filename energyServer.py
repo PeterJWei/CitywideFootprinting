@@ -15,7 +15,7 @@ import dynamicData.GPSendpoint as GPSendpoint
 import DBMgr
 
 db = DBMgr.DBMgr()
-
+db.pullCoordinates("fe937490cb3a36a1")
 
 #Stream = streamDaemon.S
 print("Assigned stream")
