@@ -4,6 +4,11 @@ import csv
 from pyproj import Proj, transform
 import geopy.distance
 import time
+import pickle
+from sklearn import linear_model 
+
+
+
 urls = ("/GPSendpoint", "nearestBuilding",
 		"/", "check")
 
@@ -21,6 +26,7 @@ class nearestBuilding:
 							"SI":5}
 		self.coordinates = LBuildings.coordinates
 		self.buildingParams = LBuildings.buildingParams
+		self.model = LBuildings.model
 		
 		# self.loadPLUTO("datasets/PLUTO_Bronx.csv", "Bronx")
 		# self.loadPLUTO("datasets/PLUTO_Brooklyn.csv", "Brooklyn")
@@ -46,8 +52,16 @@ class nearestBuilding:
 				minCoords = (lat, lon)
 		if minCoords is not None:
 			print("Found nearest building")
-			(BBL, address) = self.buildingParams[minCoords]
-			print((address, minDist))
+			
+			(address, MN, BK, QN, BX, SI,
+			totalArea, YB0, YB1, YB2, YB3, YB4, residential, office, retail,
+			garage, storage, factory) = self.buildingParams[minCoords]
+			
+			datapoint = [MN, BK, QN, BX, SI, 24, 20, 22, 51, 34, 42, totalArea,
+			YB0, YB1, YB2, YB3, YB4, residential, office, retail, garage, storage, factory]
+			print(address)
+			prediction = self.model.predict(datapoint)
+			print(prediction)
 		end = time.time()
 		print("Finished GPS localization, " + str(end-start) + " s\n")
 		return "200 OK"
@@ -64,6 +78,8 @@ class loadBuildings:
 		self.outProj = Proj(init='epsg:4326')
 		self.coordinates = []
 		self.buildingParams = {}
+		filename = 'dynamicData/NYCHARegressionModel.sav'
+		self.model = pickle.load(open(filename, 'rb'))
 		print("Initializing nearest building")
 		self.loadPLUTO("datasets/PLUTO_Manhattan.csv", "Manhattan")
 
@@ -87,7 +103,44 @@ class loadBuildings:
 					block = row[1]
 					lot = row[2]
 					address = row[16]
-					B = str(self.boroughCode[borough])
+					B = self.boroughCode[borough]
+					(MN, BK, QN, BX, SI) = (0,0,0,0,0)
+					if B == 1:
+						MN = 1
+					elif B == 2:
+						BX = 1
+					elif B == 3:
+						BK = 1
+					elif B == 4:
+						QN = 1
+					else:
+						SI = 1
+					B = str(B)
+					(totalArea, residential, office, retail, garage,
+						storage, factory) = (0,0,0,0,0,0,0)
+					try:
+						totalArea = float(row[34])
+						residential = float(row[36])/totalArea
+						office = float(row[37])/totalArea
+						retail = float(row[38])/totalArea
+						garage = float(row[39])/totalArea
+						storage = float(row[40])/totalArea
+						factory = float(row[41])/totalArea
+						totalArea = math.log(totalArea)
+					except Exception as e:
+						continue
+					year = row[61]
+					(YB0, YB1, YB2, YB3, YB4) = (0,0,0,0,0)
+					if year <= 1930:
+						YB0 = 1
+					elif year > 1930 and year <= 1950:
+						YB1 = 1
+					elif year > 1950 and year <= 1970:
+						YB2 = 1
+					elif year > 1970 and year <= 1990:
+						YB3 = 1
+					else:
+						YB4 = 1
 					if len(block) < 5:
 						block = "0" * (5-len(block)) + block
 					if len(lot) < 4:
@@ -101,6 +154,8 @@ class loadBuildings:
 					lon, lat = transform(self.inProj, self.outProj, xcoord, ycoord)
 					buildingCoords = (lat, lon)
 					self.coordinates.append(buildingCoords)
-					self.buildingParams[buildingCoords] = (BBL, address)
+					self.buildingParams[buildingCoords] = (address, MN, BK, QN, BX, SI,
+						totalArea, YB0, YB1, YB2, YB3, YB4, residential, office, retail,
+						garage, storage, factory)
 LBuildings = loadBuildings()
 GPSreport = web.application(urls, locals())
