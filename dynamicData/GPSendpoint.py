@@ -6,7 +6,7 @@ import geopy.distance
 import time
 import pickle
 from sklearn import linear_model 
-
+import math
 
 
 urls = ("/GPSendpoint", "nearestBuilding",
