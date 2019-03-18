@@ -57,8 +57,8 @@ class nearestBuilding:
 			totalArea, YB0, YB1, YB2, YB3, YB4, residential, office, retail,
 			garage, storage, factory) = self.buildingParams[minCoords]
 			
-			datapoint = [MN, BK, QN, BX, SI, 24, 20, 22, 51, 34, 42, totalArea,
-			YB0, YB1, YB2, YB3, YB4, residential, office, retail, garage, storage, factory]
+			datapoint = [[MN, BK, QN, BX, SI, 24, 20, 22, 51, 34, 42, totalArea,
+			YB0, YB1, YB2, YB3, YB4, residential, office, retail, garage, storage, factory]]
 			print(address)
 			prediction = self.model.predict(datapoint)
 			print(prediction)
