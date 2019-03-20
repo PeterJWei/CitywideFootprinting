@@ -67,11 +67,23 @@ class nearestBuilding:
 			datapoint = [[MN, BK, QN, BX, SI, 24, 20, 22, 51, 34, 42, totalArea,
 			YB0, YB1, YB2, YB3, YB4, residential, office, retail, garage, storage, factory]]
 			print(datapoint[0])
+
 			# Get energy prediction
 			prediction = self.model.predict(datapoint)[0][0]
 			print(str(math.exp(prediction)) + " kWh")
-			referenceTotal = self.totals['MidriseApartment'][month]*residential + self.totals['LargeOffice'][month]*office + self.totals['Stand-aloneRetail'][month]*retail
-			scaling = math.exp(prediction)/referenceTotal
+			resFrac = self.totals['MidriseApartment'][month]*residential
+			offFrac = self.totals['LargeOffice'][month]*office
+			retFrac = self.totals['Stand-aloneRetail'][month]*retail
+			garFrac = self.totals['Warehouse'][month]*garage
+			stoFrac = self.totals['Warehouse'][month]*storage
+			facFrac = self.totals['Warehouse'][month]*factory
+			referenceTotal = resFrac + offFrac + retFrac + garFrac + stoFrac + facFrac
+			scaling = 1.0
+			if abs(referenceTotal) < 10:
+				scaling = 1.0
+			else:
+				scaling = math.exp(prediction)/referenceTotal
+			#########################
 			
 			# get hours since Jan 1
 			dt = datetime(year, month, day, hour)
@@ -79,7 +91,13 @@ class nearestBuilding:
 			index = int((dt - start).total_seconds()/3600)
 			
 			# get power prediction
-			powerPrediction = self.referenceModels['MidriseApartment'][index]*residential + self.referenceModels['LargeOffice'][index]*office + self.referenceModels['Stand-aloneRetail'][index]*retail # get prediction
+			resPow = self.referenceModels['MidriseApartment'][index]*residential
+			offPow = self.referenceModels['LargeOffice'][index]*office
+			retPow = self.referenceModels['Stand-aloneRetail'][index]*retail
+			garPow = self.referenceModels['Warehouse'][index]*garage
+			stoPow = self.referenceModels['Warehouse'][index]*storage
+			facPow = self.referenceModels['Warehouse'][index]*factory
+			powerPrediction = resPow + offPow + retPow + garPow + stoPow + facPow # get prediction
 			powerPrediction = scaling*powerPrediction
 			print("Power Consumption: " + str(powerPrediction) + " kW")
 
