@@ -86,10 +86,10 @@ class nearestBuilding:
 			#########################
 			
 			# get hours since Jan 1
-			dt = datetime(year, month, day, hour)
+			dt = datetime.now()
 			start = datetime(2019, 1, 1, 1)
 			index = int((dt - start).total_seconds()/3600)
-			
+			print("Hours since start of year: " + str(index))
 			# get power prediction
 			resPow = self.referenceModels['MidriseApartment'][index]*residential
 			offPow = self.referenceModels['LargeOffice'][index]*office
