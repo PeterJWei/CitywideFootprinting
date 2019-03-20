@@ -37,7 +37,7 @@ class nearestBuilding:
 		# self.loadPLUTO("datasets/PLUTO_Staten.csv", "Staten Island")
 
 	def POST(self):
-		print("Received GPS coordinate")
+		print("############### START SUMMARY #############\nReceived GPS coordinate")
 		start = time.time()
 		web.header('Access-Control-Allow-Origin', '*')
 		web.header('Access-Control-Allow-Credentials', 'true')
@@ -66,7 +66,9 @@ class nearestBuilding:
 			
 			datapoint = [[MN, BK, QN, BX, SI, 24, 20, 22, 51, 34, 42, totalArea,
 			YB0, YB1, YB2, YB3, YB4, residential, office, retail, garage, storage, factory]]
+			print(address)
 			print(datapoint[0])
+
 
 			# Get energy prediction
 			prediction = self.model.predict(datapoint)[0][0]
@@ -105,6 +107,7 @@ class nearestBuilding:
 		
 		end = time.time()
 		print("Finished GPS localization, " + str(end-start) + " s\n")
+		print("############### END SUMMARY #############")
 		return "200 OK"
 
 	
