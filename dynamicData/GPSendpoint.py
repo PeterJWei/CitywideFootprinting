@@ -61,11 +61,11 @@ class nearestBuilding:
 			
 			# Get the closest building
 			(address, MN, BK, QN, BX, SI,
-			totalArea, YB0, YB1, YB2, YB3, YB4, residential, office, retail,
-			garage, storage, factory) = self.buildingParams[minCoords]
+			totalArea, YB0, YB1, YB2, YB3, YB4, commercial, residential, office, retail,
+			garage, storage, factory, other) = self.buildingParams[minCoords]
 			
 			datapoint = [[MN, BK, QN, BX, SI, 24, 20, 22, 51, 34, 42, totalArea,
-			YB0, YB1, YB2, YB3, YB4, residential, office, retail, garage, storage, factory]]
+			YB0, YB1, YB2, YB3, YB4, commercial, residential, office, retail, garage, storage, factory, other]]
 			print(address)
 			print(datapoint[0])
 
@@ -73,13 +73,15 @@ class nearestBuilding:
 			# Get energy prediction
 			prediction = self.model.predict(datapoint)[0][0]
 			print(str(math.exp(prediction)) + " kWh")
+			comFrac = self.totals['LargeOffice'][month]*commercial
 			resFrac = self.totals['MidriseApartment'][month]*residential
 			offFrac = self.totals['LargeOffice'][month]*office
 			retFrac = self.totals['Stand-aloneRetail'][month]*retail
 			garFrac = self.totals['Warehouse'][month]*garage
 			stoFrac = self.totals['Warehouse'][month]*storage
 			facFrac = self.totals['Warehouse'][month]*factory
-			referenceTotal = resFrac + offFrac + retFrac + garFrac + stoFrac + facFrac
+			othFrac = self.totals['Warehouse'][month]*other
+			referenceTotal = comFrac + resFrac + offFrac + retFrac + garFrac + stoFrac + facFrac + othFrac
 			scaling = 1.0
 			if abs(referenceTotal) < 10:
 				scaling = 1.0
@@ -93,20 +95,22 @@ class nearestBuilding:
 			index = int((dt - st).total_seconds()/3600)
 			print("Hours since start of year: " + str(index))
 			# get power prediction
+			comPow = self.referenceModels['LargeOffice'][index]*commercial
 			resPow = self.referenceModels['MidriseApartment'][index]*residential
 			offPow = self.referenceModels['LargeOffice'][index]*office
 			retPow = self.referenceModels['Stand-aloneRetail'][index]*retail
 			garPow = self.referenceModels['Warehouse'][index]*garage
 			stoPow = self.referenceModels['Warehouse'][index]*storage
 			facPow = self.referenceModels['Warehouse'][index]*factory
-			powerPrediction = resPow + offPow + retPow + garPow + stoPow + facPow # get prediction
+			othPow = self.referenceModels['Warehouse'][index]*other
+			powerPrediction = comPow + resPow + offPow + retPow + garPow + stoPow + facPow + othPow# get prediction
 			powerPrediction = scaling*powerPrediction
 			print("Power Consumption: " + str(powerPrediction) + " kW")
 
 			energyServer.db.recordCoordinates("fe937490cb3a36a1", latitude, longitude)
 		
 		end = time.time()
-		print("Finished GPS localization, " + str(end-start) + " s\n")
+		print("Finished GPS localization, " + str(end-start) + " s")
 		print("############### END SUMMARY #############")
 		return "200 OK"
 
@@ -166,12 +170,14 @@ class loadBuildings:
 						storage, factory) = (0,0,0,0,0,0,0)
 					try:
 						totalArea = float(row[34])
+						commercial = float(row[35])/totalArea
 						residential = float(row[36])/totalArea
 						office = float(row[37])/totalArea
 						retail = float(row[38])/totalArea
 						garage = float(row[39])/totalArea
 						storage = float(row[40])/totalArea
 						factory = float(row[41])/totalArea
+						other = float(row[42])/totalArea
 						totalArea = math.log(totalArea)
 					except Exception as e:
 						continue
@@ -201,7 +207,7 @@ class loadBuildings:
 					buildingCoords = (lat, lon)
 					self.coordinates.append(buildingCoords)
 					self.buildingParams[buildingCoords] = (address, MN, BK, QN, BX, SI,
-						totalArea, YB0, YB1, YB2, YB3, YB4, residential, office, retail,
-						garage, storage, factory)
+						totalArea, YB0, YB1, YB2, YB3, YB4, commercial, residential, office, retail,
+						garage, storage, factory, other)
 LBuildings = loadBuildings()
 GPSreport = web.application(urls, locals())

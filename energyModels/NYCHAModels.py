@@ -47,8 +47,8 @@ class NYCHAAnalysis:
 	def OLS(self):
 		self.baseData = self.baseData[['Manhattan', 'Brooklyn', 'Queens', 'Bronx',
 					'Staten', 'DPmax', 'DPmin', 'DPavg', 'DBmax', 'DBmin', 'DBavg',
-					'totalArea', 'Y1', 'Y2', 'Y3', 'Y4', 'Y5', 'residential', 'office',
-					'retail', 'garage', 'storage', 'factory']]
+					'totalArea', 'Y1', 'Y2', 'Y3', 'Y4', 'Y5', 'commercial', 'residential', 'office',
+					'retail', 'garage', 'storage', 'factory', 'other']]
 		# self.baseData = self.baseData[['Manhattan', 'Brooklyn', 'Queens', 'Bronx',
 		# 			'Staten', 'DBmax', 'DBmin', 'DBavg',
 		# 			'totalArea', 'Y1', 'Y2', 'Y3', 'Y4', 'Y5', 'residential', 'office',
@@ -112,15 +112,17 @@ class NYCHAAnalysis:
 						lot = "0" * (4-len(lot)) + lot
 					BBL = B + block + lot
 					GFA = float(row[34])
+					areaCom = float(row[35])
 					areaRes = float(row[36])
 					areaOff = float(row[37])
 					areaRet = float(row[38])
 					areaGar = float(row[39])
 					areaSto = float(row[40])
 					areaFac = float(row[41])
+					areaOth = float(row[42])
 					yearBuilt = int(row[61])
 
-					self.bbl2pluto[BBL] = (GFA, yearBuilt, areaRes, areaOff, areaRet, areaGar, areaSto, areaFac)
+					self.bbl2pluto[BBL] = (GFA, yearBuilt, areaCom, areaRes, areaOff, areaRet, areaGar, areaSto, areaFac, areaOth)
 
 	def loadData(self):
 		Development = []
@@ -266,12 +268,14 @@ class NYCHAAnalysis:
 		bbl = []
 		totalArea = []
 		built = []
+		commercial = []
 		residential = []
 		office = []
 		retail = []
 		garage = []
 		storage = []
 		factory = []
+		other = []
 		Years1 = []
 		Years2 = []
 		Years3 = []
@@ -288,23 +292,27 @@ class NYCHAAnalysis:
 				BBL = self.bin2bbl[BIN]
 				floorArea = 0.0
 				YB = 0.0
+				aCom = 0.0
 				aRes = 0.0
 				aOff = 0.0
 				aRet = 0.0
 				aGar = 0.0
 				aSto = 0.0
 				aFac = 0.0
+				aOth = 0.0
 				for lot in BBL:
-					(GFA, yearBuilt, areaRes, areaOff, 
-						areaRet, areaGar, areaSto, areaFac) = self.bbl2pluto[lot]
+					(GFA, yearBuilt, areaCom, areaRes, areaOff, 
+						areaRet, areaGar, areaSto, areaFac, areaOth) = self.bbl2pluto[lot]
 					floorArea += float(GFA)
 					YB += int(yearBuilt)
+					aCom += float(areaCom)
 					aRes += float(areaRes)
 					aOff += float(areaOff)
 					aRet += float(areaRet)
 					aGar += float(areaGar)
 					aSto += float(areaSto)
 					aFac += float(areaFac)
+					aOth += float(areaOth)
 				YB = YB / len(BBL)
 				YBarr = [0, 0, 0, 0, 0]
 				if YB <= 1930:
@@ -324,12 +332,14 @@ class NYCHAAnalysis:
 				Years5.append(YBarr[4])
 				totalArea.append(math.log(floorArea))
 				built.append(YB)
+				commercial.append(aCom/floorArea)
 				residential.append(aRes/floorArea)
 				office.append(aOff/floorArea)
 				retail.append(aRet/floorArea)
 				garage.append(aGar/floorArea)
 				storage.append(aSto/floorArea)
 				factory.append(aFac/floorArea)
+				other.append(aOth/floorArea)
 			except KeyError:
 				print(str(BIN))
 				#continue
@@ -345,12 +355,14 @@ class NYCHAAnalysis:
 		self.baseData['Y3'] = pd.Series(Years3, index=self.baseData.index)
 		self.baseData['Y4'] = pd.Series(Years4, index=self.baseData.index)
 		self.baseData['Y5'] = pd.Series(Years5, index=self.baseData.index)
+		self.baseData['commercial'] = pd.Series(commercial, index=self.baseData.index)
 		self.baseData['residential'] = pd.Series(residential, index=self.baseData.index)
 		self.baseData['office'] = pd.Series(office, index=self.baseData.index)
 		self.baseData['retail'] = pd.Series(retail, index=self.baseData.index)
 		self.baseData['garage'] = pd.Series(garage, index=self.baseData.index)
 		self.baseData['storage'] = pd.Series(storage, index=self.baseData.index)
 		self.baseData['factory'] = pd.Series(factory, index=self.baseData.index)
+		self.baseData['other'] = pd.Series(other, index=self.baseData.index)
 
 	def loadbin2bbl(self, binFile):
 		with open(binFile, 'rb') as txtfile:
