@@ -37,15 +37,19 @@ class nearestBuilding:
 		# self.loadPLUTO("datasets/PLUTO_Staten.csv", "Staten Island")
 
 	def POST(self):
-		print("############### START SUMMARY #############\nReceived GPS coordinate")
+		print("\n############### START SUMMARY #############\nReceived GPS coordinate")
 		start = time.time()
 		web.header('Access-Control-Allow-Origin', '*')
 		web.header('Access-Control-Allow-Credentials', 'true')
 		raw_data=web.data()
-		coords = raw_data.split(',')
+		dat = raw_data.split(',')
 		#data=json.loads(raw_data)
-		latitude=float(coords[0])
-		longitude=float(coords[1])
+		userID = dat[0]
+		latitude=float(dat[1])
+		longitude=float(dat[2])
+		accuracy = float(dat[3])
+		speed=float(dat[4])
+		course=float(dat[5])
 		minDist = None
 		minCoords = None
 
@@ -107,11 +111,11 @@ class nearestBuilding:
 			powerPrediction = scaling*powerPrediction
 			print("Power Consumption: " + str(powerPrediction) + " kW")
 
-			energyServer.db.recordCoordinates("fe937490cb3a36a1", latitude, longitude)
+			energyServer.db.recordCoordinates(userID, latitude, longitude, accuracy, speed, course)
 		
 		end = time.time()
 		print("Finished GPS localization, " + str(end-start) + " s")
-		print("############### END SUMMARY #############")
+		print("############### END SUMMARY #############\n")
 		return "200 OK"
 
 	
