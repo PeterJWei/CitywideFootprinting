@@ -27,7 +27,7 @@ class DBMgr(object):
 		conditions = {
 			"user": user
 		}
-		iterator = self.coords.find(conditions).sort([("timestamp", pymongo.DESCENDING)])
+		iterator = self.coords.find(conditions).sort([("timestamp", pymongo.ASCENDING)])
 		for datapoint in iterator:
 			ret.append((datapoint["timestamp"], datapoint["lat"], datapoint["lon"], datapoint["speed"]))
 		with open("GPScoordinates.csv", 'wb') as csvfile:
