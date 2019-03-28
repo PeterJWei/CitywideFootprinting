@@ -30,6 +30,9 @@ class nearestBuilding:
 		self.model = LBuildings.model
 		self.referenceModels = LBuildings.referenceModels
 		self.totals = LBuildings.totals
+		self.BBl2CT = LBuildings.BBL2CT
+		self.CT2BBL = LBuildings.CT2BBL
+		self.PopulationDictionary = LPopulation.PopulationDictionary
 		
 		# self.loadPLUTO("datasets/PLUTO_Bronx.csv", "Bronx")
 		# self.loadPLUTO("datasets/PLUTO_Brooklyn.csv", "Brooklyn")
@@ -64,10 +67,23 @@ class nearestBuilding:
 			print("Found nearest building")
 			
 			# Get the closest building
-			(address, MN, BK, QN, BX, SI,
+			(BBL, address, MN, BK, QN, BX, SI,
 			totalArea, YB0, YB1, YB2, YB3, YB4, commercial, residential, office, retail,
 			garage, storage, factory, other) = self.buildingParams[minCoords]
 			
+			CT = self.BBL2CT[BBL]
+			buildingList = self.CT2BBL[CT]
+			print("Number of buildings: " + str(len(buildingList)))
+			totalUnits = 0
+			currentUnits = 0
+			for (num, units) in buildingList:
+				if num == BBL:
+					currentUnits = units
+				totalUnits += units
+			if totalUnits == 0:
+				totalUnits = 1
+			estimatedPopulation = self.PopulationDictionary[CT]*currentUnits/totalUnits
+			print(estimatedPopulation)
 			datapoint = [[MN, BK, QN, BX, SI, 24, 20, 22, 51, 34, 42, totalArea,
 			YB0, YB1, YB2, YB3, YB4, commercial, residential, office, retail, garage, storage, factory, other]]
 			print(address)
@@ -118,6 +134,34 @@ class nearestBuilding:
 		print("############### END SUMMARY #############\n")
 		return "200 OK"
 
+class loadPopulation:
+	def __init__(self):
+		self.PopulationDictionary = {}
+		print("Loading Manhattan Census...")
+		self.loadCensusData(1, "CensusData/NYCBlocks/Manhattan.csv")
+		# self.loadCensusData(2, "CensusData/NYCBlocks/Bronx.csv")
+		# self.loadCensusData(3, "CensusData/NYCBlocks/Kings.csv")
+		# self.loadCensusData(4, "CensusData/NYCBlocks/Queens.csv")
+		# self.loadCensusData(5, "CensusData/NYCBlocks/Richmond.csv")
+
+
+	def loadCensusData(self, borough, blockFile):
+		with open(blockFile, 'rb') as csvfile:
+			reader = csv.reader(csvfile, delimiter=',')
+			i = 0
+			for row in reader:
+				i += 1
+				if i <= 2: #skip the first 2 lines
+					continue
+				else:
+					GEOid2 = row[1]
+					blockNumber = str(borough) + GEOid2[5:] #convert GEOid2 to block number (bits 4-14)
+					estimated = row[3] #estimated populations
+					assert(blockNumber not in self.PopulationDictionary)
+					try:
+						self.PopulationDictionary[blockNumber] = int(estimated)
+					except ValueError:
+						self.PopulationDictionary[blockNumber] = 0
 	
 class loadBuildings:
 	def __init__(self):
@@ -132,6 +176,8 @@ class loadBuildings:
 		self.outProj = Proj(init='epsg:4326')
 		self.coordinates = []
 		self.buildingParams = {}
+		self.BBL2CT = {}
+		self.CT2BBL = {}
 		filename = 'dynamicData/NYCHARegressionModel.sav'
 		self.model = pickle.load(open(filename, 'rb'))
 		print("Initializing nearest building")
@@ -156,6 +202,21 @@ class loadBuildings:
 					borough = row[0]
 					block = row[1]
 					lot = row[2]
+					CT2010 = row[4]
+					CB2010 = row[5]
+					
+					if len(CT2010) == 0 or len(CB2010) != 4 or borough not in self.boroughCode:
+						continue
+					CT2010Split = CT2010.split(".")
+					if len(CT2010Split) == 1:
+						tract = CT2010Split[0]
+						CT2010 = "0" * (4-len(tract)) + tract + "00"
+					elif len(CT2010Split) == 2:
+						tract = CT2010Split[0]
+						subtract = CT2010Split[1]
+						CT2010 = "0" * (4-len(tract)) + tract + "0"*(2-len(subtract)) + subtract
+					CTblock = str(self.boroughCode[borough]) + str(CT2010) + str(CB2010)
+
 					address = row[16]
 					B = self.boroughCode[borough]
 					(MN, BK, QN, BX, SI) = (0,0,0,0,0)
@@ -182,6 +243,8 @@ class loadBuildings:
 						storage = float(row[40])/totalArea
 						factory = float(row[41])/totalArea
 						other = float(row[42])/totalArea
+
+						resUnits = float(row[46])
 						totalArea = math.log(totalArea)
 					except Exception as e:
 						continue
@@ -203,6 +266,12 @@ class loadBuildings:
 						lot = "0" * (4-len(lot)) + lot
 					BBL = B + block + lot
 					
+					self.BBL2CT[BBL] = CTblock
+					if CTblock not in self.BBL2CT:
+						self.CT2BBL[CTblock] = []
+					self.CT2BBL[CTblock].append((BBL,resUnits))
+
+
 					xcoord = row[74]
 					ycoord = row[75]
 					if len(xcoord) == 0 or len(ycoord) == 0:
@@ -210,8 +279,11 @@ class loadBuildings:
 					lon, lat = transform(self.inProj, self.outProj, xcoord, ycoord)
 					buildingCoords = (lat, lon)
 					self.coordinates.append(buildingCoords)
-					self.buildingParams[buildingCoords] = (address, MN, BK, QN, BX, SI,
+					self.buildingParams[buildingCoords] = (BBL, address, MN, BK, QN, BX, SI,
 						totalArea, YB0, YB1, YB2, YB3, YB4, commercial, residential, office, retail,
 						garage, storage, factory, other)
+
+
 LBuildings = loadBuildings()
+LPopulation = loadPopulation()
 GPSreport = web.application(urls, locals())
