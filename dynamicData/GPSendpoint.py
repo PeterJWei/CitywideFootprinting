@@ -70,7 +70,7 @@ class nearestBuilding:
 			(BBL, address, MN, BK, QN, BX, SI,
 			totalArea, YB0, YB1, YB2, YB3, YB4, commercial, residential, office, retail,
 			garage, storage, factory, other) = self.buildingParams[minCoords]
-			
+			self.BBl2CT = LBuildings.BBL2CT
 			CT = self.BBL2CT[BBL]
 			buildingList = self.CT2BBL[CT]
 			print("Number of buildings: " + str(len(buildingList)))
