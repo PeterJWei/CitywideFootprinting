@@ -89,7 +89,6 @@ class nearestBuilding:
 			print(address)
 			print(datapoint[0])
 
-
 			# Get energy prediction
 			prediction = self.model.predict(datapoint)[0][0]
 			print(str(math.exp(prediction)) + " kWh")
@@ -126,9 +125,11 @@ class nearestBuilding:
 			powerPrediction = comPow + resPow + offPow + retPow + garPow + stoPow + facPow + othPow# get prediction
 			powerPrediction = scaling*powerPrediction
 			print("Power Consumption: " + str(powerPrediction) + " kW")
-
-			energyServer.db.recordCoordinates(userID, latitude, longitude, accuracy, speed, course)
-		
+			footprint = 0
+			if estimatedPopulation > 0:
+				footprint = powerPrediction/estimatedPopulation
+			#energyServer.db.recordCoordinates(userID, latitude, longitude, accuracy, speed, course)
+			energyServer.db.recordInfo(userID, latitude, longitude, accuracy, speed, course, powerPrediction, estimatedPopulation, footprint)
 		end = time.time()
 		print("Finished GPS localization, " + str(end-start) + " s")
 		print("############### END SUMMARY #############\n")
@@ -270,8 +271,7 @@ class loadBuildings:
 					if CTblock not in self.BBL2CT:
 						self.CT2BBL[CTblock] = []
 					self.CT2BBL[CTblock].append((BBL,resUnits))
-
-
+					
 					xcoord = row[74]
 					ycoord = row[75]
 					if len(xcoord) == 0 or len(ycoord) == 0:

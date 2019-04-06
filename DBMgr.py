@@ -20,6 +20,20 @@ class DBMgr(object):
 			"speed": speed,
 			"course": course
 			})
+
+	def recordInfo(self, user, lat, lon, accuracy, speed, course, energy, population, footprint):
+		self.coords.insert({
+			"timestamp": datetime.datetime.now(),
+			"user": user,
+			"lat": lat,
+			"lon": lon,
+			"accuracy": accuracy,
+			"speed": speed,
+			"course": course,
+			"energy": energy,
+			"population": population,
+			"footprint": footprint
+			})
 	#"fe937490cb3a36a1"
 	#"45458C82-9CE4-412F-8BD7-0D45CA175508"
 	def pullCoordinates(self, user):

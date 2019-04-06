@@ -13,6 +13,7 @@ import json
 import math
 import fiona
 import csv
+from scipy.spatial import Voronoi, voronoi_plot_2d
 #from subwayHistorical import S
 
 #nDictionary = S.loadTurnstile('TurnstileData/turnstile_180811.csv')
@@ -41,7 +42,20 @@ class plotNYCblocks:
 		print("Loaded Richmond (Staten Island)...")
 
 		self.MB = self.maxBlock()
+		self.MB1 = self.minBlock()
 		return
+
+	def sensysPlots(self):
+		self.instantiateFigure()
+		self.drawSubwayLines("SubwayLines/SubwayLines.shp")
+		self.drawSubwayStations("SubwayStations/SubwayStations.shp")
+		self.V = Voronoi(self.vor)
+		voronoi_plot_2d(self.V, self.ax,show_vertices=False)
+		self.regularPlot()
+		self.instantiateFigure()
+		self.drawBoroughs("Boroughs/boroughs.shp")
+		self.regularPlot()
+		self.showPlots()
 
 	def exampleRun(self):
 		self.instantiateFigure()
@@ -130,7 +144,7 @@ class plotNYCblocks:
 						self.PopulationDictionary[blockNumber] = 0
 
 	def maxBlock(self):
-		MB = 0
+		MB = 1
 		for block in self.PopulationDictionary:
 			if (self.borough == 0 or block[0] == str(self.borough)) and MB < self.PopulationDictionary[block]:
 				MB = self.PopulationDictionary[block]
@@ -165,9 +179,9 @@ class plotNYCblocks:
 	def drawBoroughs(self, boroughFile):
 		sf = shp.Reader(boroughFile)
 		for s in sf.shapeRecords():
-			R = 0.5
-			G = 0.5
-			B = 0.5
+			R = 1.0
+			G = 1.0
+			B = 1.0
 			shape = s.shape
 			newPoints = []
 			for point in shape.points:
@@ -177,7 +191,7 @@ class plotNYCblocks:
 			if nparts == 1:
 				#polygon = Polygon(shape.points)
 				polygon = Polygon(newPoints)
-				patch = PolygonPatch(polygon, facecolor=[R,G,B], alpha=1.0, zorder=2)
+				patch = PolygonPatch(polygon, facecolor=[R,G,B,0], alpha=1.0, zorder=2)
 				self.ax.add_patch(patch)
 			else:
 				for ip in range(nparts):
@@ -188,7 +202,7 @@ class plotNYCblocks:
 						i1 = len(shape.points)
 					#polygon = Polygon(shape.points[i0:i1+1])
 					polygon = Polygon(newPoints[i0:i1+1])
-					patch = PolygonPatch(polygon, facecolor=[R,G,B], alpha=1.0, zorder=2)
+					patch = PolygonPatch(polygon, facecolor=[R,G,B,0], alpha=1.0, zorder=2)
 					self.ax.add_patch(patch)
 		# for shape in sf.shapeRecords():
 		# 	for i in range(len(shape.shape.parts)):
@@ -466,21 +480,32 @@ class plotNYCblocks:
 
 	def drawSubwayStations(self, subwayStationsFile):
 		sf = shp.Reader(subwayStationsFile)
+		self.vor = []
 		for shape in sf.shapeRecords():
 			#print((shape.shape.points[0][0], shape.shape.points[0][1]))
 			newPoints = []
 			for point in shape.shape.points:
 				newPoints.append(transform(self.inProj, self.outProj, point[0], point[1]))
+			self.vor.append([newPoints[0][0], newPoints[0][1]])
 			plt.plot(newPoints[0][0], newPoints[0][1], marker='o', markersize = 3, color='green')
 
 	def regularPlot(self):
-		self.ax.autoscale()
+		axes = {0:[-74.28337047811618,-73.67222994890716,40.475144526128865,40.93650364504156],
+				1:[-74.034394327,-73.905866485,40.68100549,40.876861617],
+				2:None}
+		if axes[self.borough] is not None:
+			plt.axis(axes[self.borough])
+		else: self.ax.autoscale()
 		plt.xlabel('Longitude', fontsize=30)
 		plt.ylabel('Latitude', fontsize=30)
 		plt.xticks(fontsize=20)
 		plt.yticks(fontsize=20)
-		mng = plt.get_current_fig_manager()
-		mng.resize(*mng.window.maxsize())
+		print(plt.gca().get_xlim())
+		print(plt.gca().get_ylim())
+		# mng = plt.get_current_fig_manager()
+		# mng.resize(*mng.window.maxsize())
+	
+	def showPlots(self):
 		plt.show()
 
 	def plotGraph(self):
@@ -526,8 +551,8 @@ class plotNYCblocks:
 		plt.ylabel('Latitude', fontsize=30)
 		plt.xticks(fontsize=20)
 		plt.yticks(fontsize=20)
-		mng = plt.get_current_fig_manager()
-		mng.resize(*mng.window.maxsize())
+		#mng = plt.get_current_fig_manager()
+		#mng.resize(*mng.window.maxsize())
 		plt.show()
 		#plt.savefig("foo.png")
 
