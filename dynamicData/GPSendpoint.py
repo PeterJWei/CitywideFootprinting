@@ -125,7 +125,7 @@ class nearestBuilding:
 			powerPrediction = comPow + resPow + offPow + retPow + garPow + stoPow + facPow + othPow# get prediction
 			powerPrediction = scaling*powerPrediction
 			print("Power Consumption: " + str(powerPrediction) + " kW")
-			footprint = 0
+			footprint = powerPrediction
 			if estimatedPopulation > 0:
 				footprint = powerPrediction/estimatedPopulation
 			#energyServer.db.recordCoordinates(userID, latitude, longitude, accuracy, speed, course)
