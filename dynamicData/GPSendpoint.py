@@ -133,7 +133,11 @@ class nearestBuilding:
 		end = time.time()
 		print("Finished GPS localization, " + str(end-start) + " s")
 		print("############### END SUMMARY #############\n")
-		return "200 OK"
+		ret = {
+			"address":address,
+			"footprint":footprint
+		}
+		return json.dumps(ret)
 
 class loadPopulation:
 	def __init__(self):
