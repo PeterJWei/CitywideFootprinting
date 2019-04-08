@@ -35,6 +35,15 @@ class loadBuildings:
 		self.estimateBaseline()
 		print("Completed Baseline Estimation")
 
+	def loadBuildingChanges(self, changeDictionary):
+		populationChanges = 0
+		for BBL in changeDictionary:
+			if BBL in self.BBLpopulation:
+				change = changeDictionary[BBL]
+				self.BBLpopulation[BBL] += change
+				populationChanges += 1
+		print("\n" + str(populationChanges) + " population changes\n")
+
 	def loadPLUTO(self, PLUTOfile, name):
 		print("Loading PLUTO " + name + " File...")
 		start = time.time()

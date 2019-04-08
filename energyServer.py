@@ -57,18 +57,32 @@ class Service:
 
 class MyApplication(web.application):
 	def run(self, port=8080, *middleware):
-		#self.runDynamicPopulation()
+		self.runDynamicPopulation()
 		#self.runTrafficCount()
 		func = self.wsgifunc(*middleware)
 		return web.httpserver.runsimple(func, ('0.0.0.0', port))
 
 	#def runTrafficCount(self):
-
-
+	def startDaemon(self):
+		t=Thread(target=self._loopCheckStreams, args=())
+		t.setDaemon(True)
+		t.start()
+	
+	
+	
 	def runDynamicPopulation(self):
 		#run1 = dynamicPopulation.showDynamicPopulation(1)
 		while True:
 			print("\n\nRunning dynamic\n\n")
+			#print("Number of building changes" + str(len(energyServer.S.buildingChangesList)))
+			for (borough, block, lot, diff) in S.buildingChangesList:
+				print(borough)
+				print(block)
+				print(lot)
+				break
+				#convert borough block lot to BBL
+			#LBuildings.loadBuildingChanges(S.buildingChangesList)
+			
 			#run1.getBlocks2Occupancy(20)
 			#run1.startup()
 			#run1.plotBuildings()

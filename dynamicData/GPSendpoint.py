@@ -42,7 +42,7 @@ class nearestBuilding:
 
 	def POST(self):
 		print("\n############### START SUMMARY #############\nReceived GPS coordinate")
-		print("Number of building changes" + str(len(energyServer.S.buildingChangesList)))
+		
 		start = time.time()
 		web.header('Access-Control-Allow-Origin', '*')
 		web.header('Access-Control-Allow-Credentials', 'true')
@@ -88,6 +88,7 @@ class nearestBuilding:
 			estimatedPopulation = 0
 			try:
 				estimatedPopulation = self.BBLpopulation[BBL]
+				print(BBL)
 				print("Found BBL")
 			except KeyError:
 				print("BBL not yet available")
