@@ -12,11 +12,12 @@ import streamDaemon
 import dynamicData.subwayData as SD
 import dynamicData.GPSendpoint as GPSendpoint
 import DBMgr
+import dynamicData.loadBuildingData as LBD
 
 db = DBMgr.DBMgr()
 db.pullCoordinates("45458C82-9CE4-412F-8BD7-0D45CA175508")
 S = streamDaemon.streams()
-
+LBuildings = LBD.loadBuildings()
 #Stream = streamDaemon.S
 print("Assigned stream")
 urls = (
