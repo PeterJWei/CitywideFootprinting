@@ -113,6 +113,7 @@ class subwayStream:
 						# t.futureStops[st_update.stop_id] = times
 						break
 					self.tripUpdates.append(t)
+			print(len(self.tripUpdates))
 			print(len(self.lastStops))
 			for t in self.tripUpdates:
 				if t.nextStop not in self.stopID2parent: #make sure ID is valid
@@ -130,24 +131,24 @@ class subwayStream:
 							stationTrains[parentStation] = 0
 						stationTrains[parentStation] += 1 # another train has gone through the station
 						self.lastStops[t.tripId] = nextStation #train is now going to the next station
-			removeTrains = []
-			for t in self.lastStops:
-				found = False
-				for t_u in self.tripUpdates:
-					if t_u.tripId == t:
-						found = True
-						break
-				if not found:
-				#if t not in self.tripUpdates: # train has finished
-					lastStation = self.lastStops[t]
-					#print(t)
-					parentStation = self.stopID2parent[lastStation]
-					if parentStation not in stationTrains:
-						stationTrains[parentStation] = 0
-					stationTrains[parentStation] += 1
-					removeTrains.append(t)
-			for t in removeTrains:
-				self.lastStops.pop(t, None) # remove the train
+			# removeTrains = []
+			# for t in self.lastStops:
+			# 	found = False
+			# 	for t_u in self.tripUpdates:
+			# 		if t_u.tripId == t:
+			# 			found = True
+			# 			break
+			# 	if not found:
+			# 	#if t not in self.tripUpdates: # train has finished
+			# 		lastStation = self.lastStops[t]
+			# 		#print(t)
+			# 		parentStation = self.stopID2parent[lastStation]
+			# 		if parentStation not in stationTrains:
+			# 			stationTrains[parentStation] = 0
+			# 		stationTrains[parentStation] += 1
+			# 		removeTrains.append(t)
+			# for t in removeTrains:
+			# 	self.lastStops.pop(t, None) # remove the train
 
 		return stationTrains
 
