@@ -92,7 +92,7 @@ class streams:
 			B1 = self.boroughCode[borough]
 		d1 = len(block)
 		d2 = len(lot)
-		return B1 + "0"*(5-d1) + d1 + "0"*(4-d2) + d2
+		return B1 + "0"*(5-d1) + block + "0"*(4-d2) + lot
 
 
 
