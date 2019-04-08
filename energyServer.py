@@ -8,7 +8,7 @@ import graphBackend
 import staticData.foursquareCheckinData as FS
 import staticData.staticTaxiData as TD
 import staticData.staticCensusData as CD
-#from streamDaemon import streams
+from streamDaemon import streams
 import streamDaemon
 import dynamicData.subwayData as SD
 import dynamicData.GPSendpoint as GPSendpoint

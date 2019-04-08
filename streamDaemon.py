@@ -42,6 +42,7 @@ class streams:
 		self.buildingChangesList = []
 
 	def subwayChanges(self):
+		print("\nStation Information\n--------------")
 		stationTrains = self.MTAstream.getData(0x1)
 		#for station in stationTrains:
 		#	print(str(stationTrains[station]) + " trains passed station: " + station)
@@ -55,10 +56,9 @@ class streams:
 				continue
 			entryDiff = self.timeSeriesEntries[station][t] - self.timeSeriesEntries[station][t-1]
 			exitDiff = self.timeSeriesExits[station][t] - self.timeSeriesExits[station][t-1]
-			print((entryDiff, exitDiff))
+
 			if entryDiff > 100000 or exitDiff > 100000 or entryDiff < -100000 or exitDiff < -100000:
 				continue
-			print("Got here")
 			numBuildings = len(self.stationDictionary[station])
 			if numBuildings == 0:
 				continue
@@ -74,6 +74,6 @@ class streams:
 			diff = self.buildingChanges[BBL]
 			self.buildingChangesList.append((borough, block, lot, diff))
 		print(len(self.buildingChangesList))
-		print("Completed subway changes")
+		print("End Station Information")
 
-#S=streams()
+S=streams()
