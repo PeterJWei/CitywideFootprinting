@@ -113,8 +113,8 @@ class subwayStream:
 						# t.futureStops[st_update.stop_id] = times
 						break
 					self.tripUpdates.append(t)
-			print(len(self.tripUpdates))
-			print(len(self.lastStops))
+			#print(len(self.tripUpdates))
+			#print(len(self.lastStops))
 			for t in self.tripUpdates:
 				if t.nextStop not in self.stopID2parent: #make sure ID is valid
 					continue
@@ -125,7 +125,7 @@ class subwayStream:
 					nextStation = t.nextStop
 					leftStation = self.lastStops[t.tripId]
 					if leftStation != nextStation: #train has left the station
-						print((t.routeId, leftStation, nextStation))
+						#rint((t.routeId, leftStation, nextStation))
 						parentStation = self.stopID2parent[leftStation]
 						if parentStation not in stationTrains:
 							stationTrains[parentStation] = 0
