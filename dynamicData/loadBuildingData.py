@@ -10,6 +10,7 @@ import math
 class loadBuildings:
 	def __init__(self):
 		self.PopulationDictionary = {}
+		self.BBLpopulation = {}
 		print("Loading Manhattan Census...")
 		self.loadCensusData(1, "CensusData/NYCBlocks/Manhattan.csv")
 
@@ -31,7 +32,7 @@ class loadBuildings:
 		self.model = pickle.load(open(filename, 'rb'))
 		print("Initializing nearest building")
 		self.loadPLUTO("datasets/PLUTO_Manhattan.csv", "Manhattan")
-		self.BBLpopulation = {}
+		
 		self.estimateBaseline()
 
 	def loadPLUTO(self, PLUTOfile, name):
