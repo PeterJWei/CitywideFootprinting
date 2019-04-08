@@ -81,7 +81,7 @@ class streams:
 			(borough, block, lot) = BBL
 			diff = self.buildingChanges[BBL]
 			self.buildingChangesList.append((borough, block, lot, diff))
-			self.dynamicChanges.append((convert2BBL(borough,block,lot),diff))
+			self.dynamicChanges.append((self.convert2BBL(borough,block,lot),diff))
 		print("Total trains stopped: " + str(totalTrains))
 		#print(len(self.buildingChangesList))
 		print("End Station Information")
