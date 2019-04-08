@@ -32,7 +32,7 @@ class nearestBuilding:
 		self.totals = energyServer.LBuildings.totals
 		self.BBL2CT = energyServer.LBuildings.BBL2CT
 		self.CT2BBL = energyServer.LBuildings.CT2BBL
-		self.BBLpopulation = energyServer.LBuildings.BBLpopulation
+		#self.BBLpopulation = energyServer.LBuildings.BBLpopulation
 		self.PopulationDictionary = LPopulation.PopulationDictionary
 		
 		# self.loadPLUTO("datasets/PLUTO_Bronx.csv", "Bronx")
