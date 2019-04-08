@@ -88,6 +88,7 @@ class nearestBuilding:
 			estimatedPopulation = 0
 			try:
 				estimatedPopulation = self.BBLpopulation[BBL]
+				print("Found BBL")
 			except KeyError:
 				print("BBL not yet available")
 			print(estimatedPopulation)
