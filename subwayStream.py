@@ -125,7 +125,7 @@ class subwayStream:
 					nextStation = t.nextStop
 					leftStation = self.lastStops[t.tripId]
 					if leftStation != nextStation: #train has left the station
-						print((t, leftStation, nextStation))
+						print((t.routeId, leftStation, nextStation))
 						parentStation = self.stopID2parent[leftStation]
 						if parentStation not in stationTrains:
 							stationTrains[parentStation] = 0
