@@ -83,7 +83,7 @@ class MyApplication(web.application):
 			# 	print(lot)
 			# 	break
 				#convert borough block lot to BBL
-			LBuildings.loadBuildingChanges(S.buildingChangesList)
+			LBuildings.loadBuildingChanges(S.dynamicChanges)
 			S.clearList()
 			#run1.getBlocks2Occupancy(20)
 			#run1.startup()
