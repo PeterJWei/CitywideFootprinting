@@ -32,8 +32,8 @@ class nearestBuilding:
 		self.totals = energyServer.LBuildings.totals
 		self.BBL2CT = energyServer.LBuildings.BBL2CT
 		self.CT2BBL = energyServer.LBuildings.CT2BBL
-		#self.BBLpopulation = energyServer.LBuildings.BBLpopulation
-		self.PopulationDictionary = LPopulation.PopulationDictionary
+		self.BBLpopulation = energyServer.LBuildings.BBLpopulation
+		#self.PopulationDictionary = energyServer.LBuildings.PopulationDictionary
 		
 		# self.loadPLUTO("datasets/PLUTO_Bronx.csv", "Bronx")
 		# self.loadPLUTO("datasets/PLUTO_Brooklyn.csv", "Brooklyn")
@@ -73,18 +73,20 @@ class nearestBuilding:
 			totalArea, YB0, YB1, YB2, YB3, YB4, commercial, residential, office, retail,
 			garage, storage, factory, other) = self.buildingParams[minCoords]
 
-			CT = self.BBL2CT[BBL]
-			buildingList = self.CT2BBL[CT]
-			print("Number of buildings: " + str(len(buildingList)))
-			totalUnits = 0
-			currentUnits = 0
-			for (num, units) in buildingList:
-				if num == BBL:
-					currentUnits = units
-				totalUnits += units
-			if totalUnits == 0:
-				totalUnits = 1
-			estimatedPopulation = self.PopulationDictionary[CT]*currentUnits/totalUnits
+			# CT = self.BBL2CT[BBL]
+			# buildingList = self.CT2BBL[CT]
+			# print("Number of buildings: " + str(len(buildingList)))
+			# totalUnits = 0
+			# currentUnits = 0
+			# for (num, units) in buildingList:
+			# 	if num == BBL:
+			# 		currentUnits = units
+			# 	totalUnits += units
+			# if totalUnits == 0:
+			# 	totalUnits = 1
+			# estimatedPopulation = self.PopulationDictionary[CT]*currentUnits/totalUnits
+
+			estimatedPopulation = self.BBLpopulation[BBL]
 			print(estimatedPopulation)
 			datapoint = [[MN, BK, QN, BX, SI, 24, 20, 22, 51, 34, 42, totalArea,
 			YB0, YB1, YB2, YB3, YB4, commercial, residential, office, retail, garage, storage, factory, other]]
@@ -141,35 +143,5 @@ class nearestBuilding:
 		}
 		return json.dumps(ret)
 
-class loadPopulation:
-	def __init__(self):
-		self.PopulationDictionary = {}
-		print("Loading Manhattan Census...")
-		self.loadCensusData(1, "CensusData/NYCBlocks/Manhattan.csv")
-		# self.loadCensusData(2, "CensusData/NYCBlocks/Bronx.csv")
-		# self.loadCensusData(3, "CensusData/NYCBlocks/Kings.csv")
-		# self.loadCensusData(4, "CensusData/NYCBlocks/Queens.csv")
-		# self.loadCensusData(5, "CensusData/NYCBlocks/Richmond.csv")
 
-
-	def loadCensusData(self, borough, blockFile):
-		with open(blockFile, 'rb') as csvfile:
-			reader = csv.reader(csvfile, delimiter=',')
-			i = 0
-			for row in reader:
-				i += 1
-				if i <= 2: #skip the first 2 lines
-					continue
-				else:
-					GEOid2 = row[1]
-					blockNumber = str(borough) + GEOid2[5:] #convert GEOid2 to block number (bits 4-14)
-					estimated = row[3] #estimated populations
-					assert(blockNumber not in self.PopulationDictionary)
-					try:
-						self.PopulationDictionary[blockNumber] = int(estimated)
-					except ValueError:
-						self.PopulationDictionary[blockNumber] = 0
-	
-
-LPopulation = loadPopulation()
 GPSreport = web.application(urls, locals())

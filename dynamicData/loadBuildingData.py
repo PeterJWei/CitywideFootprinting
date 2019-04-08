@@ -9,6 +9,10 @@ from datetime import datetime
 import math
 class loadBuildings:
 	def __init__(self):
+		self.PopulationDictionary = {}
+		print("Loading Manhattan Census...")
+		self.loadCensusData(1, "CensusData/NYCBlocks/Manhattan.csv")
+
 		self.referenceModels = dailyInterpolation.I.footprints
 		self.totals = dailyInterpolation.I.totals
 		self.boroughCode = {"MN":1,
@@ -22,10 +26,13 @@ class loadBuildings:
 		self.buildingParams = {}
 		self.BBL2CT = {}
 		self.CT2BBL = {}
+		
 		filename = 'dynamicData/NYCHARegressionModel.sav'
 		self.model = pickle.load(open(filename, 'rb'))
 		print("Initializing nearest building")
 		self.loadPLUTO("datasets/PLUTO_Manhattan.csv", "Manhattan")
+		self.BBLpopulation = {}
+		self.estimateBaseline()
 
 	def loadPLUTO(self, PLUTOfile, name):
 		print("Loading PLUTO " + name + " File...")
@@ -33,6 +40,36 @@ class loadBuildings:
 		self.loadCSV(PLUTOfile)
 		end = time.time()
 		print("Finished: " + str(end-start) + " s\n")
+
+	def estimateBaseline(self):
+		for CT in self.PopulationDictionary:
+			blockPop = self.PopulationDictionary[CT]
+			buildingList = self.CT2BBL[CT]
+			totalUnits = 0
+			for (BBL, units) in buildingList:
+				totalUnits += units
+			if totalUnits == 0:
+				totalUnits = 1
+			for (BBL, units) in buildingList:
+				self.BBLpopulation[BBL] = blockPop*units/totalUnits
+
+	def loadCensusData(self, borough, blockFile):
+		with open(blockFile, 'rb') as csvfile:
+			reader = csv.reader(csvfile, delimiter=',')
+			i = 0
+			for row in reader:
+				i += 1
+				if i <= 2: #skip the first 2 lines
+					continue
+				else:
+					GEOid2 = row[1]
+					blockNumber = str(borough) + GEOid2[5:] #convert GEOid2 to block number (bits 4-14)
+					estimated = row[3] #estimated populations
+					assert(blockNumber not in self.PopulationDictionary)
+					try:
+						self.PopulationDictionary[blockNumber] = int(estimated)
+					except ValueError:
+						self.PopulationDictionary[blockNumber] = 0
 
 	def loadCSV(self, PLUTOfile):
 		with open (PLUTOfile, 'rb') as csvfile:
@@ -111,6 +148,7 @@ class loadBuildings:
 					BBL = B + block + lot
 					
 					self.BBL2CT[BBL] = CTblock
+					self.BBLpopulation[BBL] = 0
 					if CTblock not in self.BBL2CT:
 						self.CT2BBL[CTblock] = []
 					self.CT2BBL[CTblock].append((BBL,resUnits))
@@ -125,5 +163,4 @@ class loadBuildings:
 					self.buildingParams[buildingCoords] = (BBL, address, MN, BK, QN, BX, SI,
 						totalArea, YB0, YB1, YB2, YB3, YB4, commercial, residential, office, retail,
 						garage, storage, factory, other)
-
 
