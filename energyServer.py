@@ -77,14 +77,14 @@ class MyApplication(web.application):
 		while True:
 			print("\n\nRunning dynamic\n\n")
 			#print("Number of building changes" + str(len(energyServer.S.buildingChangesList)))
-			for (borough, block, lot, diff) in S.buildingChangesList:
-				print(borough)
-				print(block)
-				print(lot)
-				break
+			# for (borough, block, lot, diff) in S.buildingChangesList:
+			# 	print(borough)
+			# 	print(block)
+			# 	print(lot)
+			# 	break
 				#convert borough block lot to BBL
-			#LBuildings.loadBuildingChanges(S.buildingChangesList)
-			
+			LBuildings.loadBuildingChanges(S.buildingChangesList)
+			S.clearList()
 			#run1.getBlocks2Occupancy(20)
 			#run1.startup()
 			#run1.plotBuildings()

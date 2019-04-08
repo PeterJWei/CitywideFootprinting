@@ -37,9 +37,9 @@ class loadBuildings:
 
 	def loadBuildingChanges(self, changeDictionary):
 		populationChanges = 0
-		for BBL in changeDictionary:
+		for (BBL,change) in changeDictionary:
 			if BBL in self.BBLpopulation:
-				change = changeDictionary[BBL]
+				#change = changeDictionary[BBL]
 				self.BBLpopulation[BBL] += change
 				populationChanges += 1
 		print("\n" + str(populationChanges) + " population changes\n")

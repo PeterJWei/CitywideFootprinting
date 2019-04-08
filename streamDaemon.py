@@ -10,7 +10,11 @@ class streams:
 	def __init__(self):
 		self.checkInterval = 30
 		self.startDaemon()
-		
+		self.boroughCode = {"MN":1,
+							"BX":2,
+							"BK":3,
+							"QN":4,
+							"SI":5}
 		self.stationDictionary = self.load_obj("station2buildings")
 		print("Pickle Loaded " + 'station2buildings.pkl')
 		self.MTAstream = subwayStream()
@@ -21,6 +25,7 @@ class streams:
 		print("Time Series Datapoints: " + str(len(self.timeSeriesEntries)))
 		self.buildingChanges = {}
 		self.buildingChangesList = []
+		self.dynamicChanges = []
 		self.hello = "Hello World!\n\n\n\n\n\n\n"
 
 	def load_obj(self, name):
@@ -40,6 +45,7 @@ class streams:
 	def clearList(self):
 		self.buildingChanges = {}
 		self.buildingChangesList = []
+		self.dynamicChanges = []
 
 	def subwayChanges(self):
 		print("\nStation Information\n--------------")
@@ -75,7 +81,20 @@ class streams:
 			(borough, block, lot) = BBL
 			diff = self.buildingChanges[BBL]
 			self.buildingChangesList.append((borough, block, lot, diff))
+			self.dynamicChanges.append((convert2BBL(borough,block,lot),diff))
 		print("Total trains stopped: " + str(totalTrains))
 		#print(len(self.buildingChangesList))
 		print("End Station Information")
+
+	def convert2BBL(borough, block, lot):
+		B1 = "0"
+		if borough in self.boroughCode:
+			B1 = self.boroughCode[borough]
+		d1 = len(block)
+		d2 = len(lot)
+		return B1 + "0"*(5-d1) + d1 + "0"*(4-d2) + d2
+
+
+
+
 
