@@ -89,7 +89,7 @@ class streams:
 	def convert2BBL(self, borough, block, lot):
 		B1 = "0"
 		if borough in self.boroughCode:
-			B1 = self.boroughCode[borough]
+			B1 = str(self.boroughCode[borough])
 		d1 = len(block)
 		d2 = len(lot)
 		return B1 + "0"*(5-d1) + block + "0"*(4-d2) + lot
