@@ -47,10 +47,12 @@ class streams:
 		#for station in stationTrains:
 		#	print(str(stationTrains[station]) + " trains passed station: " + station)
 		t = 1
+		totalTrains = 0
 		for station in stationTrains:
 			#Trainslate s to station
 			#TODO
-			print(str(stationTrains[station]) + " trains passed station: " + station)
+			totalTrains += stationTrains[station]
+			#print(str(stationTrains[station]) + " trains passed station: " + station)
 			if station not in self.stationDictionary or station not in self.timeSeriesEntries:
 				print("No station: " + str(station) + " found")
 				continue
@@ -73,6 +75,7 @@ class streams:
 			(borough, block, lot) = BBL
 			diff = self.buildingChanges[BBL]
 			self.buildingChangesList.append((borough, block, lot, diff))
+		print("Total trains stopped: " + str(totalTrains))
 		#print(len(self.buildingChangesList))
 		print("End Station Information")
 

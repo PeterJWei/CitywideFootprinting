@@ -41,7 +41,7 @@ class nearestBuilding:
 
 	def POST(self):
 		print("\n############### START SUMMARY #############\nReceived GPS coordinate")
-		print(energyServer.S.buildingChangesList)
+		print("Number of building changes" + str(len(energyServer.S.buildingChangesList)))
 		start = time.time()
 		web.header('Access-Control-Allow-Origin', '*')
 		web.header('Access-Control-Allow-Credentials', 'true')
