@@ -57,14 +57,15 @@ class Service:
 
 class MyApplication(web.application):
 	def run(self, port=8080, *middleware):
-		self.runDynamicPopulation()
+		#self.runDynamicPopulation()
 		#self.runTrafficCount()
+		self.startDaemon()
 		func = self.wsgifunc(*middleware)
 		return web.httpserver.runsimple(func, ('0.0.0.0', port))
 
 	#def runTrafficCount(self):
 	def startDaemon(self):
-		t=Thread(target=self._loopCheckStreams, args=())
+		t=Thread(target=self.runDynamicPopulation, args=())
 		t.setDaemon(True)
 		t.start()
 	
