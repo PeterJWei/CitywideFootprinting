@@ -86,7 +86,7 @@ class streams:
 		#print(len(self.buildingChangesList))
 		print("End Station Information")
 
-	def convert2BBL(borough, block, lot):
+	def convert2BBL(self, borough, block, lot):
 		B1 = "0"
 		if borough in self.boroughCode:
 			B1 = self.boroughCode[borough]
