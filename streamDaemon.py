@@ -73,7 +73,7 @@ class streams:
 			(borough, block, lot) = BBL
 			diff = self.buildingChanges[BBL]
 			self.buildingChangesList.append((borough, block, lot, diff))
-		print(len(self.buildingChangesList))
+		#print(len(self.buildingChangesList))
 		print("End Station Information")
 
 S=streams()
