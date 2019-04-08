@@ -32,8 +32,8 @@ class loadBuildings:
 		self.model = pickle.load(open(filename, 'rb'))
 		print("Initializing nearest building")
 		self.loadPLUTO("datasets/PLUTO_Manhattan.csv", "Manhattan")
-		
 		self.estimateBaseline()
+		print("Completed Baseline Estimation")
 
 	def loadPLUTO(self, PLUTOfile, name):
 		print("Loading PLUTO " + name + " File...")
