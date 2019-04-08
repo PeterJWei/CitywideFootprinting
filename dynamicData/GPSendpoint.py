@@ -85,6 +85,7 @@ class nearestBuilding:
 			# if totalUnits == 0:
 			# 	totalUnits = 1
 			# estimatedPopulation = self.PopulationDictionary[CT]*currentUnits/totalUnits
+			estimatedPopulation = 0
 			try:
 				estimatedPopulation = self.BBLpopulation[BBL]
 			except KeyError:

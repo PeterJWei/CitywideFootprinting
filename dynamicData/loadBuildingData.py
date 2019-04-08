@@ -45,6 +45,8 @@ class loadBuildings:
 	def estimateBaseline(self):
 		for CT in self.PopulationDictionary:
 			blockPop = self.PopulationDictionary[CT]
+			if CT not in self.CT2BBL:
+				continue
 			buildingList = self.CT2BBL[CT]
 			totalUnits = 0
 			for (BBL, units) in buildingList:
