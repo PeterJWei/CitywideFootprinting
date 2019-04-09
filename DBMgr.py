@@ -49,3 +49,23 @@ class DBMgr(object):
 			writer.writerow(['timestamp', 'latitude', 'longitude', 'speed'])
 			for coord in ret:
 				writer.writerow([coord[0], coord[1], coord[2], coord[3]])
+
+	def getEnergyFootprint(self, user):
+		ret = []
+		conditions = {
+			"user": user
+		}		
+		iterator = self.coords.find(conditions).sort([("timestamp", pymongo.ASCENDING)])
+		for datapoint in iterator:
+			if "footprint" in datapoint:
+			ret.append((datapoint["timestamp"], datapoint["footprint"]))
+		return ret
+
+
+
+
+
+
+
+
+
