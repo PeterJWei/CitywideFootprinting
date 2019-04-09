@@ -2,9 +2,8 @@ from plotNYCblocks import plotNYCblocks
 from datetime import datetime, timedelta
 from dynamicPopulation import showDynamicPopulation
 import matplotlib.pyplot as plt
-import DBMgr
-from dateutil.parser import *
 import csv
+
 #NYC Voronoi Diagram
 if False:
 	P = plotNYCblocks({},0)
@@ -43,7 +42,10 @@ if False:
 	plt.ylabel("Energy Consumption (kWh)", fontsize=16)
 	plt.show()
 
-if True:
+scrape = False
+plot = not scrape
+if scrape:
+	import DBMgr
 	db = DBMgr.DBMgr()
 	footprint = db.getEnergyFootprint("45458C82-9CE4-412F-8BD7-0D45CA175508")
 	timestamps = []
@@ -52,3 +54,31 @@ if True:
 		for (t,power) in footprint:
 			csvwriter.writerow([t, power])
 
+if plot:
+	timestamps = []
+	powers = []
+	with open("footprint.csv", 'rb') as csvfile:
+		reader = csv.reader(csvfile, delimiter=',')
+		for row in reader:
+			t = row[0]
+			fmt1 = "%Y-%m-%d %H:%M:%S"
+			dt = None
+			fmt2 = "%Y-%m-%d %H:%M:%S.%f"
+			try:
+				dt = datetime.strptime(t, fmt1)
+			except ValueError:
+				dt = None
+			if dt is None:
+				try:
+					dt = datetime.strptime(t, fmt2)
+				except ValueError:
+					continue
+			if dt < datetime(2019, 4, 8, 21, 04, 58):#2019-04-08 21:04:58.695000)
+				continue
+			timestamps.append(dt)
+			power = float(row[1])
+			powers.append(power)
+	plt.figure()
+	plt.plot(timestamps, powers)
+	plt.gcf().autofmt_xdate()
+	plt.show()
