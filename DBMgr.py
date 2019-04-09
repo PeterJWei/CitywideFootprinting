@@ -58,7 +58,7 @@ class DBMgr(object):
 		iterator = self.coords.find(conditions).sort([("timestamp", pymongo.ASCENDING)])
 		for datapoint in iterator:
 			if "footprint" in datapoint:
-			ret.append((datapoint["timestamp"], datapoint["footprint"]))
+				ret.append((datapoint["timestamp"], datapoint["footprint"]))
 		return ret
 
 

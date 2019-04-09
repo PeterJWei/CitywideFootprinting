@@ -4,6 +4,7 @@ from dynamicPopulation import showDynamicPopulation
 import matplotlib.pyplot as plt
 import DBMgr
 from dateutil.parser import *
+import csv
 #NYC Voronoi Diagram
 if False:
 	P = plotNYCblocks({},0)
@@ -48,6 +49,6 @@ if True:
 	timestamps = []
 	powers = []
 	with open("footprint.csv", 'wb') as csvfile:
-	for (t,power) in footprint:
-		csvwriter.writerow([t, power])
+		for (t,power) in footprint:
+			csvwriter.writerow([t, power])
 
