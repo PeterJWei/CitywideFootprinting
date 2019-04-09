@@ -36,7 +36,7 @@ class energyDataClass:
 	def returnEnergyEstimates(self):
 		return self.data
 
-EData = censusDataClass()
+EData = energyDataClass()
 
 class energyDataReturn:
 	def GET(self):
