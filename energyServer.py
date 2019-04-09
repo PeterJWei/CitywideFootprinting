@@ -9,6 +9,7 @@ import graphBackend
 import staticData.foursquareCheckinData as FS
 import staticData.staticTaxiData as TD
 import staticData.staticCensusData as CD
+import staticData.staticEnergyData as ED
 import streamDaemon
 import dynamicData.subwayData as SD
 import dynamicData.GPSendpoint as GPSendpoint
@@ -28,6 +29,7 @@ urls = (
 	"/foursquareData", FS.foursquareData,
 	"/taxiData", TD.taxiData,
 	"/censusData", CD.censusData,
+	"/energyData", ED.energyData,
 	"/graph", graphBackend.G,
 	"/subway", SD.subwayData,
 	"/GPSdata", GPSendpoint.GPSreport,

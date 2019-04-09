@@ -5,7 +5,6 @@ import pandas as pd
 import math
 from datetime import datetime, timedelta
 from generateWeather import weather
-import math
 from sklearn import linear_model
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 from sklearn.model_selection import train_test_split
