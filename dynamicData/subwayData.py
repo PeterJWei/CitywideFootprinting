@@ -24,7 +24,7 @@ def getTime():
 class subway:
 	def GET(self):
 		hour, minute = getTime()
-		B = energyServer.Stream.buildingChangesList
+		B = energyServer.S.buildingChangesList
 		jsonDump = json.dumps(B)
 		energyServer.Stream.clearList()
 		return jsonDump
