@@ -26,7 +26,7 @@ class subway:
 		hour, minute = getTime()
 		B = energyServer.S.buildingChangesList
 		jsonDump = json.dumps(B)
-		energyServer.Stream.clearList()
+		energyServer.S.clearList()
 		return jsonDump
 
 subwayData = web.application(urls, locals());
