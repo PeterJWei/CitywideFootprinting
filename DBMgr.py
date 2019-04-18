@@ -21,7 +21,7 @@ class DBMgr(object):
 			"course": course
 			})
 
-	def recordInfo(self, user, lat, lon, accuracy, speed, course, energy, population, footprint):
+	def recordInfo(self, user, lat, lon, accuracy, speed, course, mode, energy, population, footprint):
 		self.coords.insert({
 			"timestamp": datetime.datetime.now(),
 			"user": user,
@@ -30,6 +30,7 @@ class DBMgr(object):
 			"accuracy": accuracy,
 			"speed": speed,
 			"course": course,
+			"mode": mode,
 			"energy": energy,
 			"population": population,
 			"footprint": footprint

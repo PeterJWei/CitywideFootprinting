@@ -55,6 +55,7 @@ class nearestBuilding:
 		accuracy = float(dat[3])
 		speed=float(dat[4])
 		course=float(dat[5])
+		mode = dat[6]
 		minDist = None
 		minCoords = None
 
@@ -138,7 +139,7 @@ class nearestBuilding:
 			if estimatedPopulation > 0:
 				footprint = powerPrediction/estimatedPopulation
 			#energyServer.db.recordCoordinates(userID, latitude, longitude, accuracy, speed, course)
-			energyServer.db.recordInfo(userID, latitude, longitude, accuracy, speed, course, powerPrediction, estimatedPopulation, footprint)
+			energyServer.db.recordInfo(userID, latitude, longitude, accuracy, speed, course, mode, powerPrediction, estimatedPopulation, footprint)
 		end = time.time()
 		print("Finished GPS localization, " + str(end-start) + " s")
 		print("############### END SUMMARY #############\n")
