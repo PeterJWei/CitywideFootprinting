@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+  <title>New York Dynamic Populations</title>
+
+  <link rel="stylesheet" href="https://js.arcgis.com/4.9/esri/themes/light/main.css">
+  <script src="https://js.arcgis.com/4.9/"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script>
+    require([
+      "esri/Map",
+      "esri/layers/FeatureLayer",
+      "esri/views/MapView",
+      "esri/widgets/Legend",
+      "esri/widgets/Home",
+      "esri/widgets/Print",
+      "esri/widgets/Fullscreen",
+      "esri/tasks/support/Query",
+      "esri/layers/support/Field"
+    ], function (
+      Map,
+      FeatureLayer,
+      MapView,
+      Legend, Home, Print, Fullscreen
+    ) {  
+    var layer = new FeatureLayer({
+        url: "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/LION/FeatureServer/0"
+        //url: "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/MAPPLUTO/FeatureServer/0",
+        //"https://services1.arcgis.com/jjVcwHv9AQEq3DH3/ArcGIS/rest/services/Buildings/FeatureServer/0",
+        //definitionExpression: "Borough = 'MN'",
+        objectIdField: "OBJECTID",
+        renderer: null,
+        popupTemplate: { // autocasts as new PopupTemplate()
+          title: "LION",
+          content: [{
+            type: "fields",
+            fieldInfos: [{
+              fieldName: "Street",
+              label: "Street"
+            }, {
+              fieldName: "LBoro",
+              label: "LBoro"
+            }, {
+              fieldName: "RBoro",
+              label: "RBoro"
+            }]
+          }]
+        },
+        outFields: ["Street", "LBoro", "RBoro"]//, "Dynamic", "Borough"]
+      });
+    const fields = [
+      {
+        name: "ObjectID",
+        alias: "ObjectID",
+        type: "oid"
+      },{
+        name: "Address",
+        alias: "Address",
+        type: "string"
+      },{
+        name: "YearBuilt",
+        alias: "Year Built",
+        type: "integer"
+      },{
+        name: "Borough",
+        alias: "Borough",
+        type: "string"
+      },{
+        name: "Block",
+        alias: "Block",
+        type: "integer"
+      },{
+        name: "Lot",
+        alias: "Lot",
+        type: "integer"
+      },{
+        name: "Dynamic",
+        alias: "Dynamic",
+        type: "integer"
+      }, {
+        name: "ZipCode",
+        alias: "Zip Code",
+        type: "integer"
+      }];
+      // {
+      //   "geometry" : {"x" : -118.15, "y" : 33.80},  
+      //   "attributes" : {
+      //     "Address" : "No Address",
+      //     "Year Built" : 1999,
+      //     "Borough" : "MN"
+      //   }}
+    var newLayer = new FeatureLayer({
+      geometryType: "polygon",
+      source: [],
+      fields: fields,
+      objectIdField: "ObjectID",
+      popupTemplate: { // autocasts as new PopupTemplate()
+          title: "PLUTO",
+          content: [{
+            type: "fields",
+            fieldInfos: [{
+              fieldName: "Address",
+              label: "Address",
+              type: "string"
+            }, {
+              fieldName: "YearBuilt",
+              label: "Year Built",
+              type: "integer"
+            }, {
+              fieldName: "Borough",
+              label: "Borough",
+              type: "string"
+            },{
+              fieldName: "Block",
+              label: "Block",
+              type: "integer"
+            },{
+              fieldName: "Lot",
+              label: "Lot",
+              type: "integer"
+            },{
+              fieldName: "Dynamic",
+              label: "Dynamic",
+              type: "integer"
+            }, {
+              fieldName: "ZipCode",
+              label: "Zip Code",
+              type: "integer"
+            }]
+          }]
+        },
+      renderer: null
+    });
+    var censusDict = {};
+    
+
+    // var initializeCensusData = function(callback) {
+    //   console.log("Started initialization");
+    //   $.get("http://icsl.ee.columbia.edu:8001/censusData/censusData",{
+    //     },
+    //     function(data,status){
+    //       console.log(status);
+    //       for (var i = 0; i < data.length; i++) {
+    //         //console.log(data[i][1]);
+    //         //console.log(data[i][2]);
+    //         //console.log(typeof parseInt(data[i][1]));
+    //         censusDict[[parseInt(data[i][1]), parseInt(data[i][2])]] = parseInt(data[i][3]);
+    //       }
+    //     },'json').fail(function(xhr, status, error) {
+    //       var err = eval("(" + xhr.responseText + ")");
+    //       alert(err.Message);
+    //   }).done(function() {
+    //     console.log("Finished initialization");
+    //     callback();
+    //   });
+    // }
+
+    // var manhattanZipCodeList = [10027, 10026, 10030, 10037, 10036, 10029, 10035, 10010, 10016, 10017, 10022, 10012, 10013, 10014, 10004, 10005, 10006, 10007, 10038, 10280, 10002, 10003, 10009, 10021, 10028, 10044, 10065, 10075, 10128, 10023, 10024, 10025, 10031, 10032, 10033, 10034, 10040, 10019, 10018, 10001, 10011];
+    // var addFeatures = function() {
+    //   console.log("Beginning add features");
+    //   for (var i=0; i < manhattanZipCodeList.length; i++) {
+    //     var query = layer.createQuery();
+    //     var queryString = "ZipCode = " + manhattanZipCodeList[i].toString();
+    //     //console.log(queryString);
+    //     query.where = queryString;
+    //     query.outFields = ["*"];
+    //     addLayerFeatures(query);
+    //   }
+    // }
+    //initializeCensusData(addFeatures);
+
+
+
+    // var query = layer.createQuery();
+    // query.where = "Address = '519 WEST 121 STREET'";
+    // query.outFields = ["Address", "YearBuilt"];
+    
+
+    // function addLayerFeatures(query) {
+    //   layer.queryFeatures(query).then(function(response) {
+    //     var editFeatures = [];
+    //     console.log("Features: " + response.features.length.toString())
+    //     for (var i=0; i<response.features.length; i++) {
+    //       var editFeature = response.features[i];
+    //       var block = editFeature.attributes["Block"];
+    //       var lot = editFeature.attributes["Lot"];
+    //       //console.log(typeof block);
+    //       if ([block, lot] in censusDict) {
+    //         editFeature.attributes["Dynamic"] = censusDict[[block, lot]];
+    //       } else {
+    //         editFeature.attributes["Dynamic"] = 0;
+    //       }
+    //       //console.log(editFeature.attributes["YearBuilt"]);
+    //       //editFeature.attributes["YearBuilt"] = 1881;
+          
+    //       //console.log(editFeature.attributes["YearBuilt"]);
+    //       editFeatures.push(editFeature);
+    //     }
+    //     var edits = {
+    //       addFeatures: editFeatures
+    //     }
+    //     var promise = newLayer.applyEdits(edits).then(function(editsResult) {
+    //       console.log(editsResult);
+    //     })
+    //     .catch(function(error) {
+    //       console.log("===============================================");
+    //       console.error("[ applyEdits ] FAILURE: ", error.code, error.name,
+    //         error.message);
+    //       console.log("error = ", error);
+    //     });
+    //   });
+    // }
+
+    // function changeDynamicFeatures(query, dynamic, set) {
+    //   newLayer.queryFeatures(query).then(function(response) {
+    //     var editFeatures = [];
+    //     //console.log("Found " + response.features.length);
+    //     if (response.features.length == 0) {
+    //       return;
+    //     }
+    //     for (var i=0; i<response.features.length; i++) {
+    //       var editFeature = response.features[i];
+    //       //console.log(editFeature.attributes["Dynamic"]);
+    //       //editFeature.attributes["YearBuilt"] = 1950;
+    //       if (set == 0) {
+    //         editFeature.attributes["Dynamic"] = editFeature.attributes["Dynamic"] + dynamic;
+    //       } else {
+    //         editFeature.attributes["Dynamic"] = dynamic;
+    //       }
+    //       //console.log(editFeature.attributes["Dynamic"]);
+    //       editFeatures.push(editFeature);
+    //     }
+    //     var edits = {
+    //       updateFeatures: editFeatures
+    //     }
+
+    //     var promise = newLayer.applyEdits(edits).then(function(editsResult) {
+    //       console.log(editsResult);
+    //     })
+    //     .catch(function(error) {
+    //       console.log("===============================================");
+    //       console.error("[ applyEdits ] FAILURE: ", error.code, error.name,
+    //         error.message);
+    //       console.log("error = ", error);
+    //     });
+    //   });
+    // }
+
+
+      var map = new Map({
+      basemap: "gray",
+      layers: [layer]
+      //layers: [newLayer]
+    });
+
+    // setInterval(function() {
+    //   console.log("changing features...")
+    //   $.get("http://icsl.ee.columbia.edu:8001/subway/subwayData",{
+    //     },
+    //     function(data,status){
+    //       console.log(status);
+    //       console.log(data);
+    //       for (var i = 0; i < data.length; i++) {
+    //         var query = newLayer.createQuery();
+    //         var queryString = "Borough = 'MN' and Block = " + data[i][1] + " and Lot = " + data[i][2];
+    //         var popChange = data[i][3];
+    //         query.where = queryString;
+    //         query.outFields = ["*"];
+    //         changeDynamicFeatures(query, popChange, 0);
+    //       }
+    //     },'json').fail(function(xhr, status, error) {
+    //       var err = eval("(" + xhr.responseText + ")");
+    //       alert(err.Message);
+    //   });
+    //   setRenderer();
+    // }, 60 * 1000);
+
+    // setInterval(function() {
+    //   console.log("changing features...")
+    //   $.get("http://icsl.ee.columbia.edu:8001/taxiData/taxiOriginData",{
+    //     },
+    //     function(data,status){
+    //       console.log(status);
+    //       console.log(data);
+    //       for (var i = 0; i < data.length; i++) {
+    //         var query = newLayer.createQuery();
+    //         var queryString = "Borough = 'MN' and Block = " + data[i][1] + " and Lot = " + data[i][2];
+    //         query.where = queryString;
+    //         query.outFields = ["*"];
+    //         changeDynamicFeatures(query, -1, 0);
+    //       }
+    //     },'json').fail(function(xhr, status, error) {
+    //       var err = eval("(" + xhr.responseText + ")");
+    //       alert(err.Message);
+    //   });
+    //   setRenderer();
+    // }, 60 * 1000);
+
+    // setInterval(function() {
+    //   console.log("changing features...")
+    //   $.get("http://icsl.ee.columbia.edu:8001/taxiData/taxiDestinationData",{
+    //     },
+    //     function(data,status){
+    //       for (var i = 0; i < data.length; i++) {
+    //         var query = newLayer.createQuery();
+    //         var queryString = "Borough = 'MN' and Block = " + data[i][1] + " and Lot = " + data[i][2];
+    //         query.where = queryString;
+    //         query.outFields = ["*"];
+    //         changeDynamicFeatures(query, 1, 0);
+    //       }
+    //     },'json').fail(function(xhr, status, error) {
+    //       var err = eval("(" + xhr.responseText + ")");
+    //       alert(err.Message);
+    //   });
+    //   setRenderer();
+    // }, 60 * 1000);
+
+    var applicationDiv = document.getElementById("applicationDiv");
+    var slider = document.getElementById("slider");
+    var sliderValue = document.getElementById("sliderValue");
+    var playButton = document.getElementById("playButton");
+    var titleDiv = document.getElementById("titleDiv");
+    var reroute = document.getElementById("extraDiv");
+    var animation = null;
+
+    var view = new MapView({
+      container: "viewDiv",  // Reference to the DOM node that will contain the view
+      center: [-73.976,40.7828],
+      zoom:12,
+      map: map            // References the map object created in step 3
+    });
+    view.ui.empty("top-left");
+    view.ui.add(titleDiv, "top-left");
+    view.ui.add(reroute, "top-left");
+    view.ui.add(new Home({
+      view: view
+    }), "top-left");
+    // view.ui.add(new Print({
+    //   view: view
+    // }), "top-left");
+    view.ui.add(new Legend({
+      view: view
+    }), "bottom-left");
+    
+
+    view.ui.add(new Fullscreen({
+      view: view,
+      element: applicationDiv
+    }), "top-right");
+
+    
+    view.whenLayerView(newLayer).then(setupHoverTooltip);
+
+    setRenderer();
+
+    
+// When user drags the slider:
+      //  - stops the animation
+      //  - set the visualized year to the slider one.
+      // function inputHandler() {
+      //   stopAnimation();
+      //   setRenderer();
+      // }
+      // slider.addEventListener("input", inputHandler);
+      // slider.addEventListener("change", inputHandler);
+
+
+      // Toggle animation on/off when user
+      // clicks on the play button
+      // playButton.addEventListener("click", function () {
+      //   if (playButton.classList.contains("toggled")) {
+      //     stopAnimation();
+      //   } else {
+      //     startAnimation();
+      //   }
+      // });
+
+
+      // function queryNewLayer() {
+      //   var newQuery = newLayer.createQuery();
+      //   newQuery.where = "Address = '519 WEST 121 STREET'";
+      //   query.outFields = ["*"];
+      //   newLayer.queryFeatures(query).then(function(response) {
+      //     console.log(response);
+      //     for (var i=0; i < response.features.length; i++) {
+      //       var editFeature = response.features[i];
+      //       console.log(editFeature.attributes["YearBuilt"]);
+      //     }
+      //   }).catch(function(error) {
+      //     console.log("===============================================");
+      //     console.error("[ applyEdits ] FAILURE: ", error.code, error.name,
+      //       error.message);
+      //     console.log("error = ", error);
+      //   });
+      // }
+      //--------------------------------------------------------------------------
+      //
+      //  Methods
+      //
+      //--------------------------------------------------------------------------
+
+      /**
+       * Sets the current visualized construction year.
+       */
+      function setRenderer() {
+        newLayer.renderer = createRenderer();
+      }
+
+      /**
+       * Returns a renderer with a color visual variable driven by the input
+       * year. The selected year will always render buildings built in that year
+       * with a light blue color. Buildings built 20+ years before the indicated
+       * year are visualized with a pink color. Buildings built within that
+       * 20-year time frame are assigned a color interpolated between blue and pink.
+       */
+      function createRenderer() {
+        /*var opacityStops = [{
+            opacity: 1,
+            value: year
+          },
+          {
+            opacity: 0,
+            value: year + 1
+          }
+        ];*/
+
+        return {
+          type: "simple",
+          symbol: {
+            type: "simple-fill",
+            color: "rgb(0, 0, 0)",
+            outline: null
+          },
+          visualVariables: [
+          /*{
+            type: "opacity",
+            field: "Dynamic",
+            stops: opacityStops,
+            legendOptions: {
+              showLegend: false
+            }
+          }, */{
+            type: "color",
+            field: "Dynamic",
+            legendOptions: {
+              title: "Dynamic Population"
+            },
+            stops: [{
+              value: 3125,
+              color: "#f9f871",
+              label: "3125"
+            },{
+              value: 625,
+              color: "#ffc070",
+              label: "625"
+            },{
+              value: 125,
+              color: "#ed9481",
+              label: "125"
+            }, {
+              value: 25,
+              color: "#b67887",
+              label: "25"
+            }, {
+              value: 5,
+              color: "#786374",
+              label: "5"
+            }, {
+              value: 0,
+              color: "#444",
+              label: "0"
+            }]
+          }]
+        };
+      }
+
+      /**
+       * Sets up a moving tooltip that displays
+       * the construction year of the hovered building.
+       */
+      function setupHoverTooltip(layerview) {
+        var promise;
+        var highlight;
+
+        var tooltip = createTooltip();
+
+        view.on("pointer-move", function (event) {
+          if (promise) {
+            promise.cancel();
+          }
+
+          promise = view.hitTest(event.x, event.y)
+            .then(function(hit){
+              promise = null;
+
+              // remove current highlighted feature
+              if (highlight) {
+                highlight.remove();
+                highlight = null;
+              }
+
+              var results = hit.results.filter(function (result) {
+                return result.graphic.layer === newLayer;
+              });
+
+              // highlight the hovered feature
+              // or hide the tooltip
+              if (results.length) {
+                var graphic = results[0].graphic;
+                var screenPoint = hit.screenPoint;
+
+                highlight = layerview.highlight(graphic);
+                tooltip.show(screenPoint, "Built in " + graphic.getAttribute("YearBuilt"));
+              } else {
+                tooltip.hide();
+              }
+            });
+        });
+      }
+
+      /**
+       * Creates a tooltip to display a the construction year of a building.
+       */
+      function createTooltip() {
+        var tooltip = document.createElement("div");
+        var style = tooltip.style;
+
+        tooltip.setAttribute("role", "tooltip");
+        tooltip.classList.add("tooltip");
+
+        var textElement = document.createElement("div");
+        textElement.classList.add("esri-widget");
+        tooltip.appendChild(textElement);
+
+        view.container.appendChild(tooltip);
+
+        var x = 0;
+        var y = 0;
+        var targetX = 0;
+        var targetY = 0;
+        var visible = false;
+
+        // move the tooltip progressively
+        function move() {
+          x += (targetX - x) * 0.1;
+          y += (targetY - y) * 0.1;
+
+          if (Math.abs(targetX - x) < 1 && Math.abs(targetY - y) < 1) {
+            x = targetX;
+            y = targetY;
+          } else {
+            requestAnimationFrame(move);
+          }
+
+          style.transform = "translate3d(" + Math.round(x) + "px," + Math.round(y) + "px, 0)";
+        }
+
+        return {
+          show: function (point, text) {
+            if (!visible) {
+              x = point.x;
+              y = point.y;
+            }
+
+            targetX = point.x;
+            targetY = point.y;
+            style.opacity = 1;
+            visible = true;
+            textElement.innerHTML = text;
+
+            move();
+          },
+
+          hide: function () {
+            style.opacity = 0;
+            visible = false;
+          }
+        };
+      }
+
+    });
+
+  </script>
+
+  <style>
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+      padding: 0;
+      margin: 0;
+    }
+
+    #applicationDiv {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    #viewDiv {
+      width: 100%;
+      height: 100%;
+      flex: 1 1 auto;
+      order: 1;
+    }
+
+    #titleDiv {
+      font-weight: 400;
+      font-style: normal;
+      font-size: 1.2019rem;
+      padding: 10px;
+    }
+
+    input.button-add {
+      background-image: url('ICSL_Logo.png');
+      background-color: #D6FFF6;
+      background-repeat: no-repeat;
+      height: 34px;
+      width: 34px;
+      vertical-align: middle;
+      cursor:pointer;
+      border: 10px;
+      border-color: #D6FFF6;
+    }
+
+    #extraDiv {
+      font-weight: 400;
+      font-style: normal;
+      font-size: 1.2019rem;
+      padding: 10px;
+      background-color: #D6FFF6;
+    }
+
+    #sliderContainer {
+      flex: 0 0 80px;
+      order: 2;
+
+      display: flex;
+      flex-flow: row;
+
+      padding: 0 12px;
+    }
+
+    #sliderValue {
+      flex: 0 0 100px;
+      order: 1;
+
+      display: flex;
+      justify-content: center;
+      flex-direction: column;
+      text-align: center;
+
+      font-size: 300%;
+    }
+
+    #sliderInnerContainer {
+      flex: 1 1 auto;
+      order: 2;
+
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 0 20px;
+    }
+
+    #sliderLabels {
+      flex: 1 1 auto;
+      order: 1;
+
+      display: flex;
+      justify-content: space-between;
+      margin-top: 20px;
+    }
+
+    #rangeWrapper {
+      flex: 1 1 auto;
+      order: 2;
+
+      position: relative;
+      padding: 0 20px;
+    }
+
+    #slider {
+      width: 100%;
+    }
+    /**
+    * Play/Stop toggle button
+    */
+
+    #playButton {
+      flex: 0 0 100px;
+      order: 3;
+
+      margin: 20px 0;
+    }
+
+    .toggle-button {
+      display: flex;
+    }
+
+    .toggle-button.toggled .toggle-button-icon {
+      color: #CC1B1B;
+    }
+
+    .toggle-button .toggle-button-icon {
+      color: #1BCC1B;
+    }
+
+    .toggle-button> :nth-child(2) {
+      display: none;
+    }
+
+    .toggle-button.toggled> :nth-child(1) {
+      display: none;
+    }
+
+    .toggle-button.toggled> :nth-child(2) {
+      display: block;
+    }
+    /**
+    * Hover tooltip
+    */
+
+    .tooltip {
+      position: absolute;
+      pointer-events: none;
+      transition: opacity 200ms;
+    }
+
+    .tooltip>div {
+      margin: 0 auto;
+      padding: 12px;
+      border-radius: 4px;
+      box-shadow: 0px 0px 4px rgba(255, 255, 255, 0.75);
+      transform: translate3d(-50%, -125%, 0);
+    }
+
+  </style>
+
+</head>
+
+<body>
+  <div id="applicationDiv" style="background-color: #333333">
+    <div id="viewDiv">
+      <div id="titleDiv" class="esri-widget">Dynamic Population in New York</div>
+      <div id="extraDiv" class="esri-widget">
+        <input type="button" class="button-add" onclick="location.href='index.html';"/>
+      </div>
+    </div>
+  </div>
+</body>
+
+</html>
+
