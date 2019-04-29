@@ -92,52 +92,49 @@
       //     "Year Built" : 1999,
       //     "Borough" : "MN"
       //   }}
-    
-
-
-    // var newLayer = new FeatureLayer({
-    //   geometryType: "polygon",
-    //   source: [],
-    //   fields: fields,
-    //   objectIdField: "ObjectID",
-    //   popupTemplate: { // autocasts as new PopupTemplate()
-    //       title: "PLUTO",
-    //       content: [{
-    //         type: "fields",
-    //         fieldInfos: [{
-    //           fieldName: "Address",
-    //           label: "Address",
-    //           type: "string"
-    //         }, {
-    //           fieldName: "YearBuilt",
-    //           label: "Year Built",
-    //           type: "integer"
-    //         }, {
-    //           fieldName: "Borough",
-    //           label: "Borough",
-    //           type: "string"
-    //         },{
-    //           fieldName: "Block",
-    //           label: "Block",
-    //           type: "integer"
-    //         },{
-    //           fieldName: "Lot",
-    //           label: "Lot",
-    //           type: "integer"
-    //         },{
-    //           fieldName: "Dynamic",
-    //           label: "Dynamic",
-    //           type: "integer"
-    //         }, {
-    //           fieldName: "ZipCode",
-    //           label: "Zip Code",
-    //           type: "integer"
-    //         }]
-    //       }]
-    //     },
-    //   renderer: null
-    // });
-    // var censusDict = {};
+    var newLayer = new FeatureLayer({
+      geometryType: "polygon",
+      source: [],
+      fields: fields,
+      objectIdField: "ObjectID",
+      popupTemplate: { // autocasts as new PopupTemplate()
+          title: "PLUTO",
+          content: [{
+            type: "fields",
+            fieldInfos: [{
+              fieldName: "Address",
+              label: "Address",
+              type: "string"
+            }, {
+              fieldName: "YearBuilt",
+              label: "Year Built",
+              type: "integer"
+            }, {
+              fieldName: "Borough",
+              label: "Borough",
+              type: "string"
+            },{
+              fieldName: "Block",
+              label: "Block",
+              type: "integer"
+            },{
+              fieldName: "Lot",
+              label: "Lot",
+              type: "integer"
+            },{
+              fieldName: "Dynamic",
+              label: "Dynamic",
+              type: "integer"
+            }, {
+              fieldName: "ZipCode",
+              label: "Zip Code",
+              type: "integer"
+            }]
+          }]
+        },
+      renderer: null
+    });
+    var censusDict = {};
     
 
     // var initializeCensusData = function(callback) {
@@ -355,7 +352,7 @@
     }), "top-right");
 
     
-    //view.whenLayerView(newLayer).then(setupHoverTooltip);
+    view.whenLayerView(newLayer).then(setupHoverTooltip);
 
     setRenderer();
 
@@ -409,7 +406,7 @@
        * Sets the current visualized construction year.
        */
       function setRenderer() {
-        layer.renderer = createRenderer();
+        newLayer.renderer = createRenderer();
       }
 
       /**
@@ -434,49 +431,49 @@
           type: "simple",
           symbol: {
             type: "simple-fill",
-            color: "rgb(255, 0, 0)",
+            color: "rgb(0, 0, 0)",
             outline: null
           },
-        //   visualVariables: [
-        //   /*{
-        //     type: "opacity",
-        //     field: "Dynamic",
-        //     stops: opacityStops,
-        //     legendOptions: {
-        //       showLegend: false
-        //     }
-        //   }, */{
-        //     type: "color",
-        //     field: "Dynamic",
-        //     legendOptions: {
-        //       title: "Dynamic Population"
-        //     },
-        //     stops: [{
-        //       value: 3125,
-        //       color: "#f9f871",
-        //       label: "3125"
-        //     },{
-        //       value: 625,
-        //       color: "#ffc070",
-        //       label: "625"
-        //     },{
-        //       value: 125,
-        //       color: "#ed9481",
-        //       label: "125"
-        //     }, {
-        //       value: 25,
-        //       color: "#b67887",
-        //       label: "25"
-        //     }, {
-        //       value: 5,
-        //       color: "#786374",
-        //       label: "5"
-        //     }, {
-        //       value: 0,
-        //       color: "#444",
-        //       label: "0"
-        //     }]
-        //   }]
+          visualVariables: [
+          /*{
+            type: "opacity",
+            field: "Dynamic",
+            stops: opacityStops,
+            legendOptions: {
+              showLegend: false
+            }
+          }, */{
+            type: "color",
+            field: "Dynamic",
+            legendOptions: {
+              title: "Dynamic Population"
+            },
+            stops: [{
+              value: 3125,
+              color: "#f9f871",
+              label: "3125"
+            },{
+              value: 625,
+              color: "#ffc070",
+              label: "625"
+            },{
+              value: 125,
+              color: "#ed9481",
+              label: "125"
+            }, {
+              value: 25,
+              color: "#b67887",
+              label: "25"
+            }, {
+              value: 5,
+              color: "#786374",
+              label: "5"
+            }, {
+              value: 0,
+              color: "#444",
+              label: "0"
+            }]
+          }]
         };
       }
 
