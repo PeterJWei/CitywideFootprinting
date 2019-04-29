@@ -92,49 +92,52 @@
       //     "Year Built" : 1999,
       //     "Borough" : "MN"
       //   }}
-    var newLayer = new FeatureLayer({
-      geometryType: "polygon",
-      source: [],
-      fields: fields,
-      objectIdField: "ObjectID",
-      popupTemplate: { // autocasts as new PopupTemplate()
-          title: "PLUTO",
-          content: [{
-            type: "fields",
-            fieldInfos: [{
-              fieldName: "Address",
-              label: "Address",
-              type: "string"
-            }, {
-              fieldName: "YearBuilt",
-              label: "Year Built",
-              type: "integer"
-            }, {
-              fieldName: "Borough",
-              label: "Borough",
-              type: "string"
-            },{
-              fieldName: "Block",
-              label: "Block",
-              type: "integer"
-            },{
-              fieldName: "Lot",
-              label: "Lot",
-              type: "integer"
-            },{
-              fieldName: "Dynamic",
-              label: "Dynamic",
-              type: "integer"
-            }, {
-              fieldName: "ZipCode",
-              label: "Zip Code",
-              type: "integer"
-            }]
-          }]
-        },
-      renderer: null
-    });
-    var censusDict = {};
+    
+
+
+    // var newLayer = new FeatureLayer({
+    //   geometryType: "polygon",
+    //   source: [],
+    //   fields: fields,
+    //   objectIdField: "ObjectID",
+    //   popupTemplate: { // autocasts as new PopupTemplate()
+    //       title: "PLUTO",
+    //       content: [{
+    //         type: "fields",
+    //         fieldInfos: [{
+    //           fieldName: "Address",
+    //           label: "Address",
+    //           type: "string"
+    //         }, {
+    //           fieldName: "YearBuilt",
+    //           label: "Year Built",
+    //           type: "integer"
+    //         }, {
+    //           fieldName: "Borough",
+    //           label: "Borough",
+    //           type: "string"
+    //         },{
+    //           fieldName: "Block",
+    //           label: "Block",
+    //           type: "integer"
+    //         },{
+    //           fieldName: "Lot",
+    //           label: "Lot",
+    //           type: "integer"
+    //         },{
+    //           fieldName: "Dynamic",
+    //           label: "Dynamic",
+    //           type: "integer"
+    //         }, {
+    //           fieldName: "ZipCode",
+    //           label: "Zip Code",
+    //           type: "integer"
+    //         }]
+    //       }]
+    //     },
+    //   renderer: null
+    // });
+    // var censusDict = {};
     
 
     // var initializeCensusData = function(callback) {
@@ -330,7 +333,7 @@
       container: "viewDiv",  // Reference to the DOM node that will contain the view
       center: [-73.976,40.7828],
       zoom:12,
-      map: map            // References the map object created in step 3
+      map: map               // References the map object created in step 3
     });
     view.ui.empty("top-left");
     view.ui.add(titleDiv, "top-left");
@@ -431,7 +434,7 @@
           type: "simple",
           symbol: {
             type: "simple-fill",
-            color: "rgb(0, 0, 0)",
+            color: "rgb(255, 0, 0)",
             outline: null
           },
           visualVariables: [
