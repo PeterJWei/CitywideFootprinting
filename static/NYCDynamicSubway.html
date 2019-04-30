@@ -57,7 +57,7 @@
             }]
           }]
         },
-        outFields: ["Address", "YearBuilt", "Borough", "Block", "Lot", "ZipCode"]//, "Dynamic", "Borough"]
+        outFields: ["Address", /*"YearBuilt",*/"Borough", "Block", "Lot", "ZipCode"]//, "Dynamic", "Borough"]
       });
     const fields = [
       {
@@ -69,10 +69,10 @@
         alias: "Address",
         type: "string"
       },{
-        name: "YearBuilt",
-        alias: "Year Built",
-        type: "integer"
-      },{
+      //   name: "YearBuilt",
+      //   alias: "Year Built",
+      //   type: "integer"
+      // },{
         name: "Borough",
         alias: "Borough",
         type: "string"
@@ -246,7 +246,7 @@
         }
 
         var promise = newLayer.applyEdits(edits).then(function(editsResult) {
-          console.log(editsResult);
+          //console.log(editsResult);
         })
         .catch(function(error) {
           console.log("===============================================");
@@ -268,7 +268,7 @@
       $.get("http://icsl.ee.columbia.edu:8001/subway/subwayData",{
         },
         function(data,status){
-          console.log(status);
+          //console.log(status);
           console.log(data);
           for (var i = 0; i < data.length; i++) {
             var query = newLayer.createQuery();
@@ -456,10 +456,10 @@
               title: "Dynamic Population"
             },
             stops: [{
-              value: 3125,
-              color: "#f9f871",
-              label: "3125"
-            },{
+            //   value: 3125,
+            //   color: "#f9f871",
+            //   label: "3125"
+            // },{
               value: 625,
               color: "#ffc070",
               label: "625"
@@ -491,10 +491,10 @@
               value: -125,
               color: "#94ed81",
               label: "-125"
-            }, {
-              value: -625,
-              color: "#c0ff70",
-              label: "-625"
+            // }, {
+            //   value: -625,
+            //   color: "#c0ff70",
+            //   label: "-625"
             }]
           }]
         };
