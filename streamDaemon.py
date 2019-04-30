@@ -79,9 +79,12 @@ class streams:
 		self.buildingChangesList = []
 		for BBL in self.buildingChanges:
 			(borough, block, lot) = BBL
-			diff = self.buildingChanges[BBL]
-			self.buildingChangesList.append((borough, block, lot, diff))
-			self.dynamicChanges.append((self.convert2BBL(borough,str(block),str(lot)),diff))
+			try:
+				diff = self.buildingChanges[BBL]
+				self.buildingChangesList.append((borough, block, lot, diff))
+				self.dynamicChanges.append((self.convert2BBL(borough,str(block),str(lot)),diff))
+			except KeyError:
+				continue
 		print("Total trains stopped: " + str(totalTrains))
 		#print(len(self.buildingChangesList))
 		print("End Station Information")

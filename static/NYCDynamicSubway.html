@@ -39,9 +39,9 @@
             fieldInfos: [{
               fieldName: "Address",
               label: "Address"
-            }, {
-              fieldName: "YearBuilt",
-              label: "Year Built"
+            // }, {
+            //   fieldName: "YearBuilt",
+            //   label: "Year Built"
             }, {
               fieldName: "Borough",
               label: "Borough"
@@ -113,10 +113,10 @@
               fieldName: "Address",
               label: "Address",
               type: "string"
-            }, {
-              fieldName: "YearBuilt",
-              label: "Year Built",
-              type: "integer"
+            // }, {
+            //   fieldName: "YearBuilt",
+            //   label: "Year Built",
+            //   type: "integer"
             }, {
               fieldName: "Borough",
               label: "Borough",
@@ -536,7 +536,7 @@
                 var screenPoint = hit.screenPoint;
 
                 highlight = layerview.highlight(graphic);
-                tooltip.show(screenPoint, "Built in " + graphic.getAttribute("YearBuilt"));
+                // tooltip.show(screenPoint, "Built in " + graphic.getAttribute("YearBuilt"));
               } else {
                 tooltip.hide();
               }
