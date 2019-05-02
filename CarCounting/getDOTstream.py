@@ -168,6 +168,58 @@ class getStreamCount:
 		
 		return new
 
+	def filter(self, img, regions=None):
+		if regions is None:
+			img[:, 0:135, 0] = 0
+			img[:, 0:135, 1] = 0
+			img[:, 0:135, 2] = 0
+
+			img[170:,:,0] = 0
+			img[170:,:,1] = 0
+			img[170:,:,2] = 0
+
+			img[:67, 135:220, 0] = 0
+			img[:67, 135:220, 1] = 0
+			img[:67, 135:220, 2] = 0
+
+			for i in range(141):
+				for j in range(84,352):
+					if (i*148.0/78 + 84 < j):
+						img[i, j, 0] = 0
+						img[i, j, 1] = 0
+						img[i, j, 2] = 0
+		return img
+
+	def filter2(self, x1, y1, x2, y2, x3, y3, x4, y4, img):
+		m = (y1-y2)*1.0/(x1-x2)
+		b = y1 - m*x1
+		m1 = (y3-y4)*1.0/(x3-x4)
+		b1 = y3-m1*x3
+		for i in range(240):
+			for j in range(352):
+				if (m*j+b > i) or (m1*j+b1 > i):
+					img[i, j, 0] = 0
+					img[i, j, 1] = 0
+					img[i, j, 2] = 0
+		return img
+	def drawBox(self, img, x1, x2, y1, y2, colors):
+		R = colors[0]
+		G = colors[1]
+		B = colors[2]
+		img[y1:y2, x1, 0] = R
+		img[y1:y2, x1, 1] = G
+		img[y1:y2, x1, 2] = B
+		img[y1:y2, x2, 0] = R
+		img[y1:y2, x2, 1] = G
+		img[y1:y2, x2, 2] = B
+		img[y1, x1:x2, 0] = R
+		img[y1, x1:x2, 1] = G
+		img[y1, x1:x2, 2] = B
+		img[y2, x1:x2, 0] = R
+		img[y2, x1:x2, 1] = G
+		img[y2, x1:x2, 2] = B
+		return img
+
 
 class getStream:
 	def __init__(self, url):
