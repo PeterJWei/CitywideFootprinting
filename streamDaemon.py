@@ -28,6 +28,7 @@ class streams:
 		self.buildingChangesList = []
 		self.dynamicChanges = []
 		self.totalChanges = {}
+		self.tempChanges = {}
 		self.totalChangesList = []
 		self.V = D.vehicleCount()
 		self.currentVehicleChanges = {}
@@ -56,6 +57,7 @@ class streams:
 		self.buildingChanges = {}
 		self.buildingChangesList = []
 		self.dynamicChanges = []
+		self.tempChanges = {}
 
 	def vehicleChanges(self):
 		print("\nVehicle Information\n--------------")
@@ -106,7 +108,8 @@ class streams:
 					self.totalChanges[(Borough, Block, Lot)] += addedPop
 				else:
 					self.totalChanges[(Borough, Block, Lot)] = addedPop
-		for BBL in self.totalChanges:
+				self.tempChanges[(Borough, Block, Lot)] = self.totalChanges[(Borough, Block, Lot)]
+		for BBL in self.tempChanges:
 			(borough, block, lot) = BBL
 			try:
 				diff = self.buildingChanges[BBL]
