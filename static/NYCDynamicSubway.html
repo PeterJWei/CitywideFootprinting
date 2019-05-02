@@ -146,25 +146,24 @@
     
 
     var initializeCensusData = function(callback) {
-      callback();
-      // console.log("Started initialization");
-      // $.get("http://icsl.ee.columbia.edu:8001/censusData/censusData",{
-      //   },
-      //   function(data,status){
-      //     console.log(status);
-      //     for (var i = 0; i < data.length; i++) {
-      //       //console.log(data[i][1]);
-      //       //console.log(data[i][2]);
-      //       //console.log(typeof parseInt(data[i][1]));
-      //       censusDict[[parseInt(data[i][1]), parseInt(data[i][2])]] = parseInt(data[i][3]);
-      //     }
-      //   },'json').fail(function(xhr, status, error) {
-      //     var err = eval("(" + xhr.responseText + ")");
-      //     alert(err.Message);
-      // }).done(function() {
-      //   console.log("Finished initialization");
-      //   callback();
-      // });
+      console.log("Started initialization");
+      $.get("http://icsl.ee.columbia.edu:8001/subway/subwayTotal",{
+        },
+        function(data,status){
+          console.log(status);
+          for (var i = 0; i < data.length; i++) {
+            //console.log(data[i][1]);
+            //console.log(data[i][2]);
+            //console.log(typeof parseInt(data[i][1]));
+            censusDict[[parseInt(data[i][1]), parseInt(data[i][2])]] = parseInt(data[i][3]);
+          }
+        },'json').fail(function(xhr, status, error) {
+          var err = eval("(" + xhr.responseText + ")");
+          alert(err.Message);
+      }).done(function() {
+        console.log("Finished initialization");
+        callback();
+      });
     }
 
     var manhattanZipCodeList = [10027, 10026, 10030, 10037, 10039, 10036, 10029, 10035, 10010, 10016, 10017, 10022, 10012, 10013, 10014, 10004, 10005, 10006, 10007, 10038, 10280, 10002, 10003, 10009, 10021, 10028, 10044, 10065, 10075, 10128, 10023, 10024, 10025, 10031, 10032, 10033, 10034, 10040, 10019, 10020, 10018, 10001, 10011];
@@ -293,7 +292,7 @@
       });
     }
 
-      var map = new Map({
+    var map = new Map({
       basemap: "gray",
       layers: [newLayer]
     });
