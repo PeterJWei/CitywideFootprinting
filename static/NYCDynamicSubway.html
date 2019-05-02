@@ -265,7 +265,7 @@
 
     setInterval(function() {
       console.log("changing features...")
-      $.get("http://icsl.ee.columbia.edu:8001/subway/subwayData",{
+      $.get("http://icsl.ee.columbia.edu:8001/subway/subwayTotal",{
         },
         function(data,status){
           //console.log(status);
@@ -276,7 +276,7 @@
             var popChange = data[i][3];
             query.where = queryString;
             query.outFields = ["*"];
-            changeDynamicFeatures(query, popChange, 0);
+            changeDynamicFeatures(query, popChange, 1);
           }
         },'json').fail(function(xhr, status, error) {
           var err = eval("(" + xhr.responseText + ")");

@@ -3,7 +3,7 @@ import time
 import pickle
 from Remote2StopID import remoteDictionary
 from subwayStream import subwayStream
-
+import datetime
 
 
 class streams:
@@ -26,6 +26,7 @@ class streams:
 		self.buildingChanges = {}
 		self.buildingChangesList = []
 		self.dynamicChanges = []
+		self.totalChanges = {}
 		self.hello = "Hello World!\n\n\n\n\n\n\n"
 
 	def load_obj(self, name):
@@ -70,19 +71,31 @@ class streams:
 			numBuildings = len(self.stationDictionary[station])
 			if numBuildings == 0:
 				continue
-			diff = (exitDiff-entryDiff)/numBuildings
-			for (Borough, Block, Lot, dist) in self.stationDictionary[station]:
-				if (Borough, Block, Lot) in self.buildingChanges:
-					self.buildingChanges[(Borough, Block, Lot)] += diff
+			diff = (exitDiff-entryDiff)#/numBuildings
+			#for (Borough, Block, Lot, comArea, resArea, offArea, retArea, dist) in self.stationDictionary[station]:
+			for (Borough, Block, Lot, ratioOffice, ratioRetail, ratioResidential, dist) in self.stationDictionary[station]:
+				addedPop = 0
+				now = datetime.datetime.now()
+				hour = now.hour
+				if hour > 14 or hour < 5:
+					addedPop = exitDiff*ratioResidential - entryDiff*(ratioOffice*0.616 + ratioRetail*0.297)
 				else:
-					self.buildingChanges[(Borough, Block, Lot)] = diff
-		self.buildingChangesList = []
+					addedPop = exitDiff*(ratioOffice*0.616 + ratioRetail*0.297) - entryDiff*(ratioResidential)
+				if (Borough, Block, Lot) in self.buildingChanges:
+					self.buildingChanges[(Borough, Block, Lot)] += addedPop
+				else:
+					self.buildingChanges[(Borough, Block, Lot)] = addedPop
+				if (Borough, Block, Lot) in self.totalChanges:
+					self.totalChanges[(Borough, Block, Lot)] += addedPop
+				else:
+					self.totalChanges[(Borough, Block, Lot)] = addedPop
 		for BBL in self.buildingChanges:
 			(borough, block, lot) = BBL
 			try:
 				diff = self.buildingChanges[BBL]
 				self.buildingChangesList.append((borough, block, lot, diff))
 				self.dynamicChanges.append((self.convert2BBL(borough,str(block),str(lot)),diff))
+				
 			except KeyError:
 				continue
 		print("Total trains stopped: " + str(totalTrains))

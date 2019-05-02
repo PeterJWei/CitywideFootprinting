@@ -6,7 +6,9 @@ import energyServer
 
 
 urls = ("/subwayData", "subway",
-	"/", "check")
+		"/subwayTotal", "subwayTotal",
+		"/subwayChanges", "subwayChanges",
+		"/", "check")
 
 
 class check:
@@ -28,5 +30,18 @@ class subway:
 		jsonDump = json.dumps(B)
 		energyServer.S.clearList()
 		return jsonDump
+
+class subwayTotal:
+	def GET(self):
+		B = energyServer.S.totalChanges
+		jsonDump = json.dumps(B)
+		return jsonDump
+
+class subwayChanges:
+	def GET(self):
+		data = web.input()
+		BBL = data.BBL
+		populationDifference = energyServer.S.totalChanges[BBL]
+		return json.dumps(populationDifference)
 
 subwayData = web.application(urls, locals());
