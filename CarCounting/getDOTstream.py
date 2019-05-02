@@ -166,7 +166,7 @@ class getStreamCount:
 		T.total += len(new)
 		T.prevImage = img
 		
-		return new
+		return len(new)
 
 	def filter(self, img, regions=None):
 		if regions is None:
