@@ -106,8 +106,11 @@ class getStreamCount:
 		file = self.stream.read()
 		encoded_string = base64.b64encode(file)
 		arr = np.asarray(bytearray(file), dtype=np.uint8)
-		img = cv2.imdecode(arr, -1)
-
+		try:
+			img = cv2.imdecode(arr, -1)
+		except Exception:
+			return 0
+			
 		#filter out background
 		img2 = img.copy()
 		img2 = self.filter2(79, 104, 43, 240, 141, 108, 351, 195, img2) #hacked solution to black out the non-essential parts of the image
