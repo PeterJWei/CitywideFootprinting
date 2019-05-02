@@ -61,7 +61,7 @@ class streams:
 		print("\nVehicle Information\n--------------")
 		for camera in [797]:
 			numBuildings = len(self.cameraDictionary[camera])
-			diff = self.currentVehicleChanges[camera]*100.0/numBuildings
+			diff = self.currentVehicleChanges[camera]*1000.0/numBuildings
 			for (Borough, Block, Lot, ratioOffice, ratioRetail, ratioResidential, dist) in self.cameraDictionary[camera]:
 				self.vehicleChangesList.append((Borough, Block, Lot, diff))
 
