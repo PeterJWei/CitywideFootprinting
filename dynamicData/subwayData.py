@@ -33,7 +33,7 @@ class subway:
 
 class subwayTotal:
 	def GET(self):
-		B = energyServer.S.totalChanges
+		B = energyServer.S.totalChangesList
 		jsonDump = json.dumps(B)
 		return jsonDump
 
@@ -41,7 +41,7 @@ class subwayChanges:
 	def GET(self):
 		data = web.input()
 		BBL = data.BBL
-		populationDifference = energyServer.S.totalChangesList[BBL]
+		populationDifference = energyServer.S.totalChanges[BBL]
 		return json.dumps(populationDifference)
 
 subwayData = web.application(urls, locals());
