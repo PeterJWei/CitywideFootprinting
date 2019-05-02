@@ -257,11 +257,68 @@
       });
     }
 
+    function changeDynamicFeatures1(query, dict, set) {
+      newLayer.queryFeatures(query).then(function(response) {
+        var editFeatures = [];
+        console.log("Found " + response.features.length);
+        if (response.features.length == 0) {
+          return;
+        }
+        for (var i=0; i<response.features.length; i++) {
+          var editFeature = response.features[i];
+          var block = editFeature.attributes["Block"];
+          var lot = editFeature.attributes["Lot"];
+          var popChange = dict["" + block + "," + lot];
+          if (set == 0) {
+            editFeature.attributes["Dynamic"] = editFeature.attributes["Dynamic"] + popChange;
+          } else {
+            editFeature.attributes["Dynamic"] = popChange;
+          }
+          //console.log(editFeature.attributes["Dynamic"]);
+          editFeatures.push(editFeature);
+        }
+        var edits = {
+          updateFeatures: editFeatures
+        }
+
+        var promise = newLayer.applyEdits(edits).then(function(editsResult) {
+          //console.log(editsResult);
+        })
+        .catch(function(error) {
+          console.log("===============================================");
+          console.error("[ applyEdits ] FAILURE: ", error.code, error.name,
+            error.message);
+          console.log("error = ", error);
+        });
+      });
+    }
 
       var map = new Map({
       basemap: "gray",
       layers: [newLayer]
     });
+
+    // setInterval(function() {
+    //   console.log("changing features...")
+    //   $.get("http://icsl.ee.columbia.edu:8001/subway/subwayTotal",{
+    //     },
+    //     function(data,status){
+    //       //console.log(status);
+    //       console.log(data);
+    //       for (var i = 0; i < data.length; i++) {
+    //         var query = newLayer.createQuery();
+    //         var queryString = "Borough = 'MN' and Block = " + data[i][1] + " and Lot = " + data[i][2];
+    //         var popChange = data[i][3];
+    //         query.where = queryString;
+    //         query.outFields = ["*"];
+    //         changeDynamicFeatures(query, popChange, 1);
+    //       }
+    //     },'json').fail(function(xhr, status, error) {
+    //       var err = eval("(" + xhr.responseText + ")");
+    //       alert(err.Message);
+    //   });
+    //   setRenderer();
+    // }, 60 * 1000);
 
     setInterval(function() {
       console.log("changing features...")
@@ -270,60 +327,30 @@
         function(data,status){
           //console.log(status);
           console.log(data);
+          var buildingStr = "Borough = 'MN' and (";
+          var query = newLayer.createQuery();
+          var dict = {};
           for (var i = 0; i < data.length; i++) {
-            var query = newLayer.createQuery();
-            var queryString = "Borough = 'MN' and Block = " + data[i][1] + " and Lot = " + data[i][2];
-            var popChange = data[i][3];
-            query.where = queryString;
-            query.outFields = ["*"];
-            changeDynamicFeatures(query, popChange, 1);
+            if (i != 0) {
+              buildingStr += " or ";
+            }
+            buildingStr += "(Block = " + data[i][1] + " and Lot = " + data[i][2] + ")";
+            dict["" + data[i][1] + "," + data[i][2]] = data[i][3];
           }
+          buildingStr += ")";
+          //var queryString = "Borough = 'MN' and Block = " + data[i][1] + " and Lot = " + data[i][2];
+          //var popChange = data[i][3];
+
+          query.where = buildingStr;
+          query.outFields = ["*"];
+          changeDynamicFeatures1(query, dict, 1);
+
         },'json').fail(function(xhr, status, error) {
           var err = eval("(" + xhr.responseText + ")");
           alert(err.Message);
       });
       setRenderer();
     }, 60 * 1000);
-
-    // setInterval(function() {
-    //   console.log("changing features...")
-    //   $.get("http://icsl.ee.columbia.edu:8001/taxiData/taxiOriginData",{
-    //     },
-    //     function(data,status){
-    //       console.log(status);
-    //       console.log(data);
-    //       for (var i = 0; i < data.length; i++) {
-    //         var query = newLayer.createQuery();
-    //         var queryString = "Borough = 'MN' and Block = " + data[i][1] + " and Lot = " + data[i][2];
-    //         query.where = queryString;
-    //         query.outFields = ["*"];
-    //         changeDynamicFeatures(query, -1, 0);
-    //       }
-    //     },'json').fail(function(xhr, status, error) {
-    //       var err = eval("(" + xhr.responseText + ")");
-    //       alert(err.Message);
-    //   });
-    //   setRenderer();
-    // }, 60 * 1000);
-
-    // setInterval(function() {
-    //   console.log("changing features...")
-    //   $.get("http://icsl.ee.columbia.edu:8001/taxiData/taxiDestinationData",{
-    //     },
-    //     function(data,status){
-    //       for (var i = 0; i < data.length; i++) {
-    //         var query = newLayer.createQuery();
-    //         var queryString = "Borough = 'MN' and Block = " + data[i][1] + " and Lot = " + data[i][2];
-    //         query.where = queryString;
-    //         query.outFields = ["*"];
-    //         changeDynamicFeatures(query, 1, 0);
-    //       }
-    //     },'json').fail(function(xhr, status, error) {
-    //       var err = eval("(" + xhr.responseText + ")");
-    //       alert(err.Message);
-    //   });
-    //   setRenderer();
-    // }, 60 * 1000);
 
     var applicationDiv = document.getElementById("applicationDiv");
     var slider = document.getElementById("slider");
