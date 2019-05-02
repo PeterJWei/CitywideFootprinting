@@ -27,6 +27,7 @@ class streams:
 		self.buildingChangesList = []
 		self.dynamicChanges = []
 		self.totalChanges = {}
+		self.totalChangesList = []
 		self.hello = "Hello World!\n\n\n\n\n\n\n"
 
 	def load_obj(self, name):
@@ -89,6 +90,14 @@ class streams:
 					self.totalChanges[(Borough, Block, Lot)] += addedPop
 				else:
 					self.totalChanges[(Borough, Block, Lot)] = addedPop
+		for BBL in self.totalChanges:
+			(borough, block, lot) = BBL
+			try:
+				diff = self.buildingChanges[BBL]
+				self.totalChangesList.append((borough, block, lot, diff))
+			except KeyError:
+				continue
+
 		for BBL in self.buildingChanges:
 			(borough, block, lot) = BBL
 			try:
