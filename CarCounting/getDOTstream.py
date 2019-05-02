@@ -9,6 +9,7 @@ from utility.correlation import correlationClass
 import json
 
 urls = ("/", "stream",
+		"/vehicle", "vehicleCount",
 		"/test", "testCamera")
 
 C = CarDetector('CarCounting/InferenceGraph/citycam_graph.pb')
@@ -22,6 +23,17 @@ class tempData:
 
 T = tempData()
 
+class vehicleCount:
+	def __init__(self):
+		URL='http://207.251.86.238/797'
+		print("Getting stream from " + URL + "...")
+		self.G = getStreamCount(URL)
+		self.count = 0
+
+	def vehicleCountFromImage(self):
+		self.count += self.G.getImage()
+		return self.count
+
 class stream:
 	def __init__(self):
 		return
@@ -34,7 +46,8 @@ class stream:
 			URL = data["URL"]
 			print("found in data")
 		else:
-			URL='http://207.251.86.238/cctv31.jpg'
+			#URL='http://207.251.86.238/cctv31.jpg'
+			URL='http://207.251.86.238/797'
 		#	URL='http://207.251.86.238/cctv797.jpg?math=0.658582090996567'
 		print("Getting stream from " + URL + "...")
 		self.G = getStream(URL)
@@ -81,6 +94,79 @@ class testCamera:
 		retval, b = cv2.imencode('.jpg', im)
 		encoded_string = base64.b64encode(b)
 		return encoded_string
+
+class getStreamCount:
+	def __init__(self, url):
+		self.stream = urllib2.urlopen(url)
+
+	def getImage(self):
+		total = T.total	#total number of bounding boxes
+		boundingBoxes = T.boundingBoxes #stored bounding box coordinates from last frame
+		prevImage = T.prevImage #stored image from previous frame
+		file = self.stream.read()
+		encoded_string = base64.b64encode(file)
+		arr = np.asarray(bytearray(file), dtype=np.uint8)
+		img = cv2.imdecode(arr, -1)
+
+		#filter out background
+		img2 = img.copy()
+		img2 = self.filter2(79, 104, 43, 240, 141, 108, 351, 195, img2) #hacked solution to black out the non-essential parts of the image
+
+		sensitivity = 0.4 #threshold to filter out detections
+
+		boxes, scores, classes, num = C.getClassification(img2) #runs the image through ssd-mobilenet
+		limit = 0
+		for i in range(scores[0].shape[0]):
+			limit = i
+			if scores[0][i] < sensitivity:
+				break
+		nBoxes = boxes[0][0:limit]
+		nScores = scores[0][0:limit]
+		nClasses = classes[0][0:limit]
+
+
+		currentBoxes = []
+		for box1 in nBoxes:
+			x1 = min(351,int(round(box1[1]*352)))
+			y1 = min(239,int(round(box1[0]*240)))
+			x2 = min(351,int(round(box1[3]*352)))
+			y2 = min(239,int(round(box1[2]*240)))
+			print((x1, x2, y1, y2))
+			currentBoxes.append((x1, x2, y1, y2))
+		#currentBoxes now holds the coordinates of the bounding boxes for this frame
+		
+		#TODO: Run the current bounding boxes through VGG
+		#EXAMPLE
+		for coord in currentBoxes:
+			(x1, x2, y1, y2) = coord
+			boundingBox = img[y1:y2, x1:x2, :]
+			#Determine whether this bounding box is a car or not by passing through VGG
+
+			#remove bounding box if below score threshold
+
+		#instantiates a correlation object with the boxes from the previous frame and this frame
+		self.corr = correlationClass(boundingBoxes, currentBoxes)
+		
+		#correlates the bounding boxes. method to be implemented in correlation.py.
+		#tracked and new each contain a list of indices for the bounding boxes in this frame,
+		#whether the car in the box is matched with a bounding box in the previous frame, or not.
+		tracked, new = self.corr.correlateBoxes(prevImage, img)
+		
+		for i in range(len(currentBoxes)):
+			(x1, x2, y1, y2) = currentBoxes[i]
+			if i in new:
+				img = self.drawBox(img, x1, x2, y1, y2, [0, 255, 0])
+			else:
+				img = self.drawBox(img, x1, x2, y1, y2, [0, 0, 255])
+		#img = self.filter(img)
+		print("Image 1 bounding boxes: " + str(len(boundingBoxes)))
+		print("Image 2 bounding boxes: " + str(len(currentBoxes)))
+		print("Number of correlations: " + str(self.corr.numCorrelations))
+		T.boundingBoxes = currentBoxes
+		T.total += len(new)
+		T.prevImage = img
+		
+		return new
 
 
 class getStream:

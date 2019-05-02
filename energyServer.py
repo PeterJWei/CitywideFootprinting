@@ -12,6 +12,7 @@ import staticData.staticCensusData as CD
 import staticData.staticEnergyData as ED
 import streamDaemon
 import dynamicData.subwayData as SD
+import dynamicData.vehicleData as VD
 import dynamicData.GPSendpoint as GPSendpoint
 import DBMgr
 import dynamicData.loadBuildingData as LBD
@@ -20,6 +21,8 @@ db = DBMgr.DBMgr()
 db.pullCoordinates("45458C82-9CE4-412F-8BD7-0D45CA175508")
 S = streamDaemon.streams()
 LBuildings = LBD.loadBuildings()
+
+
 #Stream = streamDaemon.S
 print("Assigned stream")
 urls = (
@@ -32,6 +35,7 @@ urls = (
 	"/energyData", ED.energyData,
 	"/graph", graphBackend.G,
 	"/subway", SD.subwayData,
+	"/vehicle", VD.vehicleData,
 	"/GPSdata", GPSendpoint.GPSreport,
 	"/", "baseURL"
 	)
@@ -86,14 +90,13 @@ class MyApplication(web.application):
 			# 	break
 				#convert borough block lot to BBL
 			LBuildings.loadBuildingChanges(S.dynamicChanges)
+			#V.vehicleCountFromImage()
 			S.clearList()
 			#run1.getBlocks2Occupancy(20)
 			#run1.startup()
 			#run1.plotBuildings()
 			#run1.plotRealtime()
 			time.sleep(30)
-
-
 		return
 
 def notfound():

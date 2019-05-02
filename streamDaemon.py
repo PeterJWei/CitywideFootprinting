@@ -4,6 +4,7 @@ import pickle
 from Remote2StopID import remoteDictionary
 from subwayStream import subwayStream
 import datetime
+import CarCounting.getDOTstream as D
 
 
 class streams:
@@ -28,6 +29,11 @@ class streams:
 		self.dynamicChanges = []
 		self.totalChanges = {}
 		self.totalChangesList = []
+		self.V = D.vehicleCount()
+		self.currentVehicleChanges = {}
+		self.cameraDictionary = self.load_obj("camera2buildings")
+		self.vehicleChangesList = []
+
 		self.hello = "Hello World!\n\n\n\n\n\n\n"
 
 	def load_obj(self, name):
@@ -43,11 +49,21 @@ class streams:
 		while True:
 			time.sleep(self.checkInterval)
 			self.subwayChanges()
+			self.currentVehicleChanges[797] = self.V.vehicleCountFromImage()
+			self.vehicleChanges()
 
 	def clearList(self):
 		self.buildingChanges = {}
 		self.buildingChangesList = []
 		self.dynamicChanges = []
+
+	def vehicleChanges(self):
+		print("\nVehicle Information\n--------------")
+		for camera in [797]:
+			numBuildings = len(self.cameraDictionary[camera])
+			diff = self.currentVehicleChanges[camera]*100/numBuildings
+			for (Borough, Block, Lot, ratioOffice, ratioRetail, ratioResidential, dist) in self.cameraDictionary[camera]:
+				self.vehicleChangesList.append((Borough, Block, Lot, diff))
 
 	def subwayChanges(self):
 		print("\nStation Information\n--------------")
