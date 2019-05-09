@@ -124,14 +124,14 @@ class DBMgr(object):
 			index = int((dt - st).total_seconds()/3600)
 			print("Hours since start of year: " + str(index))
 			# get power prediction
-			comPow = referenceModels['LargeOffice'][index]*commercial
-			resPow = referenceModels['MidriseApartment'][index]*residential
-			offPow = referenceModels['LargeOffice'][index]*office
-			retPow = referenceModels['Stand-aloneRetail'][index]*retail
-			garPow = referenceModels['Warehouse'][index]*garage
-			stoPow = referenceModels['Warehouse'][index]*storage
-			facPow = referenceModels['Warehouse'][index]*factory
-			othPow = referenceModels['Warehouse'][index]*other
+			comPow = reference['LargeOffice'][index]*commercial
+			resPow = reference['MidriseApartment'][index]*residential
+			offPow = reference['LargeOffice'][index]*office
+			retPow = reference['Stand-aloneRetail'][index]*retail
+			garPow = reference['Warehouse'][index]*garage
+			stoPow = reference['Warehouse'][index]*storage
+			facPow = reference['Warehouse'][index]*factory
+			othPow = reference['Warehouse'][index]*other
 			powerPrediction = comPow + resPow + offPow + retPow + garPow + stoPow + facPow + othPow# get prediction
 			powerPrediction = scaling*powerPrediction
 			print("Power Consumption: " + str(powerPrediction) + " kW")
