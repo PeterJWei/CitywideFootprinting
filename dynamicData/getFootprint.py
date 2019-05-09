@@ -2,6 +2,7 @@ import web
 import energyServer
 import datetime
 import calendar
+import json
 urls = ("/", "personalFootprint"
 		)
 
