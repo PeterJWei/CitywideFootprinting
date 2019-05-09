@@ -32,18 +32,7 @@ body {
     <script>
     var ch1=document.getElementById('chart1');
 
-        var $btn = $(this).button('loading');
-        $.get("/footprint/",{
-            client:"AJAX debug frontend"
-          },
-          function(data,status){
-          console.log(data,status);
-          $btn.button('reset');
-          render1(data);
-        },'json').fail(function() {
-          alert('Error!'); // or whatever         
-          $btn.button('reset');
-      });
+        
 
       
       function render1(input){
@@ -85,6 +74,18 @@ body {
             chart.draw(data, options);
           });
       }
+      var $btn = $(this).button('loading');
+        $.get("/footprint/",{
+            client:"AJAX debug frontend"
+          },
+          function(data,status){
+          console.log(data,status);
+          $btn.button('reset');
+          render1(data);
+        },'json').fail(function() {
+          alert('Error!'); // or whatever         
+          $btn.button('reset');
+      });
       </script>
   </body>
 </html>
