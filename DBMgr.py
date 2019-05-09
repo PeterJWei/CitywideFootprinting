@@ -2,6 +2,7 @@ import pymongo
 import datetime
 import time
 import csv
+import math
 
 
 class DBMgr(object):
