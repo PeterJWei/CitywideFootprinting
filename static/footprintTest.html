@@ -51,7 +51,7 @@ body {
           }
           var data = new google.visualization.DataTable();
           var dlen=0;
-          dlen++;data.addColumn('datetime', 'TIME'); // Implicit domain label col.
+          dlen++;data.addColumn(/*'datetime'*/'number', 'TIME'); // Implicit domain label col.
           data.addColumn('number', 'Energy');
 
           var lastR=false;
