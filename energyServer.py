@@ -82,6 +82,7 @@ class MyApplication(web.application):
 		#run1 = dynamicPopulation.showDynamicPopulation(1)
 		while True:
 			print("\n\nRunning dynamic\n\n")
+
 			#print("Number of building changes" + str(len(energyServer.S.buildingChangesList)))
 			# for (borough, block, lot, diff) in S.buildingChangesList:
 			# 	print(borough)
@@ -89,9 +90,17 @@ class MyApplication(web.application):
 			# 	print(lot)
 			# 	break
 				#convert borough block lot to BBL
+			print("#################Saving snapshot##################")
+			start = time.time()
+			energyDictionary = db.energyDictionary(LBuildings.model, LBuildings.buildingParams, LBuildings.totals, LBuildings.referenceModels)
 			LBuildings.loadBuildingChanges(S.dynamicChanges)
+			populationDictionary = LBuildings.BBLpopulation
+			db.recordFullState(energyDictionary, populationDictionary)
 			#V.vehicleCountFromImage()
 			S.clearList()
+			end = time.time()
+			print("Finished: " + str(end-start) + " s")
+			print("#################Saved snapshot#################")
 			#run1.getBlocks2Occupancy(20)
 			#run1.startup()
 			#run1.plotBuildings()
