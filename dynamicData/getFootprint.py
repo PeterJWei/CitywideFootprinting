@@ -14,8 +14,9 @@ class personalFootprint:
 		start = calendar.timegm(datetime.datetime(2019, 5, 9, 0).utctimetuple())
 		end = calendar.timegm(datetime.datetime.now().utctimetuple())
 		ret = energyServer.db.retrieveStateParameters(start, end)
-		footprint = ret["footprint"]
-		jsonDump = json.dumps(footprint)
+		#footprint = ret["footprint"]
+
+		jsonDump = json.dumps(ret)
 		return jsonDump
 
 footprint = web.application(urls, locals());

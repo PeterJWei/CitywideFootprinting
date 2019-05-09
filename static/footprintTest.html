@@ -29,43 +29,54 @@ body {
 </head>
 <body>
   <div id="chart1" class="panel-body" style="height:500px;display:none;"></div>
+  <div id="chart2" class="panel-body" style="height:500px;display:none;"></div>
     <script>
     var ch1=document.getElementById('chart1');
+    var ch2=document.getElementById('chart2');
 
         
 
       
       function render1(input){
         input=input.reverse();
-      function distinct_types(input){
-            var types={};
-            input.map(function(s){
-              if(s.type_aggregate)
-                for(var t in s.type_aggregate)
-                  types[t]=true;
-            });
-            var ret=[];
-            for(var t in types)
-              ret.push(t);
-            return ret;
-          }
+      
+          var energy = input.energy;
+          var population = input.population;
           var data = new google.visualization.DataTable();
+          var data2 = new google.visualization.DataTable();
           var dlen=0;
           dlen++;data.addColumn(/*'datetime'*/'number', 'TIME'); // Implicit domain label col.
           data.addColumn('number', 'Energy');
+          data2.addColumn('number', 'TIME');
+          data2.addColumn('number', 'Energy');
 
           var lastR=false;
-          for(var i=0;i<input.length;i++){
-            var item = input[i];
+          for(var i=0;i<energy.length;i++){
+            var item = energy[i];
             var ret = new Array(2);
             ret[0] = i;
-            ret[1] = item;
+            ret[1] = energy;
             data.addRow(ret);
+          };
+          for(var i=0;i<population.length;i++){
+            var item = population[i];
+            var ret = new Array(2);
+            ret[0] = i;
+            ret[1] = population;
+            data2.addRow(ret);
           };
 
           
 
       var chart = new google.visualization.AreaChart(ch1);
+          var options = {
+            title: 'Footprint',
+            vAxis: {title: 'kWh'}
+          };
+          $(ch1).show(0,function(){
+            chart.draw(data, options);
+          });
+      var chart2 = new google.visualization.AreaChart(ch2);
           var options = {
             title: 'Footprint',
             vAxis: {title: 'kWh'}

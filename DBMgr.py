@@ -57,7 +57,8 @@ class DBMgr(object):
 
 	def retrieveStateParameters(self, start, end):
 		ret = {}
-		footprint = []
+		energy = []
+		population = []
 		t = []
 		conditions = {
 			"timestamp":{
@@ -69,13 +70,17 @@ class DBMgr(object):
 		for state in iterator:
 			E = state["energy"]["1018780036"]
 			P = state["population"]["1018780036"]
-			try:
-				footprint.append(E/P)
-			except:
-				footprint.append(100)
+			energy.append(E)
+			population.append(P)
+			#try:
+			#	footprint.append(E/P)
+			#except:
+			#	footprint.append(100)
 			t.append(state["timestamp"])
-		ret["footprint"] = footprint
-		ret["timestmaps"] = t
+		ret["energy"] = energy
+		ret["population"] = population
+		#ret["footprint"] = footprint
+		ret["timestamps"] = t
 		return ret
 
 
