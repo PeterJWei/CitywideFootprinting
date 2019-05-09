@@ -80,7 +80,7 @@ class DBMgr(object):
 		ret["energy"] = energy
 		ret["population"] = population
 		#ret["footprint"] = footprint
-		ret["timestamps"] = t
+		#ret["timestamps"] = t
 		return ret
 
 
