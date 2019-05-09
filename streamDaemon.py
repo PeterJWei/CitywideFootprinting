@@ -79,8 +79,10 @@ class streams:
 			#TODO
 			totalTrains += stationTrains[station]
 			#print(str(stationTrains[station]) + " trains passed station: " + station)
-			if station not in self.stationDictionary or station not in self.timeSeriesEntries:
-				print("No station: " + str(station) + " found")
+			if station not in self.stationDictionary
+				print("Station " + str(station) + " not in station dictionary")
+			if station not in self.timeSeriesEntries:
+				print("Station " + str(station) + " not in time series entries")
 				continue
 			entryDiff = self.timeSeriesEntries[station][t] - self.timeSeriesEntries[station][t-1]
 			exitDiff = self.timeSeriesExits[station][t] - self.timeSeriesExits[station][t-1]
