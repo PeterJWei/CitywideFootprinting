@@ -81,6 +81,7 @@ class streams:
 			#print(str(stationTrains[station]) + " trains passed station: " + station)
 			if station not in self.stationDictionary:
 				print("Station " + str(station) + " not in station dictionary")
+				continue
 			if station not in self.timeSeriesEntries:
 				print("Station " + str(station) + " not in time series entries")
 				continue
