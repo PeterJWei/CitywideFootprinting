@@ -90,7 +90,7 @@ class MyApplication(web.application):
 			# 	print(lot)
 			# 	break
 				#convert borough block lot to BBL
-			print("#################Saving snapshot##################")
+			print("#################SAVING SNAPSHOT##################")
 			start = time.time()
 			energyDictionary = db.energyDictionary(LBuildings.model, LBuildings.buildingParams, LBuildings.totals, LBuildings.referenceModels)
 			LBuildings.loadBuildingChanges(S.dynamicChanges)
@@ -100,7 +100,7 @@ class MyApplication(web.application):
 			S.clearList()
 			end = time.time()
 			print("Finished: " + str(end-start) + " s")
-			print("#################Saved snapshot#################")
+			print("#################SAVED SNAPSHOT#################")
 			#run1.getBlocks2Occupancy(20)
 			#run1.startup()
 			#run1.plotBuildings()
