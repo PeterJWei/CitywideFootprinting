@@ -1,6 +1,7 @@
 import web
 import energyServer
 import datetime
+import calendar
 urls = ("/", "personalFootprint"
 		)
 
@@ -8,9 +9,9 @@ urls = ("/", "personalFootprint"
 class personalFootprint:
 	def GET(self):
 		web.header('Access-Control-Allow-Origin', '*')
-		web.header('Access-Control-Allow-Credentials', 'true')
-		start = datetime.datetime(2019, 5, 9, 0)
-		end = datetime.datetime.now()
+		web.header('Access-Control-Allow-Credentials', 'true') 
+		start = calendar.timegm(datetime.datetime(2019, 5, 9, 0).utctimetuple())
+		end = calendar.timegm(datetime.datetime.now().utctimetuple())
 		ret = energyServer.db.retrieveStateParameters(start, end)
 		footprint = ret["footprint"]
 		jsonDump = json.dumps(footprint)
