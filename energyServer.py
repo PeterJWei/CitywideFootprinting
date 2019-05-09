@@ -1,5 +1,6 @@
 import web
 import os
+import sys
 #import dynamicPopulation
 import time
 from threading import Thread
@@ -97,6 +98,8 @@ class MyApplication(web.application):
 			energyDictionary = db.energyDictionary(LBuildings.model, LBuildings.buildingParams, LBuildings.totals, LBuildings.referenceModels)
 			LBuildings.loadBuildingChanges(S.dynamicChanges)
 			populationDictionary = LBuildings.BBLpopulation
+			print("Energy Dictionary: " + str(sys.getsizeof(energyDictionary)))
+			print("Population Dictionary: " + str(sys.getsizeof(populationDictionary)))
 			db.recordFullState(energyDictionary, populationDictionary)
 			#V.vehicleCountFromImage()
 			S.clearList()

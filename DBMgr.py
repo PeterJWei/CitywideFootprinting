@@ -65,7 +65,7 @@ class DBMgr(object):
 				"$lt":datetime.datetime.utcfromtimestamp(end)
 			}
 		}
-		iterator = self.state.find().sort([("timestamp", pymongo.ASCENDING)])
+		iterator = self.state.find()
 		for state in iterator:
 			E = state["energy"]["1018780036"]
 			P = state["population"]["1018780036"]
