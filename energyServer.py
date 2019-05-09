@@ -16,6 +16,7 @@ import dynamicData.vehicleData as VD
 import dynamicData.GPSendpoint as GPSendpoint
 import DBMgr
 import dynamicData.loadBuildingData as LBD
+import static.getFootprint as F
 
 db = DBMgr.DBMgr()
 db.pullCoordinates("45458C82-9CE4-412F-8BD7-0D45CA175508")
@@ -28,6 +29,7 @@ print("Assigned stream")
 urls = (
 	#"/(.*)", 'Service',
 #	"/realtime", dynamicPopulation.doPopulation,
+	"/footprint", F.footprint,
 	"/camera", D.DOTstream,
 	"/foursquareData", FS.foursquareData,
 	"/taxiData", TD.taxiData,

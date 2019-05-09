@@ -1,0 +1,90 @@
+<!doctype>
+<html>
+<head>
+<title> The Energy Footprint System query interface </title>
+<script src="http://code.jquery.com/jquery-latest.min.js"></script>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/typeahead.js/0.10.4/typeahead.bundle.min.js"></script>
+ <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+ <script> google.load("visualization", "1", {packages:["corechart","timeline"]});</script>
+ <script src="http://code.highcharts.com/highcharts.js"></script>
+<style>
+body {
+  padding-top: 50px;
+  position: relative;
+}
+.starter-template {
+  padding: 40px 15px;
+  text-align: center;
+}
+        .box {border:1px solid grey;background-color:#d3d3d3;}
+        .large {font-size:3000%;color:red;}
+        #div1 {background-color:blue;}
+        #div2 {background-color:red;}
+        #div3 {background-color:green;}
+        .contentDiv {height:800px;}
+
+</style>
+</head>
+<body>
+  <div id="chart1" class="panel-body" style="height:500px;display:none;"></div>
+    <script>
+    var ch1=document.getElementById('chart1');
+
+        var $btn = $(this).button('loading');
+        $.get("/footprint/",{
+            client:"AJAX debug frontend"
+          },
+          function(data,status){
+          console.log(data,status);
+          $btn.button('reset');
+          render1(data);
+        },'json').fail(function() {
+          alert('Error!'); // or whatever         
+          $btn.button('reset');
+      });
+
+      
+      function render1(input){
+        input=input.reverse();
+      function distinct_types(input){
+            var types={};
+            input.map(function(s){
+              if(s.type_aggregate)
+                for(var t in s.type_aggregate)
+                  types[t]=true;
+            });
+            var ret=[];
+            for(var t in types)
+              ret.push(t);
+            return ret;
+          }
+          var data = new google.visualization.DataTable();
+          var dlen=0;
+          dlen++;data.addColumn('datetime', 'TIME'); // Implicit domain label col.
+          data.addColumn('number', t);
+
+          var lastR=false;
+          for(var i=0;i<input.length;i++){
+            var item = input[i];
+            var ret = new Array(2);
+            ret[0] = i;
+            ret[1] = item;
+            data.addRow(ret);
+          };
+
+          
+
+      var chart = new google.visualization.AreaChart(ch1);
+          var options = {
+            title: 'Footprint',
+            vAxis: {title: 'kWh'}
+          };
+          $(ch1).show(0,function(){
+            chart.draw(data, options);
+          });
+      }
+      </script>
+  </body>
+</html>

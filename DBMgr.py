@@ -56,7 +56,9 @@ class DBMgr(object):
 	#"45458C82-9CE4-412F-8BD7-0D45CA175508"
 
 	def retrieveStateParameters(self, start, end):
-		ret = []
+		ret = {}
+		footprint = []
+		t = []
 		conditions = {
 			"timestamp":{
 				"$gte":datetime.datetime.utcfromtimestamp(start),
@@ -64,6 +66,18 @@ class DBMgr(object):
 			}
 		}
 		iterator = self.state.find().sort([("timestamp", pymongo.ASCENDING)])
+		for state in iterator:
+			E = state["energy"]["1018780036"]
+			P = state["population"]["1018780036"]
+			try:
+				footprint.append(E/P)
+			except:
+				footprint.append(100)
+			t.append(state["timestamp"])
+		ret["footprint"] = footprint
+		ret["timestmaps"] = t
+		return ret
+
 
 	def pullCoordinates(self, user):
 		ret = []
