@@ -92,7 +92,7 @@ class DBMgr(object):
 
 	def energyDictionary(self, model, buildingParameters, totals, reference):
 		ret = {}
-		month = datetime.now().month-1
+		month = datetime.datetime.now().month-1
 		for coords in buildingParameters:
 			(BBL, address, MN, BK, QN, BX, SI,
 			totalArea, YB0, YB1, YB2, YB3, YB4, commercial, residential, office, retail,
@@ -119,8 +119,8 @@ class DBMgr(object):
 			#########################
 			
 			# get hours since Jan 1
-			dt = datetime.now()
-			st = datetime(2019, 1, 1, 1)
+			dt = datetime.datetime.now()
+			st = datetime.datetime(2019, 1, 1, 1)
 			index = int((dt - st).total_seconds()/3600)
 			print("Hours since start of year: " + str(index))
 			# get power prediction
