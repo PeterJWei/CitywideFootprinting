@@ -52,17 +52,15 @@ body {
 
           var lastR=false;
           for(var i=0;i<energy.length;i++){
-            var item = energy[i];
             var ret = new Array(2);
             ret[0] = i;
-            ret[1] = energy;
+            ret[1] = energy[i];
             data.addRow(ret);
           };
           for(var i=0;i<population.length;i++){
-            var item = population[i];
             var ret = new Array(2);
             ret[0] = i;
-            ret[1] = population;
+            ret[1] = population[i];
             data2.addRow(ret);
           };
 
