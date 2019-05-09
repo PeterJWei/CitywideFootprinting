@@ -97,7 +97,7 @@ class nearestBuilding:
 			datapoint = [[MN, BK, QN, BX, SI, 24, 20, 22, 51, 34, 42, totalArea,
 			YB0, YB1, YB2, YB3, YB4, commercial, residential, office, retail, garage, storage, factory, other]]
 			print(address)
-			print(datapoint[0])
+			# print(datapoint[0])
 
 			# Get energy prediction
 			prediction = self.model.predict(datapoint)[0][0]

@@ -95,7 +95,8 @@ class DBMgr(object):
 			(BBL, address, MN, BK, QN, BX, SI,
 			totalArea, YB0, YB1, YB2, YB3, YB4, commercial, residential, office, retail,
 			garage, storage, factory, other) = buildingParameters[coords]
-
+			datapoint = [[MN, BK, QN, BX, SI, 24, 20, 22, 51, 34, 42, totalArea,
+			YB0, YB1, YB2, YB3, YB4, commercial, residential, office, retail, garage, storage, factory, other]]
 			# Get energy prediction
 			prediction = model.predict(datapoint)[0][0]
 			print(str(math.exp(prediction)) + " kWh")
