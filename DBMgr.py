@@ -94,7 +94,7 @@ class DBMgr(object):
 		for coords in buildingParameters:
 			(BBL, address, MN, BK, QN, BX, SI,
 			totalArea, YB0, YB1, YB2, YB3, YB4, commercial, residential, office, retail,
-			garage, storage, factory, other) = buildingParams[coords]
+			garage, storage, factory, other) = buildingParameters[coords]
 
 			# Get energy prediction
 			prediction = model.predict(datapoint)[0][0]
