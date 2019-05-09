@@ -101,7 +101,7 @@ class DBMgr(object):
 			YB0, YB1, YB2, YB3, YB4, commercial, residential, office, retail, garage, storage, factory, other]]
 			# Get energy prediction
 			prediction = model.predict(datapoint)[0][0]
-			print(str(math.exp(prediction)) + " kWh")
+			#print(str(math.exp(prediction)) + " kWh")
 			comFrac = totals['LargeOffice'][month]*commercial
 			resFrac = totals['MidriseApartment'][month]*residential
 			offFrac = totals['LargeOffice'][month]*office
@@ -122,7 +122,7 @@ class DBMgr(object):
 			dt = datetime.datetime.now()
 			st = datetime.datetime(2019, 1, 1, 1)
 			index = int((dt - st).total_seconds()/3600)
-			print("Hours since start of year: " + str(index))
+			#print("Hours since start of year: " + str(index))
 			# get power prediction
 			comPow = reference['LargeOffice'][index]*commercial
 			resPow = reference['MidriseApartment'][index]*residential
@@ -134,7 +134,7 @@ class DBMgr(object):
 			othPow = reference['Warehouse'][index]*other
 			powerPrediction = comPow + resPow + offPow + retPow + garPow + stoPow + facPow + othPow# get prediction
 			powerPrediction = scaling*powerPrediction
-			print("Power Consumption: " + str(powerPrediction) + " kW")
+			#print("Power Consumption: " + str(powerPrediction) + " kW")
 			ret[BBL] = powerPrediction
 		return ret
 
