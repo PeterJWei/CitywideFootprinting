@@ -92,6 +92,7 @@ class DBMgr(object):
 
 	def energyDictionary(self, model, buildingParameters, totals, reference):
 		ret = {}
+		month = datetime.now().month-1
 		for coords in buildingParameters:
 			(BBL, address, MN, BK, QN, BX, SI,
 			totalArea, YB0, YB1, YB2, YB3, YB4, commercial, residential, office, retail,
