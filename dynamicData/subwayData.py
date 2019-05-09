@@ -35,6 +35,7 @@ class subwayTotal:
 	def GET(self):
 		B = energyServer.S.totalChangesList
 		jsonDump = json.dumps(B)
+		energyServer.S.clearList()
 		return jsonDump
 
 class subwayChanges:

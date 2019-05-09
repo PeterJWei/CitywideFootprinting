@@ -170,6 +170,7 @@
     var addFeatures = function() {
       console.log("Beginning add features");
       for (var i=0; i < manhattanZipCodeList.length; i++) {
+        console.log(manhattanZipCodeList[i].toString());
         var query = layer.createQuery();
         var queryString = "ZipCode = " + manhattanZipCodeList[i].toString();
         //console.log(queryString);

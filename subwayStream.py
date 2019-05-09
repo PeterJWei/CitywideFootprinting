@@ -54,9 +54,7 @@ class subwayStream:
 					self.stopID2parent[stationName] = parent
 
 	def getData(self, lines=0x1FF):
-
 		stationTrains = {}
-		
 		feedDictionary = {1:("1", "123456S"), #123456S
 						  2:("26","ACEHS"), #ACEHS
 						  4:("16", "NQRW"), #NQRW

@@ -69,7 +69,7 @@ class streams:
 
 	def subwayChanges(self):
 		print("\nStation Information\n--------------")
-		stationTrains = self.MTAstream.getData(0xF)
+		stationTrains = self.MTAstream.getData(0x1FF)
 		#for station in stationTrains:
 		#	print(str(stationTrains[station]) + " trains passed station: " + station)
 		t = 1
