@@ -69,7 +69,7 @@ class MyApplication(web.application):
 	def run(self, port=8080, *middleware):
 		#self.runDynamicPopulation()
 		#self.runTrafficCount()
-		self.startDaemon()
+		#self.startDaemon()
 		func = self.wsgifunc(*middleware)
 		return web.httpserver.runsimple(func, ('0.0.0.0', port))
 
