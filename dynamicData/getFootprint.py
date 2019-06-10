@@ -16,6 +16,7 @@ class personalFootprint:
 		#end = calendar.timegm(datetime.datetime.now().utctimetuple())
 		ret = energyServer.db.retrieveStateParameters(start, end)
 		#footprint = ret["footprint"]
+		print("Scraped Database")
 
 		jsonDump = json.dumps(ret)
 		return jsonDump

@@ -21,7 +21,7 @@ import dynamicData.getFootprint as F
 
 db = DBMgr.DBMgr()
 db.pullCoordinates("45458C82-9CE4-412F-8BD7-0D45CA175508")
-S = streamDaemon.streams()
+#S = streamDaemon.streams()
 LBuildings = LBD.loadBuildings()
 
 
