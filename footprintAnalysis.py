@@ -37,6 +37,6 @@ def main():
 if __name__ == "__main__":
 	print("Running Main...")
 	parser = argparse.ArgumentParser(description='Pull footprint from database.')
-	parser.add_argument('user', type=str, default="597C5E91-976D-48D9-8797-5004455EC7B5")
-	parser.add_argument('days', type=int, default=10)
+	parser.add_argument('--user', type=str, default="597C5E91-976D-48D9-8797-5004455EC7B5")
+	parser.add_argument('--days', type=int, default=10)
 	main()
