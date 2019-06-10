@@ -12,7 +12,8 @@ class personalFootprint:
 		web.header('Access-Control-Allow-Origin', '*')
 		web.header('Access-Control-Allow-Credentials', 'true') 
 		start = calendar.timegm(datetime.datetime(2019, 5, 9, 0).utctimetuple())
-		end = calendar.timegm(datetime.datetime.now().utctimetuple())
+		end = calendar.timegm(datetime.datetime(2019, 5, 15, 0).utctimetuple())
+		#end = calendar.timegm(datetime.datetime.now().utctimetuple())
 		ret = energyServer.db.retrieveStateParameters(start, end)
 		#footprint = ret["footprint"]
 
