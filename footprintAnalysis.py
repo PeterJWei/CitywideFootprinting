@@ -23,7 +23,7 @@ def main():
 	print("Received footprint data")
 
 	footprints = D["footprint"]
-	timestamps = D["timestamps"]
+	timestamps = D["timestamp"]
 	energies = D["energy"]
 
 	with open(csvFilePath, mode='w') as csvFile:
