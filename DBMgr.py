@@ -121,7 +121,7 @@ class DBMgr(object):
 				"$lt":datetime.datetime.utcfromtimestamp(end)
 			}
 		}
-		iterator = self.coords.find(conditions).srt([("timestamp", pymongo.ASCENDING)])
+		iterator = self.coords.find(conditions).sort([("timestamp", pymongo.ASCENDING)])
 		for datapoint in iterator:
 			if "footprint" in datapoint and "timestamp" in datapoint and "energy" in datapoint:
 				ret["footprint"].append(datapoint["footprint"])
