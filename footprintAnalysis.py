@@ -15,8 +15,9 @@ def main():
 	if days > 0:
 		print("Days: " + str(days))
 		days = 100
+	start = datetime.datetime.now() - datetime.timedelta(days=days)
+	start = calendar.timegm(start.utctimetuple())
 	end = calendar.timegm(datetime.datetime.now().utctimetuple())
-	start = end - datetime.timedelta(days=days)
 	print("Querying database for footprint...")
 	D = db.getFootprintData(user, start, end)
 	print("Received footprint data")
