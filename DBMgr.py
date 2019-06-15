@@ -141,7 +141,7 @@ class DBMgr(object):
 				"$lt":datetime.datetime.utcfromtimestamp(end)
 			}
 		}
-		iterator = self.stateInformation.find(conditions).sort([("timestamp", pymongo.ASCENDING)])
+		iterator = self.state.find(conditions).sort([("timestamp", pymongo.ASCENDING)])
 		#iterator = self.coords.find(conditions).sort([("timestamp", pymongo.ASCENDING)])
 		
 		keys = interator[0].keys()[0:100]
