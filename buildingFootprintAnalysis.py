@@ -15,9 +15,10 @@ def main():
 	if minutes > 0:
 		print("Minutes: " + str(minutes))
 		minutes = 100
-	start = datetime.datetime.now() - datetime.timedelta(minutes=minutes)
+	start = datetime.datetime(2019, 5, 13, 0, 0, 0)
+	end = start + datetime.timedelta(minutes=minutes)
 	start = calendar.timegm(start.utctimetuple())
-	end = calendar.timegm(datetime.datetime.now().utctimetuple())
+	end = calendar.timegm(end.utctimetuple())
 	print("Querying database for footprint...")
 	D = db.getBuildingFootprintData(start, end)
 	print("Received footprint data")
