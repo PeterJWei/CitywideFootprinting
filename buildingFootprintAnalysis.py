@@ -11,7 +11,6 @@ csvFilePath = "exampleBuildingFootprints/buildingFootprint1.csv"
 def main():
 	args = parser.parse_args()
 	minutes = args.minutes
-	user = args.user
 	if minutes > 0:
 		print("Minutes: " + str(minutes))
 		minutes = 100
