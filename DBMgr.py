@@ -129,6 +129,36 @@ class DBMgr(object):
 				ret["energy"].append(datapoint["energy"])
 		return ret
 
+	def getBuildingFootprintData(self, start, end):
+		ret = {}
+		#ret["footprint"] = []
+		ret["timestamp"] = []
+		#ret["energy"] = []
+		conditions = {
+			#"user": user,
+			"timestamp": {
+				"$gte":datetime.datetime.utcfromtimestamp(start),
+				"$lt":datetime.datetime.utcfromtimestamp(end)
+			}
+		}
+		iterator = self.stateInformation.find(conditions).sort([("timestamp", pymongo.ASCENDING)])
+		#iterator = self.coords.find(conditions).sort([("timestamp", pymongo.ASCENDING)])
+		
+		keys = interator[0].keys()[0:100]
+		for k in keys:
+			print(k)
+			ret[k] = []
+		for datapoint in iterator:
+			ret["timestamp"].append(datapoint["timestamp"])
+			for k in keys:
+				ret[k].append(datapoint[k])
+		#	if "footprint" in datapoint and "timestamp" in datapoint and "energy" in datapoint:
+		#		ret["footprint"].append(datapoint["footprint"])
+		#		ret["timestamp"].append(datapoint["timestamp"])
+		#		ret["energy"].append(datapoint["energy"])
+		return ret
+
+
 	def energyDictionary(self, model, buildingParameters, totals, reference):
 		ret = {}
 		month = datetime.datetime.now().month-1
