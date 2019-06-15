@@ -144,7 +144,7 @@ class DBMgr(object):
 		iterator = self.state.find(conditions).sort([("timestamp", pymongo.ASCENDING)])
 		#iterator = self.coords.find(conditions).sort([("timestamp", pymongo.ASCENDING)])
 		
-		keys = interator[0].keys()[0:100]
+		keys = iterator[0].keys()[0:100]
 		for k in keys:
 			print(k)
 			ret[k] = []
