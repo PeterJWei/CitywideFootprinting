@@ -11,9 +11,10 @@ csvFilePath = "exampleBuildingFootprints/buildingFootprint1.csv"
 def main():
 	args = parser.parse_args()
 	minutes = args.minutes
-	if minutes > 0:
-		print("Minutes: " + str(minutes))
+	if minutes < 0:
 		minutes = 100
+	print("Minutes: " + str(minutes))
+
 	start = datetime.datetime(2019, 5, 13, 0, 0, 0)
 	end = start + datetime.timedelta(minutes=minutes)
 	start = calendar.timegm(start.utctimetuple())
