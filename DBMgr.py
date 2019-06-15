@@ -147,18 +147,19 @@ class DBMgr(object):
 		i = 0
 		keys = []
 		for datapoint in iterator:
-			for k in datapoint:
+			E = datapoint["energy"]
+			for BBL in E:
 				if i > 100:
 					break
-				ret[k] = []
-				keys.append(k)
+				ret[BBL] = []
+				keys.append(BBL)
 				i += 1
 			break
 		print("Keys: " + str(keys))
 		for datapoint in iterator:
 			ret["timestamp"].append(datapoint["timestamp"])
 			for k in keys:
-				ret[k].append(datapoint[k])
+				ret[k].append(datapoint["energy"][k])
 		#	if "footprint" in datapoint and "timestamp" in datapoint and "energy" in datapoint:
 		#		ret["footprint"].append(datapoint["footprint"])
 		#		ret["timestamp"].append(datapoint["timestamp"])
