@@ -129,7 +129,7 @@ class DBMgr(object):
 				ret["energy"].append(datapoint["energy"])
 		return ret
 
-	def getBuildingFootprintData(self, start, end):
+	def getBuildingFootprintData(self, start, end, BBLs=None):
 		ret = {}
 		#ret["footprint"] = []
 		ret["timestamp"] = []
@@ -146,15 +146,23 @@ class DBMgr(object):
 		
 		i = 0
 		keys = []
-		for datapoint in iterator:
-			E = datapoint["energy"]
-			for BBL in E:
-				if i > 100:
-					break
-				ret[BBL] = []
-				keys.append(BBL)
-				i += 1
-			break
+		if BBLs is not None:
+			for datapoint in iterator:
+				E = datapoint["energy"]
+				for BBL in BBLs:
+					ret[BBL] = []
+					keys.append(BBL)
+				break
+		else:
+			for datapoint in iterator:
+				E = datapoint["energy"]
+				for BBL in E:
+					if i > 100:
+						break
+					ret[BBL] = []
+					keys.append(BBL)
+					i += 1
+				break
 		print("Keys: " + str(keys))
 		for datapoint in iterator:
 			ret["timestamp"].append(datapoint["timestamp"])

@@ -20,7 +20,8 @@ def main():
 	start = calendar.timegm(start.utctimetuple())
 	end = calendar.timegm(end.utctimetuple())
 	print("Querying database for footprint...")
-	D = db.getBuildingFootprintData(start, end)
+	BBLs = ['1019760016', '1019730001', '1019620070']
+	D = db.getBuildingFootprintData(start, end, BBLs)
 	print("Received footprint data")
 
 	keys = D.keys()
