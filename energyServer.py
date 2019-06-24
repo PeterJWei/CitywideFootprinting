@@ -67,7 +67,7 @@ class Service:
 
 class MyApplication(web.application):
 	def run(self, port=8080, *middleware):
-		#self.runDynamicPopulation()
+		self.runDynamicPopulation()
 		#self.runTrafficCount()
 		#self.startDaemon()
 		func = self.wsgifunc(*middleware)
@@ -100,7 +100,7 @@ class MyApplication(web.application):
 			populationDictionary = LBuildings.BBLpopulation
 			print("Energy Dictionary: " + str(sys.getsizeof(energyDictionary)))
 			print("Population Dictionary: " + str(sys.getsizeof(populationDictionary)))
-			db.recordFullState(energyDictionary, populationDictionary)
+			#db.recordFullState(energyDictionary, populationDictionary)
 			#V.vehicleCountFromImage()
 			S.clearList()
 			end = time.time()
